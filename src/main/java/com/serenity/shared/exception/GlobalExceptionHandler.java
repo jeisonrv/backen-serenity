@@ -32,13 +32,13 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ProblemDetail> recursoNoEncontrado(ResourceNotFoundException ex, HttpServletRequest request) {
-        log.error("Recurso no encontrado: {}", ex.getMessage(), ex);
+        log.warn("Recurso solicitado no encontrado");
         return problem(HttpStatus.NOT_FOUND, ex.getMessage(), request);
     }
 
     @ExceptionHandler(NoResourceFoundException.class)
     public ResponseEntity<ProblemDetail> rutaNoEncontrada(NoResourceFoundException ex, HttpServletRequest request) {
-        log.error("Ruta no encontrada: {}", ex.getResourcePath(), ex);
+        log.warn("Ruta solicitada no encontrada");
         return problem(HttpStatus.NOT_FOUND, "Ruta no encontrada", request);
     }
 
@@ -60,7 +60,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ProblemDetail> solicitudInvalida(HttpMessageNotReadableException ex, HttpServletRequest request) {
-        log.error("Solicitud inválida", ex);
+        log.warn("Solicitud con cuerpo inválido");
         return problem(HttpStatus.BAD_REQUEST, "El cuerpo de la solicitud es inválido", request);
     }
 
@@ -103,7 +103,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ProblemDetail> argumentoInvalido(IllegalArgumentException ex, HttpServletRequest request) {
-        log.error("Argumento inválido: {}", ex.getMessage(), ex);
+        log.warn("Solicitud rechazada por argumento inválido");
         return problem(HttpStatus.BAD_REQUEST, ex.getMessage(), request);
     }
 
@@ -119,7 +119,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(IllegalStateException.class)
     public ResponseEntity<ProblemDetail> estadoInvalido(IllegalStateException ex, HttpServletRequest request) {
-        log.error("Conflicto de estado: {}", ex.getMessage(), ex);
+        log.warn("Operación rechazada por conflicto de estado");
         return problem(HttpStatus.CONFLICT, "El estado actual impide completar la operación", request);
     }
 
@@ -130,7 +130,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ProblemDetail> manejarErrorInesperado(Exception ex, HttpServletRequest request) {
-        log.error("Error inesperado atendiendo la solicitud", ex);
+        log.error("Error inesperado atendiendo la solicitud");
         return problem(HttpStatus.INTERNAL_SERVER_ERROR, "Error interno del servidor", request);
     }
 
