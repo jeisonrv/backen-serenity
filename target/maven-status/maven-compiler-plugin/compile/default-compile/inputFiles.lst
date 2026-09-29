@@ -1,5 +1,4 @@
 C:\Users\majo1\IdeaProjects\backen-serenity\src\main\java\com\serenity\chat\domain\model\Conversacion.java
-C:\Users\majo1\IdeaProjects\backen-serenity\src\main\java\com\serenity\config\SecurityConfig.java
 C:\Users\majo1\IdeaProjects\backen-serenity\src\main\java\com\serenity\usuario\application\port\in\RegistrarUsuarioUseCase.java
 C:\Users\majo1\IdeaProjects\backen-serenity\src\main\java\com\serenity\chat\infrastructure\adapter\out\persistence\ConversacionJpaRepository.java
 C:\Users\majo1\IdeaProjects\backen-serenity\src\main\java\com\serenity\animo\application\service\EstadoAnimoService.java
@@ -9,6 +8,7 @@ C:\Users\majo1\IdeaProjects\backen-serenity\src\main\java\com\serenity\shared\ex
 C:\Users\majo1\IdeaProjects\backen-serenity\src\main\java\com\serenity\usuario\application\port\out\UsuarioRepositoryPort.java
 C:\Users\majo1\IdeaProjects\backen-serenity\src\main\java\com\serenity\animo\domain\model\EstadoAnimo.java
 C:\Users\majo1\IdeaProjects\backen-serenity\src\main\java\com\serenity\gamificacion\domain\model\Logro.java
+C:\Users\majo1\IdeaProjects\backen-serenity\src\main\java\com\serenity\usuario\application\service\ObtenerUsuarioActualService.java
 C:\Users\majo1\IdeaProjects\backen-serenity\src\main\java\com\serenity\ejercicio\application\port\out\SesionRepositoryPort.java
 C:\Users\majo1\IdeaProjects\backen-serenity\src\main\java\com\serenity\usuario\infrastructure\adapter\in\rest\dto\LoginResponse.java
 C:\Users\majo1\IdeaProjects\backen-serenity\src\main\java\com\serenity\animo\infrastructure\adapter\out\persistence\EstadoAnimoRepositoryAdapter.java
@@ -19,15 +19,19 @@ C:\Users\majo1\IdeaProjects\backen-serenity\src\main\java\com\serenity\SerenityA
 C:\Users\majo1\IdeaProjects\backen-serenity\src\main\java\com\serenity\animo\application\port\in\RegistrarAnimoUseCase.java
 C:\Users\majo1\IdeaProjects\backen-serenity\src\main\java\com\serenity\ejercicio\infrastructure\adapter\in\rest\dto\SesionResponse.java
 C:\Users\majo1\IdeaProjects\backen-serenity\src\main\java\com\serenity\ejercicio\infrastructure\adapter\out\persistence\SesionJpaRepository.java
+C:\Users\majo1\IdeaProjects\backen-serenity\src\main\java\com\serenity\usuario\application\port\in\ObtenerUsuarioActualUseCase.java
 C:\Users\majo1\IdeaProjects\backen-serenity\src\main\java\com\serenity\gamificacion\infrastructure\adapter\in\rest\GamificacionController.java
+C:\Users\majo1\IdeaProjects\backen-serenity\src\main\java\com\serenity\shared\config\OpenApiConfig.java
 C:\Users\majo1\IdeaProjects\backen-serenity\src\main\java\com\serenity\ejercicio\infrastructure\adapter\out\persistence\SesionJpaEntity.java
 C:\Users\majo1\IdeaProjects\backen-serenity\src\main\java\com\serenity\usuario\application\service\ActualizarProgresoService.java
 C:\Users\majo1\IdeaProjects\backen-serenity\src\main\java\com\serenity\diario\domain\model\EntradaDiario.java
+C:\Users\majo1\IdeaProjects\backen-serenity\src\main\java\com\serenity\ejercicio\application\port\in\ListarSesionesUseCase.java
 C:\Users\majo1\IdeaProjects\backen-serenity\src\main\java\com\serenity\usuario\application\service\RegistrarUsuarioService.java
 C:\Users\majo1\IdeaProjects\backen-serenity\src\main\java\com\serenity\gamificacion\application\port\in\ConsultarGamificacionUseCase.java
 C:\Users\majo1\IdeaProjects\backen-serenity\src\main\java\com\serenity\chat\infrastructure\adapter\out\persistence\MensajeChatJpaRepository.java
 C:\Users\majo1\IdeaProjects\backen-serenity\src\main\java\com\serenity\shared\config\CorsConfig.java
 C:\Users\majo1\IdeaProjects\backen-serenity\src\main\java\com\serenity\usuario\infrastructure\adapter\out\persistence\UsuarioJpaRepository.java
+C:\Users\majo1\IdeaProjects\backen-serenity\src\main\java\com\serenity\shared\config\SecurityConfig.java
 C:\Users\majo1\IdeaProjects\backen-serenity\src\main\java\com\serenity\ejercicio\application\service\CompletarSesionService.java
 C:\Users\majo1\IdeaProjects\backen-serenity\src\main\java\com\serenity\shared\security\JwtUtil.java
 C:\Users\majo1\IdeaProjects\backen-serenity\src\main\java\com\serenity\usuario\infrastructure\adapter\in\rest\UsuarioController.java
@@ -54,6 +58,7 @@ C:\Users\majo1\IdeaProjects\backen-serenity\src\main\java\com\serenity\controlle
 C:\Users\majo1\IdeaProjects\backen-serenity\src\main\java\com\serenity\diario\infrastructure\adapter\in\rest\dto\DiarioResumenResponse.java
 C:\Users\majo1\IdeaProjects\backen-serenity\src\main\java\com\serenity\chat\infrastructure\adapter\out\persistence\ChatRepositoryAdapter.java
 C:\Users\majo1\IdeaProjects\backen-serenity\src\main\java\com\serenity\shared\security\JwtAuthenticationFilter.java
+C:\Users\majo1\IdeaProjects\backen-serenity\src\main\java\com\serenity\shared\exception\CredencialesInvalidasException.java
 C:\Users\majo1\IdeaProjects\backen-serenity\src\main\java\com\serenity\diario\infrastructure\adapter\out\persistence\EntradaDiarioRepositoryAdapter.java
 C:\Users\majo1\IdeaProjects\backen-serenity\src\main\java\com\serenity\usuario\infrastructure\adapter\in\rest\dto\UsuarioResponse.java
 C:\Users\majo1\IdeaProjects\backen-serenity\src\main\java\com\serenity\usuario\domain\model\Usuario.java
@@ -73,4 +78,5 @@ C:\Users\majo1\IdeaProjects\backen-serenity\src\main\java\com\serenity\animo\inf
 C:\Users\majo1\IdeaProjects\backen-serenity\src\main\java\com\serenity\chat\application\port\in\ChatUseCase.java
 C:\Users\majo1\IdeaProjects\backen-serenity\src\main\java\com\serenity\diario\application\port\out\EntradaDiarioRepositoryPort.java
 C:\Users\majo1\IdeaProjects\backen-serenity\src\main\java\com\serenity\gamificacion\domain\model\ResumenEstadisticas.java
+C:\Users\majo1\IdeaProjects\backen-serenity\src\main\java\com\serenity\ejercicio\application\service\ListarSesionesService.java
 C:\Users\majo1\IdeaProjects\backen-serenity\src\main\java\com\serenity\shared\security\AuthenticatedUser.java

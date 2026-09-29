@@ -35,11 +35,11 @@ public class ChatController {
  @MessageMapping("/conversacion/{id}/enviar")
  public void enviar(@DestinationVariable Long id,MensajeRequest req,SimpMessageHeaderAccessor headers){
   var authentication=(org.springframework.security.authentication.UsernamePasswordAuthenticationToken)headers.getUser();
-  var user=(AuthenticatedUser)authentication.getPrincipal();chat.buscarPropia(id,user.id());
-  if(req.contenido()==null||req.contenido().isBlank())return;
-  publicar(new Mensaje(id,"usuario",req.contenido(),LocalDateTime.now()),user.id());
-  publicar(new Mensaje(id,"oyente","Gracias por compartirlo. Estoy aquí para acompañarte. ¿Qué te gustaría explorar?",LocalDateTime.now()),user.id());
+  var user=(AuthenticatedUser)authentication.getPrincipal();
+  for(var mensaje:chat.enviarMensaje(id,user.id(),req.contenido())){
+   messaging.convertAndSend("/topic/conversacion/"+id,
+    new Mensaje(mensaje.idConversacion(),mensaje.remitente(),mensaje.contenido(),mensaje.fechaEnvio()));
+  }
  }
- private void publicar(Mensaje mensaje,Long usuarioId){chat.guardarMensaje(new MensajeChat(mensaje.idConversacion(),mensaje.remitente(),mensaje.contenido(),mensaje.fechaEnvio()),usuarioId);messaging.convertAndSend("/topic/conversacion/"+mensaje.idConversacion(),mensaje);}
  private ConversacionResponse response(Conversacion c){return new ConversacionResponse(c.idConversacion(),c.idUsuario(),c.idOyente(),c.fechaInicio(),c.fechaFin());}
 }

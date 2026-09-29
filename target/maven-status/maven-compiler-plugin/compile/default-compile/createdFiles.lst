@@ -1,4 +1,5 @@
 com\serenity\chat\application\port\in\ChatUseCase.class
+com\serenity\usuario\application\port\in\ObtenerUsuarioActualUseCase.class
 com\serenity\diario\application\service\DiarioService.class
 com\serenity\diario\infrastructure\adapter\in\rest\DiarioController.class
 com\serenity\SerenityApplication.class
@@ -11,11 +12,13 @@ com\serenity\ejercicio\infrastructure\adapter\out\persistence\SesionJpaEntity.cl
 com\serenity\diario\infrastructure\adapter\in\rest\dto\DiarioResumenResponse.class
 com\serenity\ejercicio\application\service\CompletarSesionService.class
 com\serenity\diario\application\port\in\GuardarEntradaDiarioUseCase.class
+com\serenity\shared\exception\CredencialesInvalidasException.class
 com\serenity\animo\infrastructure\adapter\in\rest\EstadoAnimoController.class
 com\serenity\ejercicio\application\port\out\SesionRepositoryPort.class
 com\serenity\gamificacion\domain\model\ResumenEstadisticas.class
 com\serenity\usuario\application\port\out\UsuarioRepositoryPort.class
 com\serenity\ejercicio\domain\model\Sesion$SesionBuilder.class
+com\serenity\usuario\application\service\ObtenerUsuarioActualService.class
 com\serenity\shared\config\SecurityConfig.class
 com\serenity\animo\application\port\in\ListarAnimoUseCase.class
 com\serenity\chat\infrastructure\adapter\out\persistence\MensajeChatJpaEntity.class
@@ -73,6 +76,7 @@ com\serenity\animo\application\service\EstadoAnimoService.class
 com\serenity\chat\infrastructure\adapter\in\rest\ChatController$Mensaje.class
 com\serenity\chat\domain\model\Conversacion.class
 com\serenity\chat\infrastructure\adapter\in\rest\ChatController$ReporteRequest.class
+com\serenity\ejercicio\application\service\ListarSesionesService.class
 com\serenity\diario\domain\model\EntradaDiario.class
 com\serenity\chat\infrastructure\adapter\out\persistence\ConversacionJpaRepository.class
 com\serenity\diario\infrastructure\adapter\out\persistence\EntradaDiarioJpaRepository.class
@@ -81,6 +85,8 @@ com\serenity\usuario\infrastructure\adapter\in\rest\UsuarioController.class
 com\serenity\gamificacion\domain\model\RegistroJardin.class
 com\serenity\chat\application\port\out\ChatRepositoryPort.class
 com\serenity\chat\infrastructure\adapter\out\persistence\ReporteChatJpaRepository.class
+com\serenity\ejercicio\application\port\in\ListarSesionesUseCase.class
+com\serenity\shared\config\OpenApiConfig.class
 com\serenity\shared\security\AuthenticatedUser.class
 com\serenity\animo\application\port\in\RegistrarAnimoUseCase.class
 com\serenity\ejercicio\application\port\in\CompletarSesionUseCase.class
