@@ -21,7 +21,7 @@ public class UsuarioController {
         this.iniciarSesion = iniciarSesion;
     }
 
-    @PostMapping("/registro")
+    @PostMapping({"/registro", "/register"})
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<UsuarioResponse> registrar(@Valid @RequestBody RegistroRequest req) {
         Usuario usuario = registrarUsuario.registrar(req.username(), req.email(), req.password());

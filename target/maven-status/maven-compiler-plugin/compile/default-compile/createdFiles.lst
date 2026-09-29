@@ -47,6 +47,7 @@ com\serenity\usuario\infrastructure\adapter\out\persistence\UsuarioJpaRepository
 com\serenity\usuario\infrastructure\adapter\in\rest\dto\LoginResponse.class
 com\serenity\animo\domain\model\EstadoAnimo.class
 com\serenity\ejercicio\infrastructure\adapter\out\persistence\SesionRepositoryAdapter.class
+com\serenity\shared\exception\ConflictException.class
 com\serenity\usuario\infrastructure\adapter\in\rest\dto\LoginRequest.class
 com\serenity\gamificacion\domain\model\Logro.class
 com\serenity\ejercicio\infrastructure\adapter\in\rest\dto\CompletarSesionRequest.class

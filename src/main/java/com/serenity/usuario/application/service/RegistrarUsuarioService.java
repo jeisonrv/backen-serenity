@@ -3,18 +3,15 @@ package com.serenity.usuario.application.service;
 import com.serenity.usuario.application.port.in.RegistrarUsuarioUseCase;
 import com.serenity.usuario.application.port.out.UsuarioRepositoryPort;
 import com.serenity.usuario.domain.model.Usuario;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import com.serenity.shared.exception.ConflictException;
 import org.springframework.stereotype.Service;
 
 @Service
 public class RegistrarUsuarioService implements RegistrarUsuarioUseCase {
 
     private final UsuarioRepositoryPort repositorio;
-    private final PasswordEncoder passwordEncoder;
-
-    public RegistrarUsuarioService(UsuarioRepositoryPort repositorio, PasswordEncoder passwordEncoder) {
+    public RegistrarUsuarioService(UsuarioRepositoryPort repositorio) {
         this.repositorio = repositorio;
-        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -29,10 +26,9 @@ public class RegistrarUsuarioService implements RegistrarUsuarioUseCase {
             throw new IllegalArgumentException("La contraseña debe tener mínimo 6 caracteres");
         }
         if (repositorio.buscarPorEmail(email).isPresent()) {
-            throw new IllegalStateException("El email ya está registrado");
+            throw new ConflictException("Ya existe una cuenta con ese correo");
         }
 
-        String hash = passwordEncoder.encode(passwordPlano);
-        return repositorio.guardar(new Usuario(username, email, hash));
+        return repositorio.guardar(new Usuario(username, email, passwordPlano));
     }
 }

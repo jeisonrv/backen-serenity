@@ -17,6 +17,7 @@ C:\Users\majo1\IdeaProjects\backen-serenity\src\main\java\com\serenity\usuario\i
 C:\Users\majo1\IdeaProjects\backen-serenity\src\main\java\com\serenity\animo\infrastructure\adapter\in\rest\EstadoAnimoController.java
 C:\Users\majo1\IdeaProjects\backen-serenity\src\main\java\com\serenity\SerenityApplication.java
 C:\Users\majo1\IdeaProjects\backen-serenity\src\main\java\com\serenity\animo\application\port\in\RegistrarAnimoUseCase.java
+C:\Users\majo1\IdeaProjects\backen-serenity\src\main\java\com\serenity\shared\exception\ConflictException.java
 C:\Users\majo1\IdeaProjects\backen-serenity\src\main\java\com\serenity\ejercicio\infrastructure\adapter\in\rest\dto\SesionResponse.java
 C:\Users\majo1\IdeaProjects\backen-serenity\src\main\java\com\serenity\ejercicio\infrastructure\adapter\out\persistence\SesionJpaRepository.java
 C:\Users\majo1\IdeaProjects\backen-serenity\src\main\java\com\serenity\usuario\application\port\in\ObtenerUsuarioActualUseCase.java

@@ -1,67 +1,146 @@
 package com.serenity.shared.exception;
 
-import org.springframework.http.ResponseEntity;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.servlet.resource.NoResourceFoundException;
-import com.serenity.shared.exception.ResourceNotFoundException;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Map;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ProblemDetail;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.web.HttpMediaTypeNotAcceptableException;
+import org.springframework.web.HttpMediaTypeNotSupportedException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
+
+import java.net.URI;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
     private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<Map<String, String>> recursoNoEncontrado(ResourceNotFoundException ex) {
+    public ResponseEntity<ProblemDetail> recursoNoEncontrado(ResourceNotFoundException ex, HttpServletRequest request) {
         log.error("Recurso no encontrado: {}", ex.getMessage(), ex);
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", ex.getMessage()));
+        return problem(HttpStatus.NOT_FOUND, ex.getMessage(), request);
     }
 
     @ExceptionHandler(NoResourceFoundException.class)
-    public ResponseEntity<Map<String, String>> rutaNoEncontrada(NoResourceFoundException ex) {
+    public ResponseEntity<ProblemDetail> rutaNoEncontrada(NoResourceFoundException ex, HttpServletRequest request) {
         log.error("Ruta no encontrada: {}", ex.getResourcePath(), ex);
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "Ruta no encontrada"));
+        return problem(HttpStatus.NOT_FOUND, "Ruta no encontrada", request);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, String>> solicitudConCamposInvalidos(MethodArgumentNotValidException ex) {
-        FieldError error = ex.getBindingResult().getFieldErrors().get(0);
-        return ResponseEntity.badRequest().body(Map.of("error", error.getField() + ": " + error.getDefaultMessage()));
+    public ResponseEntity<ProblemDetail> solicitudConCamposInvalidos(MethodArgumentNotValidException ex, HttpServletRequest request) {
+        Map<String, String> errors = new LinkedHashMap<>();
+        for (FieldError error : ex.getBindingResult().getFieldErrors()) {
+            errors.putIfAbsent(error.getField(), error.getDefaultMessage());
+        }
+        ProblemDetail detail = createProblem(HttpStatus.BAD_REQUEST, "Hay campos inválidos", request);
+        detail.setProperty("errors", errors);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(detail);
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<ProblemDetail> constraintViolations(ConstraintViolationException ex, HttpServletRequest request) {
+        return problem(HttpStatus.BAD_REQUEST, "Uno o más parámetros no son válidos", request);
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<Map<String, String>> solicitudInvalida(HttpMessageNotReadableException ex) {
+    public ResponseEntity<ProblemDetail> solicitudInvalida(HttpMessageNotReadableException ex, HttpServletRequest request) {
         log.error("Solicitud inválida", ex);
-        return ResponseEntity.badRequest().body(Map.of("error", "El cuerpo de la solicitud es inválido"));
+        return problem(HttpStatus.BAD_REQUEST, "El cuerpo de la solicitud es inválido", request);
+    }
+
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    public ResponseEntity<ProblemDetail> parametroRequerido(MissingServletRequestParameterException ex, HttpServletRequest request) {
+        return problem(HttpStatus.BAD_REQUEST, "Falta un parámetro obligatorio: " + ex.getParameterName(), request);
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ProblemDetail> tipoDeParametroInvalido(MethodArgumentTypeMismatchException ex, HttpServletRequest request) {
+        return problem(HttpStatus.BAD_REQUEST, "El parámetro " + ex.getName() + " tiene un formato inválido", request);
+    }
+
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public ResponseEntity<ProblemDetail> metodoNoSoportado(HttpRequestMethodNotSupportedException ex, HttpServletRequest request) {
+        return problem(HttpStatus.METHOD_NOT_ALLOWED, "El método HTTP no está permitido para este recurso", request);
+    }
+
+    @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
+    public ResponseEntity<ProblemDetail> tipoDeContenidoNoSoportado(HttpMediaTypeNotSupportedException ex, HttpServletRequest request) {
+        return problem(HttpStatus.UNSUPPORTED_MEDIA_TYPE, "El tipo de contenido de la solicitud no está soportado", request);
+    }
+
+    @ExceptionHandler(HttpMediaTypeNotAcceptableException.class)
+    public ResponseEntity<ProblemDetail> tipoDeRespuestaNoAceptable(HttpMediaTypeNotAcceptableException ex, HttpServletRequest request) {
+        return problem(HttpStatus.NOT_ACCEPTABLE, "No hay una representación disponible para la respuesta", request);
+    }
+
+    @ExceptionHandler(ResponseStatusException.class)
+    public ResponseEntity<ProblemDetail> errorHttp(ResponseStatusException ex, HttpServletRequest request) {
+        HttpStatusCode status = ex.getStatusCode();
+        HttpStatus knownStatus = HttpStatus.resolve(status.value());
+        String detail = knownStatus == null || knownStatus.is5xxServerError()
+                ? "Error interno del servidor"
+                : knownStatus.getReasonPhrase();
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(status, detail);
+        problem.setInstance(URI.create(request.getRequestURI()));
+        return ResponseEntity.status(status).body(problem);
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ProblemDetail> argumentoInvalido(IllegalArgumentException ex, HttpServletRequest request) {
+        log.error("Argumento inválido: {}", ex.getMessage(), ex);
+        return problem(HttpStatus.BAD_REQUEST, ex.getMessage(), request);
     }
 
     @ExceptionHandler(CredencialesInvalidasException.class)
-    public ResponseEntity<Map<String, String>> credencialesInvalidas(CredencialesInvalidasException ex) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", ex.getMessage()));
+    public ResponseEntity<ProblemDetail> credencialesInvalidas(CredencialesInvalidasException ex, HttpServletRequest request) {
+        return problem(HttpStatus.UNAUTHORIZED, "Credenciales inválidas", request);
     }
 
-    @ExceptionHandler({IllegalArgumentException.class, IllegalStateException.class})
-    public ResponseEntity<Map<String, String>> manejarErroresDeNegocio(RuntimeException ex) {
-        log.error("Error de negocio: {}", ex.getMessage(), ex);
-        return ResponseEntity.badRequest().body(Map.of("error", mensaje(ex)));
+    @ExceptionHandler(ConflictException.class)
+    public ResponseEntity<ProblemDetail> conflicto(ConflictException ex, HttpServletRequest request) {
+        return problem(HttpStatus.CONFLICT, ex.getMessage(), request);
+    }
+
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<ProblemDetail> estadoInvalido(IllegalStateException ex, HttpServletRequest request) {
+        log.error("Conflicto de estado: {}", ex.getMessage(), ex);
+        return problem(HttpStatus.CONFLICT, "El estado actual impide completar la operación", request);
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ProblemDetail> accesoDenegado(AccessDeniedException ex, HttpServletRequest request) {
+        return problem(HttpStatus.FORBIDDEN, "Acceso denegado", request);
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<Map<String, String>> manejarErrorInesperado(Exception ex) {
+    public ResponseEntity<ProblemDetail> manejarErrorInesperado(Exception ex, HttpServletRequest request) {
         log.error("Error inesperado atendiendo la solicitud", ex);
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(Map.of("error", mensaje(ex)));
+        return problem(HttpStatus.INTERNAL_SERVER_ERROR, "Error interno del servidor", request);
     }
 
-    private String mensaje(Exception ex) {
-        return ex.getMessage() == null || ex.getMessage().isBlank()
-                ? "Error interno del servidor" : ex.getMessage();
+    private ResponseEntity<ProblemDetail> problem(HttpStatus status, String detail, HttpServletRequest request) {
+        return ResponseEntity.status(status).body(createProblem(status, detail, request));
+    }
+
+    private ProblemDetail createProblem(HttpStatus status, String detail, HttpServletRequest request) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(status, detail == null ? "" : detail);
+        problem.setInstance(URI.create(request.getRequestURI()));
+        return problem;
     }
 }
