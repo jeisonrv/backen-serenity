@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Map;
+import org.springframework.validation.FieldError;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -29,10 +30,21 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "Ruta no encontrada"));
     }
 
-    @ExceptionHandler({HttpMessageNotReadableException.class, MethodArgumentNotValidException.class})
-    public ResponseEntity<Map<String, String>> solicitudInvalida(Exception ex) {
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<Map<String, String>> solicitudConCamposInvalidos(MethodArgumentNotValidException ex) {
+        FieldError error = ex.getBindingResult().getFieldErrors().get(0);
+        return ResponseEntity.badRequest().body(Map.of("error", error.getField() + ": " + error.getDefaultMessage()));
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<Map<String, String>> solicitudInvalida(HttpMessageNotReadableException ex) {
         log.error("Solicitud inválida", ex);
         return ResponseEntity.badRequest().body(Map.of("error", "El cuerpo de la solicitud es inválido"));
+    }
+
+    @ExceptionHandler(CredencialesInvalidasException.class)
+    public ResponseEntity<Map<String, String>> credencialesInvalidas(CredencialesInvalidasException ex) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", ex.getMessage()));
     }
 
     @ExceptionHandler({IllegalArgumentException.class, IllegalStateException.class})

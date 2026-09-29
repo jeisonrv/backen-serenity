@@ -40,6 +40,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/**").permitAll()   // registro y login sin token
                         .requestMatchers("/error").permitAll()          // para ver errores reales
                         .requestMatchers("/ws/**").permitAll()          // el JWT se valida en STOMP CONNECT
+                        .requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .anyRequest().authenticated()
                 );
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

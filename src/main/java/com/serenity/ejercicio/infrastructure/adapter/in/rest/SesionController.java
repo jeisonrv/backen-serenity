@@ -11,6 +11,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import com.serenity.shared.security.AuthenticatedUser;
 import com.serenity.ejercicio.application.port.out.SesionRepositoryPort;
 import java.util.List;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 
 @RestController
 @RequestMapping("/api/sesiones")
@@ -21,7 +23,7 @@ public class SesionController {
     private final SesionRepositoryPort sesiones;
 
     @PostMapping
-    public ResponseEntity<SesionResponse> completar(@RequestBody CompletarSesionRequest req,
+    public ResponseEntity<SesionResponse> completar(@Valid @RequestBody CompletarSesionRequest req,
                                                     @AuthenticationPrincipal AuthenticatedUser user) {
         if (req == null || req.duracion() == null) {
             throw new IllegalArgumentException("La duración es obligatoria");
@@ -31,7 +33,7 @@ public class SesionController {
                 req.tipoEjercicio(),
                 req.duracion()
         );
-        return ResponseEntity.ok(SesionResponse.desde(sesion));
+        return ResponseEntity.status(HttpStatus.CREATED).body(SesionResponse.desde(sesion));
     }
 
     @GetMapping

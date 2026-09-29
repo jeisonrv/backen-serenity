@@ -1,6 +1,7 @@
 package com.serenity.usuario.infrastructure.adapter.in.rest;
 
 import com.serenity.shared.security.AuthenticatedUser;
+import com.serenity.shared.exception.ResourceNotFoundException;
 import com.serenity.usuario.application.port.out.UsuarioRepositoryPort;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -16,7 +17,7 @@ public class UsuarioActualController {
     public UsuarioActualController(UsuarioRepositoryPort usuarios){this.usuarios=usuarios;}
     @GetMapping("/me")
     public UsuarioActualResponse actual(@AuthenticationPrincipal AuthenticatedUser user){
-        var u=usuarios.buscarPorId(user.id()).orElseThrow(()->new IllegalStateException("Usuario no encontrado"));
+        var u=usuarios.buscarPorId(user.id()).orElseThrow(()->new ResourceNotFoundException("Usuario no encontrado"));
         return new UsuarioActualResponse(u.getId(),u.getUsername(),u.getEmail(),u.getNivel(),u.getXp(),
                 u.getRacha(),u.getMejorRacha(),u.getUltimaActividad(),null);
     }

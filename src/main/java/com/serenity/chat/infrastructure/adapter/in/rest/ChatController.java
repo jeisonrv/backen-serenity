@@ -12,22 +12,24 @@ import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 @RestController @RequestMapping("/api/chat")
 public class ChatController {
  public record ConversacionResponse(Long idConversacion,Long idUsuario,Long idOyente,LocalDateTime fechaInicio,LocalDateTime fechaFin){}
  public record Mensaje(Long idConversacion,String remitente,String contenido,LocalDateTime fechaEnvio){}
  public record MensajeRequest(String contenido){}
- public record ReporteRequest(Long idConversacion,String motivo){}
+ public record ReporteRequest(@NotNull Long idConversacion,@NotBlank String motivo){}
  private final ChatUseCase chat; private final SimpMessagingTemplate messaging;
  public ChatController(ChatUseCase chat,SimpMessagingTemplate s){this.chat=chat;messaging=s;}
- @PostMapping("/solicitar")
+ @PostMapping("/solicitar") @ResponseStatus(HttpStatus.CREATED)
  public ConversacionResponse solicitar(@AuthenticationPrincipal AuthenticatedUser user){return response(chat.solicitar(user.id()));}
  @PostMapping("/{id}/finalizar") @ResponseStatus(HttpStatus.NO_CONTENT)
  public void finalizar(@PathVariable Long id,@AuthenticationPrincipal AuthenticatedUser user){chat.finalizar(id,user.id());}
  @PostMapping("/reporte") @ResponseStatus(HttpStatus.NO_CONTENT)
- public void reportar(@RequestBody ReporteRequest req,@AuthenticationPrincipal AuthenticatedUser user){
-  if(req.idConversacion()==null)throw new IllegalArgumentException("La conversación es obligatoria");
+ public void reportar(@Valid @RequestBody ReporteRequest req,@AuthenticationPrincipal AuthenticatedUser user){
   chat.reportar(req.idConversacion(),user.id(),req.motivo());
  }
  @MessageMapping("/conversacion/{id}/enviar")
