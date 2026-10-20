@@ -30,6 +30,14 @@ import java.util.Map;
 public class GlobalExceptionHandler {
     private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
+    @ExceptionHandler(AccesoRestringidoException.class)
+    public ResponseEntity<ProblemDetail> accesoRestringido(AccesoRestringidoException ex, HttpServletRequest request) {
+        ProblemDetail detail = createProblem(HttpStatus.FORBIDDEN, "El acceso de esta cuenta está restringido", request);
+        detail.setProperty("codigo", "ACCESO_RESTRINGIDO");
+        detail.setProperty("restringidoHasta", ex.getRestringidoHasta());
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(detail);
+    }
+
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ProblemDetail> recursoNoEncontrado(ResourceNotFoundException ex, HttpServletRequest request) {
         log.warn("Recurso solicitado no encontrado");

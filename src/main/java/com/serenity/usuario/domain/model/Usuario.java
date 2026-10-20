@@ -1,6 +1,7 @@
 package com.serenity.usuario.domain.model;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class Usuario {
     private Long id;
@@ -12,6 +13,13 @@ public class Usuario {
     private int racha;
     private int mejorRacha;
     private LocalDate ultimaActividad;
+    private Rol rol = Rol.USUARIO;
+    private boolean restringido;
+    private String motivoRestriccion;
+    private LocalDateTime restringidoHasta;
+    private LocalDateTime fechaRestriccion;
+    private Long restringidoPor;
+    private String googleSubject;
 
     public Usuario() {}
 
@@ -49,6 +57,36 @@ public class Usuario {
         nivel = xp / 100 + 1;
     }
 
+    public boolean estaRestringido(LocalDateTime ahora) {
+        return restringido && (restringidoHasta == null || restringidoHasta.isAfter(ahora));
+    }
+
+    public void restringir(String motivo, LocalDateTime hasta, LocalDateTime ahora, Long moderadorId) {
+        if (motivo == null || motivo.isBlank()) throw new IllegalArgumentException("El motivo de restricción es obligatorio");
+        if (hasta != null && !hasta.isAfter(ahora)) throw new IllegalArgumentException("La fecha de restricción debe ser futura");
+        restringido = true;
+        motivoRestriccion = motivo.trim();
+        restringidoHasta = hasta;
+        fechaRestriccion = ahora;
+        restringidoPor = moderadorId;
+    }
+
+    public void levantarRestriccion() {
+        restringido = false;
+        motivoRestriccion = null;
+        restringidoHasta = null;
+        fechaRestriccion = null;
+        restringidoPor = null;
+    }
+
+    public void restaurarRestriccion(boolean restringido, String motivo, LocalDateTime hasta, LocalDateTime fecha, Long moderadorId) {
+        this.restringido = restringido;
+        this.motivoRestriccion = motivo;
+        this.restringidoHasta = hasta;
+        this.fechaRestriccion = fecha;
+        this.restringidoPor = moderadorId;
+    }
+
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public String getUsername() { return username; }
@@ -63,4 +101,13 @@ public class Usuario {
     public int getMejorRacha() { return mejorRacha; }
     public LocalDate getUltimaActividad() { return ultimaActividad; }
     public void setUltimaActividad(LocalDate ultimaActividad) { this.ultimaActividad = ultimaActividad; }
+    public Rol getRol() { return rol; }
+    public void setRol(Rol rol) { this.rol = rol == null ? Rol.USUARIO : rol; }
+    public boolean isRestringido() { return restringido; }
+    public String getMotivoRestriccion() { return motivoRestriccion; }
+    public LocalDateTime getRestringidoHasta() { return restringidoHasta; }
+    public LocalDateTime getFechaRestriccion() { return fechaRestriccion; }
+    public Long getRestringidoPor() { return restringidoPor; }
+    public String getGoogleSubject() { return googleSubject; }
+    public void setGoogleSubject(String googleSubject) { this.googleSubject = googleSubject; }
 }
