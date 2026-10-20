@@ -3,6 +3,9 @@ package com.serenity.shared.config;
 import com.serenity.shared.security.AuthenticatedUser;
 import com.serenity.shared.security.JwtUtil;
 import com.serenity.chat.application.port.in.ChatUseCase;
+import com.serenity.usuario.application.port.in.GestionarAccesoUseCase;
+import com.serenity.usuario.domain.model.Rol;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import io.jsonwebtoken.Claims;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.Message;
@@ -28,7 +31,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     private String allowedOrigins;
     private final JwtUtil jwtUtil;
     private final ChatUseCase chat;
-    public WebSocketConfig(JwtUtil jwtUtil,ChatUseCase chat){this.jwtUtil=jwtUtil;this.chat=chat;}
+    private final GestionarAccesoUseCase acceso;
+    public WebSocketConfig(JwtUtil jwtUtil,ChatUseCase chat,GestionarAccesoUseCase acceso){this.jwtUtil=jwtUtil;this.chat=chat;this.acceso=acceso;}
     @Override public void configureMessageBroker(MessageBrokerRegistry registry){
         // Para varias instancias, reemplazar enableSimpleBroker por enableStompBrokerRelay con un broker externo como RabbitMQ.
         registry.enableSimpleBroker("/topic");registry.setApplicationDestinationPrefixes("/app");}
@@ -44,7 +48,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                     Number id=claims.get("usuarioId",Number.class);
                     if(id==null||claims.getSubject()==null)throw new IllegalArgumentException("Token inválido");
                     var principal=new AuthenticatedUser(id.longValue(),claims.getSubject());
-                    accessor.setUser(new UsernamePasswordAuthenticationToken(principal,null,List.of()));
+                    Rol rol=acceso.verificarAcceso(principal.id());
+                    accessor.setUser(new UsernamePasswordAuthenticationToken(principal,null,List.of(new SimpleGrantedAuthority("ROLE_"+rol.name()))));
                 }
                 if(accessor!=null&&StompCommand.SUBSCRIBE.equals(accessor.getCommand())){
                     if(!(accessor.getUser() instanceof UsernamePasswordAuthenticationToken auth)
@@ -55,7 +60,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                     if(destination==null||!destination.startsWith(prefix))throw new AccessDeniedException("Destino no permitido");
                     try {
                         Long id=Long.valueOf(destination.substring(prefix.length()));
-                        chat.buscarPropia(id,user.id());
+                        acceso.verificarAcceso(user.id());
+                        chat.buscarParticipante(id,user.id());
                     } catch(NumberFormatException ex) { throw new AccessDeniedException("Destino no permitido"); }
                 }
                 return message;

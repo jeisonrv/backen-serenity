@@ -1,7 +1,10 @@
 package com.serenity.usuario.infrastructure.adapter.out.persistence;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.ColumnDefault;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import com.serenity.usuario.domain.model.Rol;
 
 @Entity
 @Table(name = "usuarios")
@@ -22,6 +25,20 @@ public class UsuarioJpaEntity {
     private int racha;
     private int mejorRacha;
     private LocalDate ultimaActividad;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    @ColumnDefault("'USUARIO'")
+    private Rol rol = Rol.USUARIO;
+    @Column(nullable = false)
+    @ColumnDefault("false")
+    private boolean restringido;
+    @Column(length = 1000)
+    private String motivoRestriccion;
+    private LocalDateTime restringidoHasta;
+    private LocalDateTime fechaRestriccion;
+    private Long restringidoPor;
+    @Column(name = "google_subject", unique = true, length = 255)
+    private String googleSubject;
 
     public UsuarioJpaEntity() {}
 
@@ -55,4 +72,18 @@ public class UsuarioJpaEntity {
     public void setMejorRacha(int mejorRacha) { this.mejorRacha = mejorRacha; }
     public LocalDate getUltimaActividad() { return ultimaActividad; }
     public void setUltimaActividad(LocalDate ultimaActividad) { this.ultimaActividad = ultimaActividad; }
+    public Rol getRol() { return rol; }
+    public void setRol(Rol rol) { this.rol = rol; }
+    public boolean isRestringido() { return restringido; }
+    public void setRestringido(boolean restringido) { this.restringido = restringido; }
+    public String getMotivoRestriccion() { return motivoRestriccion; }
+    public void setMotivoRestriccion(String motivoRestriccion) { this.motivoRestriccion = motivoRestriccion; }
+    public LocalDateTime getRestringidoHasta() { return restringidoHasta; }
+    public void setRestringidoHasta(LocalDateTime restringidoHasta) { this.restringidoHasta = restringidoHasta; }
+    public LocalDateTime getFechaRestriccion() { return fechaRestriccion; }
+    public void setFechaRestriccion(LocalDateTime fechaRestriccion) { this.fechaRestriccion = fechaRestriccion; }
+    public Long getRestringidoPor() { return restringidoPor; }
+    public void setRestringidoPor(Long restringidoPor) { this.restringidoPor = restringidoPor; }
+    public String getGoogleSubject() { return googleSubject; }
+    public void setGoogleSubject(String googleSubject) { this.googleSubject = googleSubject; }
 }

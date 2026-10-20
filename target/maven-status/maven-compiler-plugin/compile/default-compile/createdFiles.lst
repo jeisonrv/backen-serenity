@@ -1,0 +1,8 @@
+com/serenity/notificacion/application/service/EnviarCorreoTransaccionalService.class
+com/serenity/usuario/infrastructure/adapter/out/google/GoogleIdentityVerifierAdapter.class
+com/serenity/notificacion/infrastructure/adapter/out/resend/ResendCorreoAdapter.class
+com/serenity/usuario/infrastructure/adapter/in/rest/UsuarioController$GoogleLoginRequest.class
+com/serenity/usuario/domain/model/IdentidadGoogle.class
+com/serenity/notificacion/application/port/out/ProveedorCorreoPort.class
+com/serenity/usuario/application/port/out/VerificarIdentidadGooglePort.class
+com/serenity/notificacion/application/port/in/EnviarCorreoTransaccionalUseCase.class

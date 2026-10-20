@@ -4,14 +4,22 @@ import com.serenity.usuario.application.port.in.RegistrarUsuarioUseCase;
 import com.serenity.usuario.application.port.out.UsuarioRepositoryPort;
 import com.serenity.usuario.domain.model.Usuario;
 import com.serenity.shared.exception.ConflictException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import com.serenity.notificacion.application.port.in.EnviarCorreoTransaccionalUseCase;
 
 @Service
 public class RegistrarUsuarioService implements RegistrarUsuarioUseCase {
 
     private final UsuarioRepositoryPort repositorio;
-    public RegistrarUsuarioService(UsuarioRepositoryPort repositorio) {
+    private final PasswordEncoder passwordEncoder;
+    private final EnviarCorreoTransaccionalUseCase correoTransaccional;
+
+    public RegistrarUsuarioService(UsuarioRepositoryPort repositorio, PasswordEncoder passwordEncoder,
+                                   EnviarCorreoTransaccionalUseCase correoTransaccional) {
         this.repositorio = repositorio;
+        this.passwordEncoder = passwordEncoder;
+        this.correoTransaccional = correoTransaccional;
     }
 
     @Override
@@ -29,6 +37,8 @@ public class RegistrarUsuarioService implements RegistrarUsuarioUseCase {
             throw new ConflictException("Ya existe una cuenta con ese correo");
         }
 
-        return repositorio.guardar(new Usuario(username, email, passwordPlano));
+        Usuario usuario = repositorio.guardar(new Usuario(username, email, passwordEncoder.encode(passwordPlano)));
+        correoTransaccional.enviarBienvenida(usuario);
+        return usuario;
     }
 }

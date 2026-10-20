@@ -26,6 +26,10 @@ public class ChatController {
  public ChatController(ChatUseCase chat,SimpMessagingTemplate s){this.chat=chat;messaging=s;}
  @PostMapping("/solicitar") @ResponseStatus(HttpStatus.CREATED)
  public ConversacionResponse solicitar(@AuthenticationPrincipal AuthenticatedUser user){return response(chat.solicitar(user.id()));}
+ @GetMapping("/{id}/mensajes")
+ public java.util.List<Mensaje> mensajes(@PathVariable Long id,@AuthenticationPrincipal AuthenticatedUser user){
+  return chat.listarMensajes(id,user.id()).stream().map(m->new Mensaje(m.idConversacion(),m.remitente(),m.contenido(),m.fechaEnvio())).toList();
+ }
  @PostMapping("/{id}/finalizar") @ResponseStatus(HttpStatus.NO_CONTENT)
  public void finalizar(@PathVariable Long id,@AuthenticationPrincipal AuthenticatedUser user){chat.finalizar(id,user.id());}
  @PostMapping("/reporte") @ResponseStatus(HttpStatus.NO_CONTENT)
