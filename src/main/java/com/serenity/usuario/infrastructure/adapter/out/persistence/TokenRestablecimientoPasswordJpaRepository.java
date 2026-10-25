@@ -5,5 +5,6 @@ import org.springframework.data.jpa.repository.Lock;
 import java.time.Instant;
 import java.util.Optional;
 public interface TokenRestablecimientoPasswordJpaRepository extends JpaRepository<TokenRestablecimientoPasswordJpaEntity, Long> {
+ @Lock(LockModeType.PESSIMISTIC_WRITE)
  Optional<TokenRestablecimientoPasswordJpaEntity> findFirstByTokenHashAndUsadoEnIsNullAndExpiraEnAfter(String tokenHash, Instant ahora);
 }
