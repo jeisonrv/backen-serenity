@@ -22,8 +22,8 @@ public class RestablecerPasswordService implements RestablecerPasswordUseCase {
   if(passwordNueva==null||passwordNueva.length()<8||passwordNueva.length()>72)throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "La contraseña debe tener entre 8 y 72 caracteres.");
   String hash=SolicitarRestablecimientoPasswordService.sha256(token);
   Instant ahora=Instant.now();
-  var validado=tokens.buscarValidoPorHash(hash,ahora).orElseThrow(()->new IllegalArgumentException("El enlace no es válido o ha caducado. Solicita uno nuevo."));
-  Usuario usuario=usuarios.buscarPorId(validado.usuarioId()).orElseThrow(()->new IllegalArgumentException("El enlace no es válido."));
+  var validado=tokens.buscarValidoPorHash(hash,ahora).orElseThrow(()->new ResponseStatusException(HttpStatus.BAD_REQUEST, "El enlace no es válido o ha caducado. Solicita uno nuevo."));
+  Usuario usuario=usuarios.buscarPorId(validado.usuarioId()).orElseThrow(()->new ResponseStatusException(HttpStatus.BAD_REQUEST, "El enlace no es válido."));
   usuario.setPasswordHash(encoder.encode(passwordNueva));
   usuarios.guardar(usuario);
   tokens.marcarUsado(hash,ahora);
