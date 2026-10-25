@@ -5,6 +5,7 @@ import org.hibernate.annotations.ColumnDefault;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import com.serenity.usuario.domain.model.Rol;
+import jakarta.persistence.Column;
 
 @Entity
 @Table(name = "usuarios")
@@ -39,6 +40,16 @@ public class UsuarioJpaEntity {
     private Long restringidoPor;
     @Column(name = "google_subject", unique = true, length = 255)
     private String googleSubject;
+    @Column(name = "recordatorios_email", nullable = false)
+    private boolean recordatoriosEmail = false;
+
+    public boolean isRecordatoriosEmail() {
+        return recordatoriosEmail;
+    }
+
+    public void setRecordatoriosEmail(boolean recordatoriosEmail) {
+        this.recordatoriosEmail = recordatoriosEmail;
+    }
 
     public UsuarioJpaEntity() {}
 

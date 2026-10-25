@@ -9,4 +9,5 @@ public interface UsuarioJpaRepository extends JpaRepository<UsuarioJpaEntity, Lo
     Optional<UsuarioJpaEntity> findByEmailIgnoreCase(String email);
     Optional<UsuarioJpaEntity> findByGoogleSubject(String googleSubject);
     List<UsuarioJpaEntity> findByRestringidoTrueOrderByFechaRestriccionDesc();
+    List<UsuarioJpaEntity> findByRecordatoriosEmailTrue();
 }
