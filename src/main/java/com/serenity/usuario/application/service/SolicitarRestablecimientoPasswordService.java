@@ -7,6 +7,8 @@ import com.serenity.usuario.domain.model.Usuario;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.SecureRandom;
@@ -16,6 +18,7 @@ import java.util.Base64;
 import java.util.HexFormat;
 @Service
 public class SolicitarRestablecimientoPasswordService implements SolicitarRestablecimientoPasswordUseCase {
+ private static final Logger log = LoggerFactory.getLogger(SolicitarRestablecimientoPasswordService.class);
  private final UsuarioRepositoryPort usuarios;
  private final TokenRestablecimientoPasswordPort tokens;
  private final ProveedorCorreoPort correo;
@@ -47,7 +50,10 @@ public class SolicitarRestablecimientoPasswordService implements SolicitarRestab
    +"<p>Si no solicitaste este cambio, puedes ignorar este mensaje.</p></div>";
   String texto="Restablece tu contraseña de Serenity (válido por 30 minutos): "+link+"\nSi no solicitaste este cambio, ignora este mensaje.";
   try { correo.enviar(usuario.getEmail(),"Recupera tu contraseña de Serenity",html,texto); }
-  catch(RuntimeException ex) { /* no revelar si la cuenta existe ni devolver el token */ }
+  catch(RuntimeException ex) {
+   // No revelar la existencia de la cuenta; sí dejar una pista para diagnóstico en logs.
+   log.warn("No se pudo enviar un correo de recuperación; se mantiene una respuesta genérica al cliente");
+ }
  }
  static String sha256(String value){
   try{return HexFormat.of().formatHex(MessageDigest.getInstance("SHA-256").digest(value.getBytes(StandardCharsets.UTF_8)));}
