@@ -4,6 +4,8 @@ import com.serenity.usuario.application.port.out.TokenRestablecimientoPasswordPo
 import com.serenity.usuario.application.port.out.UsuarioRepositoryPort;
 import com.serenity.usuario.domain.model.Usuario;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.Instant;
@@ -16,8 +18,8 @@ public class RestablecerPasswordService implements RestablecerPasswordUseCase {
   this.tokens=tokens;this.usuarios=usuarios;this.encoder=encoder;
  }
  @Override @Transactional public void restablecer(String token,String passwordNueva){
-  if(token==null||token.isBlank())throw new IllegalArgumentException("El enlace no es válido o ha caducado. Solicita uno nuevo.");
-  if(passwordNueva==null||passwordNueva.length()<8||passwordNueva.length()>72)throw new IllegalArgumentException("La contraseña debe tener entre 8 y 72 caracteres.");
+  if(token==null||token.isBlank())throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El enlace no es válido o ha caducado. Solicita uno nuevo.");
+  if(passwordNueva==null||passwordNueva.length()<8||passwordNueva.length()>72)throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "La contraseña debe tener entre 8 y 72 caracteres.");
   String hash=SolicitarRestablecimientoPasswordService.sha256(token);
   Instant ahora=Instant.now();
   var validado=tokens.buscarValidoPorHash(hash,ahora).orElseThrow(()->new IllegalArgumentException("El enlace no es válido o ha caducado. Solicita uno nuevo."));
