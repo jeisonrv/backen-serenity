@@ -1,0 +1,14 @@
+package com.serenity;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.scheduling.annotation.EnableScheduling;
+
+@EnableScheduling
+@SpringBootApplication
+public class SerenityApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(SerenityApplication.class, args);
+    }
+}

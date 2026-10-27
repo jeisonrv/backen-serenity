@@ -1,0 +1,71 @@
+package com.serenity.shared.config;
+
+import com.serenity.shared.security.AuthenticatedUser;
+import com.serenity.shared.security.JwtUtil;
+import com.serenity.chat.application.port.in.ChatUseCase;
+import com.serenity.usuario.application.port.in.GestionarAccesoUseCase;
+import com.serenity.usuario.domain.model.Rol;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import io.jsonwebtoken.Claims;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.messaging.Message;
+import org.springframework.messaging.MessageChannel;
+import org.springframework.messaging.simp.config.ChannelRegistration;
+import org.springframework.messaging.simp.config.MessageBrokerRegistry;
+import org.springframework.messaging.simp.stomp.StompCommand;
+import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
+import org.springframework.messaging.support.ChannelInterceptor;
+import org.springframework.messaging.support.MessageHeaderAccessor;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
+import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
+import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
+import java.util.List;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.beans.factory.annotation.Value;
+
+@Configuration
+@EnableWebSocketMessageBroker
+public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
+    @Value("${app.cors.allowed-origins}")
+    private String allowedOrigins;
+    private final JwtUtil jwtUtil;
+    private final ChatUseCase chat;
+    private final GestionarAccesoUseCase acceso;
+    public WebSocketConfig(JwtUtil jwtUtil,ChatUseCase chat,GestionarAccesoUseCase acceso){this.jwtUtil=jwtUtil;this.chat=chat;this.acceso=acceso;}
+    @Override public void configureMessageBroker(MessageBrokerRegistry registry){
+        // Para varias instancias, reemplazar enableSimpleBroker por enableStompBrokerRelay con un broker externo como RabbitMQ.
+        registry.enableSimpleBroker("/topic");registry.setApplicationDestinationPrefixes("/app");}
+    @Override public void registerStompEndpoints(StompEndpointRegistry registry){registry.addEndpoint("/ws").setAllowedOrigins(allowedOrigins.split("\\s*,\\s*"));}
+    @Override public void configureClientInboundChannel(ChannelRegistration registration){
+        registration.interceptors(new ChannelInterceptor(){
+            @Override public Message<?> preSend(Message<?> message,MessageChannel channel){
+                StompHeaderAccessor accessor=MessageHeaderAccessor.getAccessor(message,StompHeaderAccessor.class);
+                if(accessor!=null&&StompCommand.CONNECT.equals(accessor.getCommand())){
+                    String header=accessor.getFirstNativeHeader("Authorization");
+                    if(header==null||!header.startsWith("Bearer "))throw new IllegalArgumentException("Se requiere autenticación JWT");
+                    Claims claims=jwtUtil.validarToken(header.substring(7));
+                    Number id=claims.get("usuarioId",Number.class);
+                    if(id==null||claims.getSubject()==null)throw new IllegalArgumentException("Token inválido");
+                    var principal=new AuthenticatedUser(id.longValue(),claims.getSubject());
+                    Rol rol=acceso.verificarAcceso(principal.id());
+                    accessor.setUser(new UsernamePasswordAuthenticationToken(principal,null,List.of(new SimpleGrantedAuthority("ROLE_"+rol.name()))));
+                }
+                if(accessor!=null&&StompCommand.SUBSCRIBE.equals(accessor.getCommand())){
+                    if(!(accessor.getUser() instanceof UsernamePasswordAuthenticationToken auth)
+                            ||!(auth.getPrincipal() instanceof AuthenticatedUser user))
+                        throw new AccessDeniedException("Autenticación requerida");
+                    String destination=accessor.getDestination();
+                    String prefix="/topic/conversacion/";
+                    if(destination==null||!destination.startsWith(prefix))throw new AccessDeniedException("Destino no permitido");
+                    try {
+                        Long id=Long.valueOf(destination.substring(prefix.length()));
+                        acceso.verificarAcceso(user.id());
+                        chat.buscarParticipante(id,user.id());
+                    } catch(NumberFormatException ex) { throw new AccessDeniedException("Destino no permitido"); }
+                }
+                return message;
+            }
+        });
+    }
+}
