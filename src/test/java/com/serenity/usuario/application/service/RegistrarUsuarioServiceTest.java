@@ -35,4 +35,30 @@ class RegistrarUsuarioServiceTest {
         assertEquals("$2hash", guardado.getPasswordHash());
         verify(correo).enviarBienvenida(guardado);
     }
+
+    @Test void camposObligatoriosNulosOVaciosSonRechazadosAntesDeConsultarRepositorio() {
+        var servicio = new RegistrarUsuarioService(usuarios, encoder, correo);
+
+        assertThrows(IllegalArgumentException.class, () -> servicio.registrar(null, "ana@b.co", "secreto"));
+        assertThrows(IllegalArgumentException.class, () -> servicio.registrar(" ", "ana@b.co", "secreto"));
+        assertThrows(IllegalArgumentException.class, () -> servicio.registrar("ana", null, "secreto"));
+        assertThrows(IllegalArgumentException.class, () -> servicio.registrar("ana", " ", "secreto"));
+        assertThrows(IllegalArgumentException.class, () -> servicio.registrar("ana", "ana@b.co", null));
+        verifyNoInteractions(usuarios, encoder, correo);
+    }
+
+    @Test void correoSinArrobaODominioConPuntoEsRechazado() {
+        var servicio = new RegistrarUsuarioService(usuarios, encoder, correo);
+
+        assertThrows(IllegalArgumentException.class, () -> servicio.registrar("ana", "sin-arroba.test", "secreto"));
+        assertThrows(IllegalArgumentException.class, () -> servicio.registrar("ana", "ana@dominio", "secreto"));
+        verifyNoInteractions(usuarios, encoder, correo);
+    }
+
+    @Test void passwordMenorASeisCaracteresEsRechazada() {
+        var servicio = new RegistrarUsuarioService(usuarios, encoder, correo);
+
+        assertThrows(IllegalArgumentException.class, () -> servicio.registrar("ana", "ana@b.co", "12345"));
+        verifyNoInteractions(usuarios, encoder, correo);
+    }
 }

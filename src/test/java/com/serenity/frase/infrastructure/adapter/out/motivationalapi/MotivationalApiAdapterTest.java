@@ -42,7 +42,7 @@ class MotivationalApiAdapterTest {
 
     @Test void descartaFrasesNulasYEnBlancoYUsaCache() throws Exception {
         AtomicInteger peticiones = new AtomicInteger();
-        var adapter = iniciarServidor(200, "[null,{\"phrase\":\" \"},{\"phrase\":\" Viva \",\"author\":\"B\"}]", peticiones);
+        var adapter = iniciarServidor(200, "[null,{\"phrase\":null},{\"phrase\":\" \"},{\"phrase\":\" Viva \",\"author\":\"B\"}]", peticiones);
         assertEquals(1, adapter.obtenerFrases().size());
         assertEquals(1, adapter.obtenerFrases().size());
         assertEquals(1, peticiones.get());
@@ -50,6 +50,30 @@ class MotivationalApiAdapterTest {
 
     @Test void respuesta500LanzaExcepcionDeEjecucion() throws Exception {
         var adapter = iniciarServidor(500, "fallo", new AtomicInteger());
+        assertThrows(RuntimeException.class, adapter::obtenerFrases);
+    }
+
+    @Test void respuestaJsonNulaDevuelveListaVacia() throws Exception {
+        var adapter = iniciarServidor(200, "null", new AtomicInteger());
+        assertTrue(adapter.obtenerFrases().isEmpty());
+    }
+
+    @Test void respuestaSinFrasesValidasVuelveAConsultarPorqueNoCacheaListasVacias() throws Exception {
+        AtomicInteger peticiones = new AtomicInteger();
+        var adapter = iniciarServidor(200, "[]", peticiones);
+
+        assertTrue(adapter.obtenerFrases().isEmpty());
+        assertTrue(adapter.obtenerFrases().isEmpty());
+        assertEquals(2, peticiones.get());
+    }
+
+    @Test void jsonConEstructuraInesperadaFallaSinLlamarServiciosExternos() throws Exception {
+        var adapter = iniciarServidor(200, "{\"phrase\":\"no es una lista\"}", new AtomicInteger());
+        assertThrows(RuntimeException.class, adapter::obtenerFrases);
+    }
+
+    @Test void errorHttp404SePropagaComoExcepcion() throws Exception {
+        var adapter = iniciarServidor(404, "no encontrado", new AtomicInteger());
         assertThrows(RuntimeException.class, adapter::obtenerFrases);
     }
 }
