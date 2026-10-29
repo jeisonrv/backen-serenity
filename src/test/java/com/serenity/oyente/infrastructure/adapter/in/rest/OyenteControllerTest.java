@@ -5,6 +5,7 @@ import com.serenity.chat.domain.model.Conversacion;
 import com.serenity.oyente.application.port.in.GestionarDisponibilidadUseCase;
 import com.serenity.oyente.infrastructure.adapter.in.rest.OyenteController.CambiarEstadoRequest;
 import com.serenity.shared.security.AuthenticatedUser;
+import com.serenity.shared.consent.ConsentService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,7 +18,9 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.anyLong;
 
 @ExtendWith(MockitoExtension.class)
 class OyenteControllerTest {
@@ -28,12 +31,16 @@ class OyenteControllerTest {
     @Mock
     ChatUseCase chat;
 
+    @Mock
+    ConsentService consentService;
+
     private OyenteController controller;
     private final AuthenticatedUser user = new AuthenticatedUser(7L, "oyente@test.com");
 
     @BeforeEach
     void setUp() {
-        controller = new OyenteController(disponibilidad, chat);
+        lenient().when(consentService.hasCurrentSensitiveConsent(anyLong())).thenReturn(true);
+        controller = new OyenteController(disponibilidad, chat, consentService);
     }
 
     @Test
@@ -75,10 +82,12 @@ class OyenteControllerTest {
     void disponibles_calculaMinutosEnEsperaYNuncaNegativos() {
         Conversacion pasada = mock(Conversacion.class);
         when(pasada.idConversacion()).thenReturn(1L);
+        when(pasada.idUsuario()).thenReturn(11L);
         when(pasada.fechaInicio()).thenReturn(LocalDateTime.now().minusMinutes(10));
 
         Conversacion futura = mock(Conversacion.class);
         when(futura.idConversacion()).thenReturn(2L);
+        when(futura.idUsuario()).thenReturn(12L);
         when(futura.fechaInicio()).thenReturn(LocalDateTime.now().plusHours(1));
 
         when(chat.listarEnEspera()).thenReturn(List.of(pasada, futura));
@@ -97,6 +106,7 @@ class OyenteControllerTest {
         LocalDateTime fin = LocalDateTime.of(2026, 10, 27, 18, 30);
         Conversacion c = mock(Conversacion.class);
         when(c.idConversacion()).thenReturn(5L);
+        when(c.idUsuario()).thenReturn(11L);
         when(c.fechaInicio()).thenReturn(inicio);
         when(c.fechaFin()).thenReturn(fin);
         when(chat.listarActivasDeOyente(7L)).thenReturn(List.of(c));
@@ -114,8 +124,10 @@ class OyenteControllerTest {
         LocalDateTime inicio = LocalDateTime.of(2026, 10, 27, 19, 0);
         Conversacion c = mock(Conversacion.class);
         when(c.idConversacion()).thenReturn(9L);
+        when(c.idUsuario()).thenReturn(11L);
         when(c.fechaInicio()).thenReturn(inicio);
         when(c.fechaFin()).thenReturn(null);
+        when(chat.buscarPorId(9L)).thenReturn(c);
         when(chat.aceptar(9L, 7L)).thenReturn(c);
 
         var r = controller.aceptar(9L, user);

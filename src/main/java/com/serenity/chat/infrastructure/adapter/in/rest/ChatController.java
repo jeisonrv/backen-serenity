@@ -3,6 +3,8 @@ package com.serenity.chat.infrastructure.adapter.in.rest;
 import com.serenity.chat.application.port.in.ChatUseCase;
 import com.serenity.chat.domain.model.Conversacion;
 import com.serenity.shared.security.AuthenticatedUser;
+import com.serenity.shared.consent.ConsentService;
+import com.serenity.shared.consent.RequireSensitiveConsent;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -48,13 +50,16 @@ public class ChatController {
 
  private final ChatUseCase chat;
  private final SimpMessagingTemplate messaging;
+ private final ConsentService consentService;
 
- public ChatController(ChatUseCase chat, SimpMessagingTemplate messaging) {
+ public ChatController(ChatUseCase chat, SimpMessagingTemplate messaging, ConsentService consentService) {
   this.chat = chat;
   this.messaging = messaging;
+  this.consentService = consentService;
  }
 
  @PostMapping("/solicitar")
+ @RequireSensitiveConsent
  @ResponseStatus(HttpStatus.CREATED)
  public ConversacionResponse solicitar(
          @AuthenticationPrincipal AuthenticatedUser user
@@ -63,10 +68,12 @@ public class ChatController {
  }
 
  @GetMapping("/{id}/mensajes")
+ @RequireSensitiveConsent
  public java.util.List<Mensaje> mensajes(
          @PathVariable Long id,
          @AuthenticationPrincipal AuthenticatedUser user
  ) {
+  requireConversationOwnerConsent(id, user.id());
   return chat.listarMensajes(id, user.id())
           .stream()
           .map(m -> new Mensaje(
@@ -88,11 +95,13 @@ public class ChatController {
  }
 
  @PostMapping("/reporte")
+ @RequireSensitiveConsent
  @ResponseStatus(HttpStatus.NO_CONTENT)
  public void reportar(
          @Valid @RequestBody ReporteRequest req,
          @AuthenticationPrincipal AuthenticatedUser user
  ) {
+  requireConversationOwnerConsent(req.idConversacion(), user.id());
   chat.reportar(req.idConversacion(), user.id(), req.motivo());
  }
 
@@ -110,6 +119,11 @@ public class ChatController {
            "Se requiere una autenticación válida para enviar mensajes"
    );
   }
+
+  if (!consentService.hasCurrentSensitiveConsent(user.id())) {
+   throw new com.serenity.shared.consent.SensitiveConsentRequiredException();
+  }
+  requireConversationOwnerConsent(id, user.id());
 
   for (var mensaje : chat.enviarMensaje(id, user.id(), req.contenido())) {
    messaging.convertAndSend(
@@ -132,5 +146,12 @@ public class ChatController {
           c.fechaInicio(),
           c.fechaFin()
   );
+ }
+
+ private void requireConversationOwnerConsent(Long conversationId, Long participantId) {
+  Conversacion conversation = chat.buscarParticipante(conversationId, participantId);
+  if (!consentService.hasCurrentSensitiveConsent(conversation.idUsuario())) {
+   throw new com.serenity.shared.consent.SensitiveConsentRequiredException();
+  }
  }
 }

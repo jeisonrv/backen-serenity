@@ -1,4 +1,5 @@
 target/
+build/
 .git
 .gitignore
 .idea/
@@ -6,6 +7,7 @@ target/
 *.log
 .env
 .env.*
+!.env.example
 Dockerfile
 docker-compose*.yml
 README.md

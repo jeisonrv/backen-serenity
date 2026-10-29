@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import com.serenity.shared.security.AuthenticatedUser;
+import com.serenity.shared.consent.RequireSensitiveConsent;
 import java.util.List;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -23,6 +24,7 @@ public class SesionController {
     private final ListarSesionesUseCase listarSesiones;
 
     @PostMapping
+    @RequireSensitiveConsent
     public ResponseEntity<SesionResponse> completar(@Valid @RequestBody CompletarSesionRequest req,
                                                     @AuthenticationPrincipal AuthenticatedUser user) {
         Sesion sesion = completarSesion.completar(
@@ -34,6 +36,7 @@ public class SesionController {
     }
 
     @GetMapping
+    @RequireSensitiveConsent
     public ResponseEntity<List<SesionResponse>> historial(@AuthenticationPrincipal AuthenticatedUser user) {
         return ResponseEntity.ok(listarSesiones.listar(user.id()).stream().map(SesionResponse::desde).toList());
     }

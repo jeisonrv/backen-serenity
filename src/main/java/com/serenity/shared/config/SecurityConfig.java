@@ -71,6 +71,10 @@ public class SecurityConfig {
                                 HttpMethod.OPTIONS, "/**"
                         ).permitAll()
 
+                        .requestMatchers(HttpMethod.GET, "/api/consents/versions").permitAll()
+
+                        .requestMatchers("/api/consents/**").authenticated()
+
                         // Vinculación de Google: requiere autenticación
                         .requestMatchers(
                                 HttpMethod.POST,

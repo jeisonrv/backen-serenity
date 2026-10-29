@@ -11,9 +11,11 @@ import com.serenity.usuario.application.port.out.VerificarIdentidadGooglePort;
 import com.serenity.usuario.domain.model.IdentidadGoogle;
 import com.serenity.usuario.domain.model.Usuario;
 import com.serenity.notificacion.application.port.in.EnviarCorreoTransaccionalUseCase;
+import com.serenity.shared.consent.ConsentService;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,19 +35,22 @@ public class IniciarSesionService implements IniciarSesionUseCase {
     private final PasswordEncoder passwordEncoder;
     private final VerificarIdentidadGooglePort verificarIdentidadGoogle;
     private final EnviarCorreoTransaccionalUseCase correoTransaccional;
+    private final ConsentService consentimientos;
 
     public IniciarSesionService(
             UsuarioRepositoryPort repositorio,
             JwtUtil jwtUtil,
             PasswordEncoder passwordEncoder,
             VerificarIdentidadGooglePort verificarIdentidadGoogle,
-            EnviarCorreoTransaccionalUseCase correoTransaccional) {
+            EnviarCorreoTransaccionalUseCase correoTransaccional,
+            ConsentService consentimientos) {
 
         this.repositorio = repositorio;
         this.jwtUtil = jwtUtil;
         this.passwordEncoder = passwordEncoder;
         this.verificarIdentidadGoogle = verificarIdentidadGoogle;
         this.correoTransaccional = correoTransaccional;
+        this.consentimientos = consentimientos;
     }
 
     @Override
@@ -110,9 +115,24 @@ public class IniciarSesionService implements IniciarSesionUseCase {
     }
 
     @Override
+    @Transactional
     public ResultadoLogin iniciarSesionConGoogle(String credential) {
+        return iniciarSesionConGoogle(credential, null);
+    }
+
+    @Override
+    @Transactional
+    public ResultadoLogin iniciarSesionConGoogle(String credential, String username) {
+        return iniciarSesionConGoogle(credential, username, null, null);
+    }
+
+    @Override
+    @Transactional
+    public ResultadoLogin iniciarSesionConGoogle(String credential, String username,
+                                                  Boolean acceptTerms, Boolean acceptSensitiveData) {
         try {
-            ResultadoLogin resultado = autenticarConGoogle(credential);
+            ResultadoLogin resultado = autenticarConGoogle(
+                    credential, username, acceptTerms, Boolean.TRUE.equals(acceptSensitiveData));
             log.info("Inicio de sesión con Google exitoso para {}",
                     enmascararCorreo(resultado.usuario().getEmail()));
             return resultado;
@@ -122,13 +142,14 @@ public class IniciarSesionService implements IniciarSesionUseCase {
         }
     }
 
-    private ResultadoLogin autenticarConGoogle(String credential) {
+    private ResultadoLogin autenticarConGoogle(String credential, String username,
+                                               Boolean acceptTerms, boolean acceptSensitiveData) {
 
         IdentidadGoogle identidad = identidadGoogle(credential);
 
         Usuario usuario = repositorio
                 .buscarPorGoogleSubject(identidad.subject())
-                .orElseGet(() -> buscarOCrearUsuario(identidad));
+                .orElseGet(() -> buscarOCrearUsuario(identidad, username, acceptTerms, acceptSensitiveData));
 
         return crearResultadoLogin(usuario);
     }
@@ -164,7 +185,8 @@ public class IniciarSesionService implements IniciarSesionUseCase {
         repositorio.guardar(usuario);
     }
 
-    private Usuario buscarOCrearUsuario(IdentidadGoogle identidad) {
+    private Usuario buscarOCrearUsuario(IdentidadGoogle identidad, String username,
+                                        Boolean acceptTerms, boolean acceptSensitiveData) {
 
         if (repositorio
                 .buscarPorEmailIgnorandoMayusculas(identidad.email())
@@ -175,19 +197,46 @@ public class IniciarSesionService implements IniciarSesionUseCase {
             );
         }
 
+        if (!Boolean.TRUE.equals(acceptTerms)) {
+            throw new IllegalArgumentException(
+                    "Debes aceptar los términos y confirmar que fuiste informado de la Política de Tratamiento de Datos"
+            );
+        }
+
         Usuario nuevo = new Usuario(
-                nombreUsuario(identidad),
+                usernameElegido(username),
                 identidad.email(),
                 null
         );
+
+        consentimientos.prepareRegistration(nuevo, acceptSensitiveData);
 
         nuevo.setGoogleSubject(identidad.subject());
 
         Usuario guardado = repositorio.guardar(nuevo);
 
+        consentimientos.recordRegistration(guardado.getId(), acceptSensitiveData);
+
         correoTransaccional.enviarBienvenida(guardado);
 
         return guardado;
+    }
+
+    private String usernameElegido(String username) {
+        if (username == null || username.isBlank()) {
+            throw new IllegalArgumentException(
+                    "Elige un nombre de usuario para crear tu cuenta con Google desde Registro"
+            );
+        }
+
+        String elegido = username.strip();
+        int longitud = elegido.codePointCount(0, elegido.length());
+        if (longitud < 3 || longitud > 50) {
+            throw new IllegalArgumentException(
+                    "El nombre de usuario debe tener entre 3 y 50 caracteres"
+            );
+        }
+        return elegido;
     }
 
     private IdentidadGoogle identidadGoogle(String credential) {
@@ -209,36 +258,6 @@ public class IniciarSesionService implements IniciarSesionUseCase {
         }
 
         return identidad;
-    }
-
-    private String nombreUsuario(IdentidadGoogle identidad) {
-
-        String nombre = identidad.nombre() == null
-                ? ""
-                : identidad.nombre().strip();
-
-        if (nombre.isBlank()) {
-            int separador = identidad.email().indexOf('@');
-
-            nombre = separador > 0
-                    ? identidad.email().substring(0, separador)
-                    : "google_user";
-        }
-
-        nombre = nombre.replaceAll("\\s+", "_");
-
-        if (nombre.codePointCount(0, nombre.length()) < 3) {
-            nombre = "g_" + nombre;
-        }
-
-        if (nombre.codePointCount(0, nombre.length()) > 50) {
-            nombre = nombre.substring(
-                    0,
-                    nombre.offsetByCodePoints(0, 50)
-            );
-        }
-
-        return nombre;
     }
 
     private ResultadoLogin crearResultadoLogin(Usuario usuario) {

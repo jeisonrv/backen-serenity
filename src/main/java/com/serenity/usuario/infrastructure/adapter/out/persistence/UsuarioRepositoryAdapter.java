@@ -74,6 +74,10 @@ public class UsuarioRepositoryAdapter implements UsuarioRepositoryPort {
         entity.setRestringidoPor(u.getRestringidoPor());
         entity.setGoogleSubject(u.getGoogleSubject());
         entity.setRecordatoriosEmail(u.isRecordatoriosEmail());
+        entity.setTermsAcceptedAt(u.getTermsAcceptedAt());
+        entity.setTermsVersion(u.getTermsVersion());
+        entity.setSensitiveConsentAt(u.getSensitiveConsentAt());
+        entity.setSensitiveConsentVersion(u.getSensitiveConsentVersion());
 
         return entity;
     }
@@ -102,6 +106,10 @@ public class UsuarioRepositoryAdapter implements UsuarioRepositoryPort {
         );
 
         usuario.setGoogleSubject(e.getGoogleSubject());
+        usuario.setTermsAcceptedAt(e.getTermsAcceptedAt());
+        usuario.setTermsVersion(e.getTermsVersion());
+        usuario.setSensitiveConsentAt(e.getSensitiveConsentAt());
+        usuario.setSensitiveConsentVersion(e.getSensitiveConsentVersion());
         usuario.setRecordatoriosEmail(e.isRecordatoriosEmail());
 
         return usuario;

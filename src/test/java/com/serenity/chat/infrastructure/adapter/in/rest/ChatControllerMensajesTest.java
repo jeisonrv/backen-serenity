@@ -2,8 +2,10 @@ package com.serenity.chat.infrastructure.adapter.in.rest;
 
 import com.serenity.chat.application.port.in.ChatUseCase;
 import com.serenity.chat.domain.model.MensajeChat;
+import com.serenity.chat.domain.model.Conversacion;
 import com.serenity.chat.infrastructure.adapter.in.rest.ChatController.MensajeRequest;
 import com.serenity.shared.security.AuthenticatedUser;
+import com.serenity.shared.consent.ConsentService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,19 +28,22 @@ class ChatControllerMensajesTest {
 
     @Mock ChatUseCase chat;
     @Mock SimpMessagingTemplate messaging;
+    @Mock ConsentService consentService;
 
     private ChatController controller;
     private final AuthenticatedUser user = new AuthenticatedUser(7L, "u@test.com");
 
     @BeforeEach
     void setUp() {
-        controller = new ChatController(chat, messaging);
+        when(consentService.hasCurrentSensitiveConsent(7L)).thenReturn(true);
+        controller = new ChatController(chat, messaging, consentService);
     }
 
     @Test
     void mensajes_mapeaMensajesDeLaConversacion() {
         LocalDateTime f1 = LocalDateTime.of(2026, 10, 27, 20, 0);
         LocalDateTime f2 = LocalDateTime.of(2026, 10, 27, 20, 1);
+        when(chat.buscarParticipante(3L, 7L)).thenReturn(new Conversacion(3L, 7L, 8L, f1, null));
         when(chat.listarMensajes(3L, 7L)).thenReturn(List.of(
                 new MensajeChat(3L, "USUARIO", "hola", f1),
                 new MensajeChat(3L, "OYENTE", "buenas", f2)));
@@ -57,6 +62,7 @@ class ChatControllerMensajesTest {
     void enviar_conUsuarioValido_publicaCadaMensajeEnElTopic() {
         LocalDateTime f1 = LocalDateTime.of(2026, 10, 27, 20, 0);
         LocalDateTime f2 = LocalDateTime.of(2026, 10, 27, 20, 1);
+        when(chat.buscarParticipante(3L, 7L)).thenReturn(new Conversacion(3L, 7L, 8L, f1, null));
         when(chat.enviarMensaje(3L, 7L, "hola")).thenReturn(List.of(
                 new MensajeChat(3L, "USUARIO", "hola", f1),
                 new MensajeChat(3L, "SISTEMA", "recibido", f2)));

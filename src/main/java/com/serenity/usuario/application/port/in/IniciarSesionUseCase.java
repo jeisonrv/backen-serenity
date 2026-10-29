@@ -6,5 +6,8 @@ public interface IniciarSesionUseCase {
     record ResultadoLogin(Usuario usuario, String token) {}
     ResultadoLogin iniciarSesion(String email, String passwordPlano);
     ResultadoLogin iniciarSesionConGoogle(String credential);
+    ResultadoLogin iniciarSesionConGoogle(String credential, String username);
+    ResultadoLogin iniciarSesionConGoogle(String credential, String username,
+                                          Boolean acceptTerms, Boolean acceptSensitiveData);
     void vincularGoogle(Long usuarioId, String credential);
 }

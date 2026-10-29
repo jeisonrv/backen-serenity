@@ -4,6 +4,9 @@ import com.serenity.chat.application.port.in.ChatUseCase;
 import com.serenity.chat.domain.model.Conversacion;
 import com.serenity.oyente.application.port.in.GestionarDisponibilidadUseCase;
 import com.serenity.shared.security.AuthenticatedUser;
+import com.serenity.shared.consent.RequireSensitiveConsent;
+import com.serenity.shared.consent.ConsentService;
+import com.serenity.shared.consent.SensitiveConsentRequiredException;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -56,13 +59,16 @@ public class OyenteController {
 
     private final GestionarDisponibilidadUseCase disponibilidad;
     private final ChatUseCase chat;
+    private final ConsentService consentService;
 
     public OyenteController(
             GestionarDisponibilidadUseCase disponibilidad,
-            ChatUseCase chat
+            ChatUseCase chat,
+            ConsentService consentService
     ) {
         this.disponibilidad = disponibilidad;
         this.chat = chat;
+        this.consentService = consentService;
     }
 
     @GetMapping("/estado")
@@ -94,12 +100,14 @@ public class OyenteController {
     }
 
     @GetMapping("/charlas/disponibles")
+    @RequireSensitiveConsent
     public CharlaDisponibleResponse disponibles() {
         ZoneId zona = ZoneId.systemDefault();
         Instant ahora = Instant.now();
 
         List<CharlaDisponible> charlas = chat.listarEnEspera()
                 .stream()
+                .filter(c -> consentService.hasCurrentSensitiveConsent(c.idUsuario()))
                 .map(c -> {
                     Instant inicio = c.fechaInicio()
                             .atZone(zona)
@@ -126,11 +134,13 @@ public class OyenteController {
     }
 
     @GetMapping("/charlas/activas")
+    @RequireSensitiveConsent
     public List<CharlaActiva> activas(
             @AuthenticationPrincipal AuthenticatedUser user
     ) {
         return chat.listarActivasDeOyente(user.id())
                 .stream()
+                .filter(c -> consentService.hasCurrentSensitiveConsent(c.idUsuario()))
                 .map(c -> new CharlaActiva(
                         c.idConversacion(),
                         c.fechaInicio(),
@@ -140,10 +150,15 @@ public class OyenteController {
     }
 
     @PostMapping("/charlas/{id}/aceptar")
+    @RequireSensitiveConsent
     public AceptarResponse aceptar(
             @PathVariable Long id,
             @AuthenticationPrincipal AuthenticatedUser user
     ) {
+        Conversacion pendiente = chat.buscarPorId(id);
+        if (!consentService.hasCurrentSensitiveConsent(pendiente.idUsuario())) {
+            throw new SensitiveConsentRequiredException();
+        }
         Conversacion c = chat.aceptar(id, user.id());
 
         return new AceptarResponse(

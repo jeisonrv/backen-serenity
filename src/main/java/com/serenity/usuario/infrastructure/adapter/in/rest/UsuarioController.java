@@ -24,7 +24,11 @@ public class UsuarioController {
     public record GoogleLoginRequest(
             @NotBlank
             @Size(max = 8192)
-            String credential
+            String credential,
+            @Size(min = 3, max = 50)
+            String username,
+            Boolean acceptTerms,
+            Boolean acceptSensitiveData
     ) {}
 
     public record CambiarPasswordRequest(
@@ -62,7 +66,9 @@ public class UsuarioController {
         Usuario usuario = registrarUsuario.registrar(
                 req.username(),
                 req.email(),
-                req.password()
+                req.password(),
+                req.acceptTerms(),
+                req.acceptSensitiveData()
         );
 
         return ResponseEntity
@@ -92,7 +98,10 @@ public class UsuarioController {
             @Valid @RequestBody GoogleLoginRequest req
     ) {
         var resultado = iniciarSesion.iniciarSesionConGoogle(
-                req.credential()
+                req.credential(),
+                req.username(),
+                req.acceptTerms(),
+                req.acceptSensitiveData()
         );
 
         return ResponseEntity.ok(

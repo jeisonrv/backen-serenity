@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import org.hibernate.annotations.ColumnDefault;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import com.serenity.usuario.domain.model.Rol;
 import jakarta.persistence.Column;
 
@@ -42,6 +43,14 @@ public class UsuarioJpaEntity {
     private String googleSubject;
     @Column(name = "recordatorios_email", nullable = false)
     private boolean recordatoriosEmail = false;
+    @Column(name = "terms_accepted_at")
+    private OffsetDateTime termsAcceptedAt;
+    @Column(name = "terms_version", length = 50)
+    private String termsVersion;
+    @Column(name = "sensitive_consent_at")
+    private OffsetDateTime sensitiveConsentAt;
+    @Column(name = "sensitive_consent_version", length = 50)
+    private String sensitiveConsentVersion;
 
     public boolean isRecordatoriosEmail() {
         return recordatoriosEmail;
@@ -97,4 +106,12 @@ public class UsuarioJpaEntity {
     public void setRestringidoPor(Long restringidoPor) { this.restringidoPor = restringidoPor; }
     public String getGoogleSubject() { return googleSubject; }
     public void setGoogleSubject(String googleSubject) { this.googleSubject = googleSubject; }
+    public OffsetDateTime getTermsAcceptedAt() { return termsAcceptedAt; }
+    public void setTermsAcceptedAt(OffsetDateTime termsAcceptedAt) { this.termsAcceptedAt = termsAcceptedAt; }
+    public String getTermsVersion() { return termsVersion; }
+    public void setTermsVersion(String termsVersion) { this.termsVersion = termsVersion; }
+    public OffsetDateTime getSensitiveConsentAt() { return sensitiveConsentAt; }
+    public void setSensitiveConsentAt(OffsetDateTime sensitiveConsentAt) { this.sensitiveConsentAt = sensitiveConsentAt; }
+    public String getSensitiveConsentVersion() { return sensitiveConsentVersion; }
+    public void setSensitiveConsentVersion(String sensitiveConsentVersion) { this.sensitiveConsentVersion = sensitiveConsentVersion; }
 }

@@ -1,6 +1,8 @@
 package com.serenity.shared.config;
 
 import com.serenity.shared.security.AuthenticatedUser;
+import com.serenity.shared.consent.ConsentService;
+import com.serenity.shared.consent.SensitiveConsentRequiredException;
 import com.serenity.shared.security.JwtUtil;
 import com.serenity.chat.application.port.in.ChatUseCase;
 import com.serenity.usuario.application.port.in.GestionarAccesoUseCase;
@@ -32,7 +34,9 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     private final JwtUtil jwtUtil;
     private final ChatUseCase chat;
     private final GestionarAccesoUseCase acceso;
-    public WebSocketConfig(JwtUtil jwtUtil,ChatUseCase chat,GestionarAccesoUseCase acceso){this.jwtUtil=jwtUtil;this.chat=chat;this.acceso=acceso;}
+    private final ConsentService consentService;
+    public WebSocketConfig(JwtUtil jwtUtil,ChatUseCase chat,GestionarAccesoUseCase acceso,
+                           ConsentService consentService){this.jwtUtil=jwtUtil;this.chat=chat;this.acceso=acceso;this.consentService=consentService;}
     @Override public void configureMessageBroker(MessageBrokerRegistry registry){
         // Para varias instancias, reemplazar enableSimpleBroker por enableStompBrokerRelay con un broker externo como RabbitMQ.
         registry.enableSimpleBroker("/topic");registry.setApplicationDestinationPrefixes("/app");}
@@ -61,7 +65,10 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                     try {
                         Long id=Long.valueOf(destination.substring(prefix.length()));
                         acceso.verificarAcceso(user.id());
-                        chat.buscarParticipante(id,user.id());
+                        var conversacion=chat.buscarParticipante(id,user.id());
+                        if(!consentService.hasCurrentSensitiveConsent(user.id())
+                                ||!consentService.hasCurrentSensitiveConsent(conversacion.idUsuario()))
+                            throw new SensitiveConsentRequiredException();
                     } catch(NumberFormatException ex) { throw new AccessDeniedException("Destino no permitido"); }
                 }
                 return message;

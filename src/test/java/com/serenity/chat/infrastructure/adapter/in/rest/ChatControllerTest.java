@@ -5,6 +5,7 @@ import com.serenity.chat.domain.model.Conversacion;
 import com.serenity.chat.infrastructure.adapter.in.rest.ChatController.MensajeRequest;
 import com.serenity.chat.infrastructure.adapter.in.rest.ChatController.ReporteRequest;
 import com.serenity.shared.security.AuthenticatedUser;
+import com.serenity.shared.consent.ConsentService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,13 +26,15 @@ class ChatControllerTest {
 
     @Mock ChatUseCase chat;
     @Mock SimpMessagingTemplate messaging;
+    @Mock ConsentService consentService;
 
     private ChatController controller;
     private final AuthenticatedUser user = new AuthenticatedUser(7L, "u@test.com");
 
     @BeforeEach
     void setUp() {
-        controller = new ChatController(chat, messaging);
+        lenient().when(consentService.hasCurrentSensitiveConsent(7L)).thenReturn(true);
+        controller = new ChatController(chat, messaging, consentService);
     }
 
     @Test
@@ -62,6 +65,8 @@ class ChatControllerTest {
 
     @Test
     void reportar_delegaConMotivo() {
+        when(chat.buscarParticipante(3L, 7L)).thenReturn(
+                new Conversacion(3L, 7L, null, LocalDateTime.now(), null));
         controller.reportar(new ReporteRequest(3L, "spam"), user);
         verify(chat).reportar(3L, 7L, "spam");
     }

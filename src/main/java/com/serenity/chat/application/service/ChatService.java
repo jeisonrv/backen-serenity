@@ -24,6 +24,7 @@ public class ChatService implements ChatUseCase {
  public ChatService(ChatRepositoryPort repository,GestionarAccesoUseCase acceso,GestionarDisponibilidadUseCase disponibilidad,ReporteChatRepositoryPort reportes){this.repository=repository;this.acceso=acceso;this.disponibilidad=disponibilidad;this.reportes=reportes;}
  @Override public Conversacion solicitar(Long id){log.info("Solicitud de chat recibida");acceso.verificarAcceso(id);Long oyente=disponibilidad.listarDisponibles().stream().filter(o->!o.equals(id)&&acceso.esOyenteActivo(o)&&repository.contarActivasDeOyente(o)==0).findFirst().orElse(null);Conversacion conversacion=repository.abrir(id,oyente);log.info("Solicitud de chat procesada");return conversacion;}
  @Override public Conversacion buscarParticipante(Long id,Long usuario){return repository.buscarParticipante(id,usuario);}
+ @Override public Conversacion buscarPorId(Long id){return repository.buscarPorId(id);}
  @Override public List<MensajeChat> listarMensajes(Long id,Long usuario){acceso.verificarAcceso(usuario);repository.buscarParticipante(id,usuario);return repository.listarMensajes(id);}
  @Override public List<Conversacion> listarEnEspera(){return repository.listarEnEspera();}
  @Override public List<Conversacion> listarActivasDeOyente(Long oyente){return repository.listarActivasDeOyente(oyente);}
