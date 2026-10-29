@@ -65,7 +65,8 @@ public class MotivationalApiAdapter
         }
 
         List<FraseMotivacional> frases = respuesta.stream()
-                .filter(f -> f.phrase() != null
+                .filter(f -> f != null
+                        && f.phrase() != null
                         && !f.phrase().isBlank())
                 .map(f -> new FraseMotivacional(
                         f.phrase().trim(),
