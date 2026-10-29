@@ -14,12 +14,16 @@ import com.serenity.notificacion.application.port.in.EnviarCorreoTransaccionalUs
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 
 @Service
 public class IniciarSesionService implements IniciarSesionUseCase {
+
+    private static final Logger log = LoggerFactory.getLogger(IniciarSesionService.class);
 
     private static final ZoneId ZONA_HORARIA =
             ZoneId.of("America/Bogota");
@@ -46,6 +50,18 @@ public class IniciarSesionService implements IniciarSesionUseCase {
 
     @Override
     public ResultadoLogin iniciarSesion(String email, String passwordPlano) {
+        String correo = enmascararCorreo(email);
+        try {
+            ResultadoLogin resultado = autenticar(email, passwordPlano);
+            log.info("Inicio de sesión exitoso para {}", correo);
+            return resultado;
+        } catch (RuntimeException ex) {
+            log.warn("Fallo de inicio de sesión para {}", correo);
+            throw ex;
+        }
+    }
+
+    private ResultadoLogin autenticar(String email, String passwordPlano) {
 
         if (email == null || email.isBlank()
                 || passwordPlano == null || passwordPlano.isEmpty()) {
@@ -95,6 +111,18 @@ public class IniciarSesionService implements IniciarSesionUseCase {
 
     @Override
     public ResultadoLogin iniciarSesionConGoogle(String credential) {
+        try {
+            ResultadoLogin resultado = autenticarConGoogle(credential);
+            log.info("Inicio de sesión con Google exitoso para {}",
+                    enmascararCorreo(resultado.usuario().getEmail()));
+            return resultado;
+        } catch (RuntimeException ex) {
+            log.warn("Fallo de inicio de sesión con Google");
+            throw ex;
+        }
+    }
+
+    private ResultadoLogin autenticarConGoogle(String credential) {
 
         IdentidadGoogle identidad = identidadGoogle(credential);
 
@@ -227,5 +255,17 @@ public class IniciarSesionService implements IniciarSesionUseCase {
         );
 
         return new ResultadoLogin(usuario, token);
+    }
+
+    private String enmascararCorreo(String email) {
+        if (email == null || email.isBlank()) {
+            return "desconocido";
+        }
+        String normalizado = email.strip();
+        int separador = normalizado.indexOf('@');
+        if (separador < 1) {
+            return "***";
+        }
+        return normalizado.charAt(0) + "***@***";
     }
 }
