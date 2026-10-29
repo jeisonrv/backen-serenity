@@ -1,4 +1,4 @@
-package com.serenity.frase.application.port.out.motivationalapi;
+package com.serenity.frase.infrastructure.adapter.out.motivationalapi;
 
 import com.serenity.frase.application.port.out.ProveedorFrasesMotivacionalesPort;
 import com.serenity.frase.domain.model.FraseMotivacional;
