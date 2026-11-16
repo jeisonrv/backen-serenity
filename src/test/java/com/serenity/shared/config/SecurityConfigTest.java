@@ -2,7 +2,6 @@ package com.serenity.shared.config;
 
 import com.serenity.frase.application.port.in.ObtenerFraseDelDiaUseCase;
 import com.serenity.shared.security.JwtUtil;
-import com.serenity.shared.consent.ConsentService;
 import com.serenity.usuario.application.port.in.GestionarAccesoUseCase;
 import com.serenity.usuario.domain.model.Rol;
 import io.jsonwebtoken.Claims;
@@ -26,7 +25,6 @@ class SecurityConfigTest {
     @MockBean JwtUtil jwt;
     @MockBean GestionarAccesoUseCase acceso;
     @MockBean ObtenerFraseDelDiaUseCase frases;
-    @MockBean ConsentService consentService;
 
     @Test void endpointPublicoDeFrasesRespondeSinAutenticacion() throws Exception {
         when(frases.obtener()).thenReturn(new com.serenity.frase.domain.model.FraseMotivacional("Calma", "Serenity", false));

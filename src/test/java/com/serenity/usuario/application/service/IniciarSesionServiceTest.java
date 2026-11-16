@@ -1,7 +1,6 @@
 package com.serenity.usuario.application.service;
 
 import com.serenity.notificacion.application.port.in.EnviarCorreoTransaccionalUseCase;
-import com.serenity.shared.consent.ConsentService;
 import com.serenity.shared.exception.AccesoRestringidoException;
 import com.serenity.shared.exception.ConflictException;
 import com.serenity.shared.exception.CredencialesInvalidasException;
@@ -31,10 +30,9 @@ class IniciarSesionServiceTest {
     @Mock PasswordEncoder encoder;
     @Mock VerificarIdentidadGooglePort google;
     @Mock EnviarCorreoTransaccionalUseCase correo;
-    @Mock ConsentService consentimientos;
     IniciarSesionService servicio;
 
-    @BeforeEach void crearServicio() { servicio = new IniciarSesionService(usuarios, jwt, encoder, google, correo, consentimientos); }
+    @BeforeEach void crearServicio() { servicio = new IniciarSesionService(usuarios, jwt, encoder, google, correo); }
 
     @Test void emailNuloBlancoYPasswordNulaOVaciaSonInvalidos() {
         assertThrows(CredencialesInvalidasException.class, () -> servicio.iniciarSesion(null, "x"));
@@ -120,11 +118,9 @@ class IniciarSesionServiceTest {
         when(usuarios.buscarPorEmailIgnorandoMayusculas("ana@b.co")).thenReturn(Optional.empty());
         when(usuarios.guardar(any(Usuario.class))).thenAnswer(inv -> inv.getArgument(0));
         when(jwt.generarToken(any(), eq("ana@b.co"))).thenReturn("jwt-google");
-        var resultado = servicio.iniciarSesionConGoogle("credential", "ana_serenity", true, false);
+        var resultado = servicio.iniciarSesionConGoogle("credential");
         assertEquals("jwt-google", resultado.token());
-        assertEquals("ana_serenity", resultado.usuario().getUsername());
-        verify(consentimientos).prepareRegistration(any(Usuario.class), eq(false));
-        verify(consentimientos).recordRegistration(any(), eq(false));
+        assertEquals("Ana_Pérez", resultado.usuario().getUsername());
         verify(correo).enviarBienvenida(resultado.usuario());
     }
 
@@ -244,16 +240,32 @@ class IniciarSesionServiceTest {
         verify(usuarios, never()).guardar(any());
     }
 
-    @Test void googleExigeNombreDeUsuarioAlCrearCuentaNueva() {
-        var identidad = new IdentidadGoogle("sub-nuevo", "nueva@b.co", true, "Nombre Google");
-        when(google.verificar("credential")).thenReturn(Optional.of(identidad));
-        when(usuarios.buscarPorGoogleSubject("sub-nuevo")).thenReturn(Optional.empty());
-        when(usuarios.buscarPorEmailIgnorandoMayusculas("nueva@b.co")).thenReturn(Optional.empty());
+    @Test void nombreGoogleAusenteUsaPrefijoDeCorreoYLimitaNombresLargos() {
+        var identidadNombreAusente = new IdentidadGoogle("sub-corto", "a@b.co", true, null);
+        var identidadNombreLargo = new IdentidadGoogle("sub-largo", "larga@b.co", true, "A".repeat(55));
+        var identidadCorreoSinSeparador = new IdentidadGoogle("sub-sin-email", "sin-separador", true, null);
+        when(google.verificar("corto")).thenReturn(Optional.of(identidadNombreAusente));
+        when(google.verificar("largo")).thenReturn(Optional.of(identidadNombreLargo));
+        when(google.verificar("sin-separador")).thenReturn(Optional.of(identidadCorreoSinSeparador));
+        when(usuarios.buscarPorGoogleSubject("sub-corto")).thenReturn(Optional.empty());
+        when(usuarios.buscarPorEmailIgnorandoMayusculas("a@b.co")).thenReturn(Optional.empty());
+        when(usuarios.buscarPorGoogleSubject("sub-largo")).thenReturn(Optional.empty());
+        when(usuarios.buscarPorEmailIgnorandoMayusculas("larga@b.co")).thenReturn(Optional.empty());
+        when(usuarios.buscarPorGoogleSubject("sub-sin-email")).thenReturn(Optional.empty());
+        when(usuarios.buscarPorEmailIgnorandoMayusculas("sin-separador")).thenReturn(Optional.empty());
+        when(usuarios.guardar(any(Usuario.class))).thenAnswer(inv -> inv.getArgument(0));
+        when(jwt.generarToken(any(), anyString())).thenReturn("jwt-firmado");
 
-        assertThrows(IllegalArgumentException.class,
-                () -> servicio.iniciarSesionConGoogle("credential", null, true, false));
-        verify(usuarios, never()).guardar(any());
-        verifyNoInteractions(correo);
+        var corto = servicio.iniciarSesionConGoogle("corto");
+        var largo = servicio.iniciarSesionConGoogle("largo");
+        var sinSeparador = servicio.iniciarSesionConGoogle("sin-separador");
+
+        assertEquals("g_a", corto.usuario().getUsername());
+        assertEquals(50, largo.usuario().getUsername().codePointCount(0, largo.usuario().getUsername().length()));
+        assertEquals("google_user", sinSeparador.usuario().getUsername());
+        verify(correo).enviarBienvenida(corto.usuario());
+        verify(correo).enviarBienvenida(largo.usuario());
+        verify(correo).enviarBienvenida(sinSeparador.usuario());
     }
 
     @Test void vincularGooglePermiteElSubjectYaVinculadoAlMismoUsuario() {
