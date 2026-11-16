@@ -1,0 +1,451 @@
+timeStamp,elapsed,label,responseCode,responseMessage,threadName,dataType,success,failureMessage,bytes,sentBytes,grpThreads,allThreads,URL,Latency,IdleTime,Connect
+1794786415996,81,POST /api/auth/login,200,,E4 Flujo completo 1-1,text,true,,891,261,1,1,http://localhost:8081/api/auth/login,81,0,14
+1794786416097,7,GET /api/sesiones,200,,E4 Flujo completo 1-1,text,true,,1875,377,1,1,http://localhost:8081/api/sesiones,7,0,0
+1794786416105,6,POST /api/diario,201,,E4 Flujo completo 1-1,text,true,,711,493,1,1,http://localhost:8081/api/diario,6,0,0
+1794786416112,13,PUT /api/diario/{id},200,,E4 Flujo completo 1-1,text,true,,703,495,1,1,http://localhost:8081/api/diario/3002,13,0,0
+1794786416126,6,GET /api/diario/{id} (final),200,,E4 Flujo completo 1-1,text,true,,700,380,1,1,http://localhost:8081/api/diario/3002,6,0,0
+1794786416133,5,GET /api/sesiones,200,,E4 Flujo completo 1-1,text,true,,1875,377,1,1,http://localhost:8081/api/sesiones,5,0,0
+1794786416139,59,POST /api/auth/login,200,,E4 Flujo completo 1-1,text,true,,891,261,1,1,http://localhost:8081/api/auth/login,59,0,0
+1794786416199,5,GET /api/sesiones,200,,E4 Flujo completo 1-1,text,true,,1882,377,1,1,http://localhost:8081/api/sesiones,5,0,0
+1794786416205,7,POST /api/diario,201,,E4 Flujo completo 1-1,text,true,,711,493,1,1,http://localhost:8081/api/diario,7,0,0
+1794786416213,7,PUT /api/diario/{id},200,,E4 Flujo completo 1-1,text,true,,703,495,1,1,http://localhost:8081/api/diario/3003,7,0,0
+1794786416221,4,GET /api/diario/{id} (final),200,,E4 Flujo completo 1-1,text,true,,700,380,1,1,http://localhost:8081/api/diario/3003,4,0,0
+1794786416226,4,GET /api/sesiones,200,,E4 Flujo completo 1-1,text,true,,1882,377,1,1,http://localhost:8081/api/sesiones,4,0,0
+1794786416231,57,POST /api/auth/login,200,,E4 Flujo completo 1-1,text,true,,891,261,1,1,http://localhost:8081/api/auth/login,57,0,0
+1794786416289,5,GET /api/sesiones,200,,E4 Flujo completo 1-1,text,true,,1883,377,1,1,http://localhost:8081/api/sesiones,5,0,0
+1794786416294,7,POST /api/diario,201,,E4 Flujo completo 1-1,text,true,,711,493,1,1,http://localhost:8081/api/diario,7,0,0
+1794786416302,6,PUT /api/diario/{id},200,,E4 Flujo completo 1-1,text,true,,703,495,1,1,http://localhost:8081/api/diario/3004,6,0,0
+1794786416308,4,GET /api/diario/{id} (final),200,,E4 Flujo completo 1-1,text,true,,699,380,1,1,http://localhost:8081/api/diario/3004,4,0,0
+1794786416313,4,GET /api/sesiones,200,,E4 Flujo completo 1-1,text,true,,1883,377,1,1,http://localhost:8081/api/sesiones,4,0,0
+1794786416317,58,POST /api/auth/login,200,,E4 Flujo completo 1-1,text,true,,891,261,1,1,http://localhost:8081/api/auth/login,58,0,0
+1794786416376,5,GET /api/sesiones,200,,E4 Flujo completo 1-1,text,true,,1882,377,1,1,http://localhost:8081/api/sesiones,5,0,0
+1794786416382,6,POST /api/diario,201,,E4 Flujo completo 1-1,text,true,,711,493,1,1,http://localhost:8081/api/diario,6,0,0
+1794786416388,6,PUT /api/diario/{id},200,,E4 Flujo completo 1-1,text,true,,703,495,1,1,http://localhost:8081/api/diario/3005,6,0,0
+1794786416395,7,GET /api/diario/{id} (final),200,,E4 Flujo completo 1-1,text,true,,700,380,1,1,http://localhost:8081/api/diario/3005,7,0,0
+1794786416402,5,GET /api/sesiones,200,,E4 Flujo completo 1-1,text,true,,1882,377,1,1,http://localhost:8081/api/sesiones,5,0,0
+1794786416408,58,POST /api/auth/login,200,,E4 Flujo completo 1-1,text,true,,891,261,1,1,http://localhost:8081/api/auth/login,58,0,0
+1794786416467,4,GET /api/sesiones,200,,E4 Flujo completo 1-1,text,true,,1883,377,1,1,http://localhost:8081/api/sesiones,4,0,0
+1794786416472,6,POST /api/diario,201,,E4 Flujo completo 1-1,text,true,,711,493,1,1,http://localhost:8081/api/diario,6,0,0
+1794786416479,7,PUT /api/diario/{id},200,,E4 Flujo completo 1-1,text,true,,702,495,1,1,http://localhost:8081/api/diario/3006,7,0,0
+1794786416486,4,GET /api/diario/{id} (final),200,,E4 Flujo completo 1-1,text,true,,700,380,1,1,http://localhost:8081/api/diario/3006,4,0,0
+1794786416491,3,GET /api/sesiones,200,,E4 Flujo completo 1-1,text,true,,1883,377,1,1,http://localhost:8081/api/sesiones,3,0,0
+1794786416599,63,POST /api/auth/login,200,,E4 Flujo completo 1-2,text,true,,891,261,1,1,http://localhost:8081/api/auth/login,63,0,1
+1794786416663,5,GET /api/sesiones,200,,E4 Flujo completo 1-2,text,true,,1884,377,1,1,http://localhost:8081/api/sesiones,4,0,0
+1794786416668,6,POST /api/diario,201,,E4 Flujo completo 1-2,text,true,,711,493,1,1,http://localhost:8081/api/diario,6,0,0
+1794786416674,7,PUT /api/diario/{id},200,,E4 Flujo completo 1-2,text,true,,703,495,1,1,http://localhost:8081/api/diario/3007,7,0,0
+1794786416681,8,GET /api/diario/{id} (final),200,,E4 Flujo completo 1-2,text,true,,700,380,1,1,http://localhost:8081/api/diario/3007,8,0,0
+1794786416690,8,GET /api/sesiones,200,,E4 Flujo completo 1-2,text,true,,1884,377,1,1,http://localhost:8081/api/sesiones,8,0,0
+1794786416699,62,POST /api/auth/login,200,,E4 Flujo completo 1-2,text,true,,891,261,1,1,http://localhost:8081/api/auth/login,62,0,0
+1794786416763,7,GET /api/sesiones,200,,E4 Flujo completo 1-2,text,true,,1884,377,1,1,http://localhost:8081/api/sesiones,6,0,0
+1794786416770,7,POST /api/diario,201,,E4 Flujo completo 1-2,text,true,,711,493,1,1,http://localhost:8081/api/diario,7,0,0
+1794786416778,16,PUT /api/diario/{id},200,,E4 Flujo completo 1-2,text,true,,703,495,1,1,http://localhost:8081/api/diario/3008,16,0,0
+1794786416795,11,GET /api/diario/{id} (final),200,,E4 Flujo completo 1-2,text,true,,700,380,1,1,http://localhost:8081/api/diario/3008,11,0,0
+1794786416807,7,GET /api/sesiones,200,,E4 Flujo completo 1-2,text,true,,1884,377,1,1,http://localhost:8081/api/sesiones,7,0,0
+1794786416814,65,POST /api/auth/login,200,,E4 Flujo completo 1-2,text,true,,891,261,1,1,http://localhost:8081/api/auth/login,65,0,0
+1794786416880,7,GET /api/sesiones,200,,E4 Flujo completo 1-2,text,true,,1884,377,1,1,http://localhost:8081/api/sesiones,7,0,0
+1794786416888,10,POST /api/diario,201,,E4 Flujo completo 1-2,text,true,,711,493,1,1,http://localhost:8081/api/diario,10,0,0
+1794786416899,12,PUT /api/diario/{id},200,,E4 Flujo completo 1-2,text,true,,702,495,1,1,http://localhost:8081/api/diario/3009,12,0,0
+1794786416912,9,GET /api/diario/{id} (final),200,,E4 Flujo completo 1-2,text,true,,700,380,1,1,http://localhost:8081/api/diario/3009,8,0,0
+1794786416922,7,GET /api/sesiones,200,,E4 Flujo completo 1-2,text,true,,1884,377,1,1,http://localhost:8081/api/sesiones,7,0,0
+1794786416930,74,POST /api/auth/login,200,,E4 Flujo completo 1-2,text,true,,891,261,1,1,http://localhost:8081/api/auth/login,74,0,0
+1794786417005,7,GET /api/sesiones,200,,E4 Flujo completo 1-2,text,true,,1883,377,1,1,http://localhost:8081/api/sesiones,7,0,0
+1794786417013,18,POST /api/diario,201,,E4 Flujo completo 1-2,text,true,,711,493,1,1,http://localhost:8081/api/diario,18,0,0
+1794786417032,10,PUT /api/diario/{id},200,,E4 Flujo completo 1-2,text,true,,703,495,1,1,http://localhost:8081/api/diario/3010,10,0,0
+1794786417043,5,GET /api/diario/{id} (final),200,,E4 Flujo completo 1-2,text,true,,700,380,1,1,http://localhost:8081/api/diario/3010,5,0,0
+1794786417049,10,GET /api/sesiones,200,,E4 Flujo completo 1-2,text,true,,1883,377,1,1,http://localhost:8081/api/sesiones,10,0,0
+1794786417060,70,POST /api/auth/login,200,,E4 Flujo completo 1-2,text,true,,891,261,1,1,http://localhost:8081/api/auth/login,70,0,0
+1794786417131,6,GET /api/sesiones,200,,E4 Flujo completo 1-2,text,true,,1891,377,1,1,http://localhost:8081/api/sesiones,6,0,0
+1794786417138,6,POST /api/diario,201,,E4 Flujo completo 1-2,text,true,,711,493,1,1,http://localhost:8081/api/diario,6,0,0
+1794786417146,11,PUT /api/diario/{id},200,,E4 Flujo completo 1-2,text,true,,703,495,1,1,http://localhost:8081/api/diario/3011,11,0,0
+1794786417157,7,GET /api/diario/{id} (final),200,,E4 Flujo completo 1-2,text,true,,700,380,1,1,http://localhost:8081/api/diario/3011,7,0,0
+1794786417165,5,GET /api/sesiones,200,,E4 Flujo completo 1-2,text,true,,1891,377,1,1,http://localhost:8081/api/sesiones,5,0,0
+1794786417263,62,POST /api/auth/login,200,,E4 Flujo completo 1-3,text,true,,891,261,1,1,http://localhost:8081/api/auth/login,62,0,1
+1794786417326,6,GET /api/sesiones,200,,E4 Flujo completo 1-3,text,true,,1888,377,1,1,http://localhost:8081/api/sesiones,6,0,0
+1794786417332,8,POST /api/diario,201,,E4 Flujo completo 1-3,text,true,,708,493,1,1,http://localhost:8081/api/diario,8,0,0
+1794786417341,8,PUT /api/diario/{id},200,,E4 Flujo completo 1-3,text,true,,703,495,1,1,http://localhost:8081/api/diario/3012,8,0,0
+1794786417350,6,GET /api/diario/{id} (final),200,,E4 Flujo completo 1-3,text,true,,700,380,1,1,http://localhost:8081/api/diario/3012,6,0,0
+1794786417356,5,GET /api/sesiones,200,,E4 Flujo completo 1-3,text,true,,1888,377,1,1,http://localhost:8081/api/sesiones,5,0,0
+1794786417362,60,POST /api/auth/login,200,,E4 Flujo completo 1-3,text,true,,891,261,1,1,http://localhost:8081/api/auth/login,60,0,0
+1794786417423,5,GET /api/sesiones,200,,E4 Flujo completo 1-3,text,true,,1893,377,1,1,http://localhost:8081/api/sesiones,5,0,0
+1794786417429,5,POST /api/diario,201,,E4 Flujo completo 1-3,text,true,,711,493,1,1,http://localhost:8081/api/diario,5,0,0
+1794786417435,7,PUT /api/diario/{id},200,,E4 Flujo completo 1-3,text,true,,703,495,1,1,http://localhost:8081/api/diario/3013,7,0,0
+1794786417442,4,GET /api/diario/{id} (final),200,,E4 Flujo completo 1-3,text,true,,700,380,1,1,http://localhost:8081/api/diario/3013,4,0,0
+1794786417447,4,GET /api/sesiones,200,,E4 Flujo completo 1-3,text,true,,1893,377,1,1,http://localhost:8081/api/sesiones,4,0,0
+1794786417452,107,POST /api/auth/login,200,,E4 Flujo completo 1-3,text,true,,891,261,1,1,http://localhost:8081/api/auth/login,104,0,0
+1794786417562,13,GET /api/sesiones,200,,E4 Flujo completo 1-3,text,true,,1893,377,1,1,http://localhost:8081/api/sesiones,13,0,0
+1794786417576,13,POST /api/diario,201,,E4 Flujo completo 1-3,text,true,,711,493,1,1,http://localhost:8081/api/diario,13,0,0
+1794786417592,25,PUT /api/diario/{id},200,,E4 Flujo completo 1-3,text,true,,703,495,1,1,http://localhost:8081/api/diario/3014,24,0,0
+1794786417619,13,GET /api/diario/{id} (final),200,,E4 Flujo completo 1-3,text,true,,700,380,1,1,http://localhost:8081/api/diario/3014,12,0,0
+1794786417633,14,GET /api/sesiones,200,,E4 Flujo completo 1-3,text,true,,1893,377,1,1,http://localhost:8081/api/sesiones,14,0,0
+1794786417649,73,POST /api/auth/login,200,,E4 Flujo completo 1-3,text,true,,891,261,1,1,http://localhost:8081/api/auth/login,73,0,0
+1794786417724,9,GET /api/sesiones,200,,E4 Flujo completo 1-3,text,true,,1892,377,1,1,http://localhost:8081/api/sesiones,9,0,0
+1794786417734,10,POST /api/diario,201,,E4 Flujo completo 1-3,text,true,,708,493,1,1,http://localhost:8081/api/diario,10,0,0
+1794786417745,10,PUT /api/diario/{id},200,,E4 Flujo completo 1-3,text,true,,701,495,1,1,http://localhost:8081/api/diario/3015,10,0,0
+1794786417756,8,GET /api/diario/{id} (final),200,,E4 Flujo completo 1-3,text,true,,698,380,1,1,http://localhost:8081/api/diario/3015,8,0,0
+1794786417765,5,GET /api/sesiones,200,,E4 Flujo completo 1-3,text,true,,1892,377,1,1,http://localhost:8081/api/sesiones,5,0,0
+1794786417771,58,POST /api/auth/login,200,,E4 Flujo completo 1-3,text,true,,891,261,1,1,http://localhost:8081/api/auth/login,58,0,0
+1794786417830,4,GET /api/sesiones,200,,E4 Flujo completo 1-3,text,true,,1893,377,1,1,http://localhost:8081/api/sesiones,4,0,0
+1794786417834,5,POST /api/diario,201,,E4 Flujo completo 1-3,text,true,,708,493,1,1,http://localhost:8081/api/diario,5,0,0
+1794786417839,5,PUT /api/diario/{id},200,,E4 Flujo completo 1-3,text,true,,701,495,1,1,http://localhost:8081/api/diario/3016,5,0,0
+1794786417844,3,GET /api/diario/{id} (final),200,,E4 Flujo completo 1-3,text,true,,698,380,1,1,http://localhost:8081/api/diario/3016,3,0,0
+1794786417848,3,GET /api/sesiones,200,,E4 Flujo completo 1-3,text,true,,1893,377,1,1,http://localhost:8081/api/sesiones,3,0,0
+1794786417930,59,POST /api/auth/login,200,,E4 Flujo completo 1-4,text,true,,891,261,1,1,http://localhost:8081/api/auth/login,59,0,1
+1794786417990,4,GET /api/sesiones,200,,E4 Flujo completo 1-4,text,true,,1894,377,1,1,http://localhost:8081/api/sesiones,4,0,0
+1794786417994,7,POST /api/diario,201,,E4 Flujo completo 1-4,text,true,,711,493,1,1,http://localhost:8081/api/diario,7,0,0
+1794786418002,8,PUT /api/diario/{id},200,,E4 Flujo completo 1-4,text,true,,703,495,1,1,http://localhost:8081/api/diario/3017,8,0,0
+1794786418011,5,GET /api/diario/{id} (final),200,,E4 Flujo completo 1-4,text,true,,700,380,1,1,http://localhost:8081/api/diario/3017,5,0,0
+1794786418017,8,GET /api/sesiones,200,,E4 Flujo completo 1-4,text,true,,1894,377,1,1,http://localhost:8081/api/sesiones,7,0,0
+1794786418025,64,POST /api/auth/login,200,,E4 Flujo completo 1-4,text,true,,891,261,1,1,http://localhost:8081/api/auth/login,64,0,0
+1794786418090,9,GET /api/sesiones,200,,E4 Flujo completo 1-4,text,true,,1892,377,1,1,http://localhost:8081/api/sesiones,9,0,0
+1794786418099,12,POST /api/diario,201,,E4 Flujo completo 1-4,text,true,,711,493,1,1,http://localhost:8081/api/diario,11,0,0
+1794786418112,12,PUT /api/diario/{id},200,,E4 Flujo completo 1-4,text,true,,703,495,1,1,http://localhost:8081/api/diario/3018,12,0,0
+1794786418125,7,GET /api/diario/{id} (final),200,,E4 Flujo completo 1-4,text,true,,700,380,1,1,http://localhost:8081/api/diario/3018,7,0,0
+1794786418133,7,GET /api/sesiones,200,,E4 Flujo completo 1-4,text,true,,1892,377,1,1,http://localhost:8081/api/sesiones,6,0,0
+1794786418140,66,POST /api/auth/login,200,,E4 Flujo completo 1-4,text,true,,891,261,1,1,http://localhost:8081/api/auth/login,66,0,0
+1794786418207,4,GET /api/sesiones,200,,E4 Flujo completo 1-4,text,true,,1894,377,1,1,http://localhost:8081/api/sesiones,4,0,0
+1794786418212,7,POST /api/diario,201,,E4 Flujo completo 1-4,text,true,,711,493,1,1,http://localhost:8081/api/diario,7,0,0
+1794786418220,6,PUT /api/diario/{id},200,,E4 Flujo completo 1-4,text,true,,701,495,1,1,http://localhost:8081/api/diario/3019,6,0,0
+1794786418226,5,GET /api/diario/{id} (final),200,,E4 Flujo completo 1-4,text,true,,698,380,1,1,http://localhost:8081/api/diario/3019,5,0,0
+1794786418231,4,GET /api/sesiones,200,,E4 Flujo completo 1-4,text,true,,1894,377,1,1,http://localhost:8081/api/sesiones,4,0,0
+1794786418236,59,POST /api/auth/login,200,,E4 Flujo completo 1-4,text,true,,891,261,1,1,http://localhost:8081/api/auth/login,59,0,0
+1794786418296,4,GET /api/sesiones,200,,E4 Flujo completo 1-4,text,true,,1891,377,1,1,http://localhost:8081/api/sesiones,4,0,0
+1794786418301,6,POST /api/diario,201,,E4 Flujo completo 1-4,text,true,,711,493,1,1,http://localhost:8081/api/diario,6,0,0
+1794786418308,5,PUT /api/diario/{id},200,,E4 Flujo completo 1-4,text,true,,703,495,1,1,http://localhost:8081/api/diario/3020,5,0,0
+1794786418313,4,GET /api/diario/{id} (final),200,,E4 Flujo completo 1-4,text,true,,700,380,1,1,http://localhost:8081/api/diario/3020,4,0,0
+1794786418317,3,GET /api/sesiones,200,,E4 Flujo completo 1-4,text,true,,1891,377,1,1,http://localhost:8081/api/sesiones,3,0,0
+1794786418321,57,POST /api/auth/login,200,,E4 Flujo completo 1-4,text,true,,891,261,1,1,http://localhost:8081/api/auth/login,56,0,0
+1794786418378,4,GET /api/sesiones,200,,E4 Flujo completo 1-4,text,true,,1892,377,1,1,http://localhost:8081/api/sesiones,4,0,0
+1794786418383,5,POST /api/diario,201,,E4 Flujo completo 1-4,text,true,,711,493,1,1,http://localhost:8081/api/diario,5,0,0
+1794786418389,6,PUT /api/diario/{id},200,,E4 Flujo completo 1-4,text,true,,703,495,1,1,http://localhost:8081/api/diario/3021,6,0,0
+1794786418396,3,GET /api/diario/{id} (final),200,,E4 Flujo completo 1-4,text,true,,700,380,1,1,http://localhost:8081/api/diario/3021,3,0,0
+1794786418400,3,GET /api/sesiones,200,,E4 Flujo completo 1-4,text,true,,1892,377,1,1,http://localhost:8081/api/sesiones,3,0,0
+1794786418607,60,POST /api/auth/login,200,,E4 Flujo completo 1-5,text,true,,891,261,1,1,http://localhost:8081/api/auth/login,60,0,1
+1794786418669,4,GET /api/sesiones,200,,E4 Flujo completo 1-5,text,true,,1894,377,1,1,http://localhost:8081/api/sesiones,4,0,0
+1794786418674,6,POST /api/diario,201,,E4 Flujo completo 1-5,text,true,,711,493,1,1,http://localhost:8081/api/diario,6,0,0
+1794786418681,6,PUT /api/diario/{id},200,,E4 Flujo completo 1-5,text,true,,703,495,1,1,http://localhost:8081/api/diario/3022,6,0,0
+1794786418687,4,GET /api/diario/{id} (final),200,,E4 Flujo completo 1-5,text,true,,700,380,1,1,http://localhost:8081/api/diario/3022,4,0,0
+1794786418691,4,GET /api/sesiones,200,,E4 Flujo completo 1-5,text,true,,1894,377,1,1,http://localhost:8081/api/sesiones,4,0,0
+1794786418696,58,POST /api/auth/login,200,,E4 Flujo completo 1-5,text,true,,891,261,1,1,http://localhost:8081/api/auth/login,58,0,0
+1794786418755,5,GET /api/sesiones,200,,E4 Flujo completo 1-5,text,true,,1893,377,1,1,http://localhost:8081/api/sesiones,5,0,0
+1794786418761,4,POST /api/diario,201,,E4 Flujo completo 1-5,text,true,,711,493,1,1,http://localhost:8081/api/diario,4,0,0
+1794786418766,6,PUT /api/diario/{id},200,,E4 Flujo completo 1-5,text,true,,703,495,1,1,http://localhost:8081/api/diario/3023,6,0,0
+1794786418772,4,GET /api/diario/{id} (final),200,,E4 Flujo completo 1-5,text,true,,700,380,1,1,http://localhost:8081/api/diario/3023,4,0,0
+1794786418777,3,GET /api/sesiones,200,,E4 Flujo completo 1-5,text,true,,1893,377,1,1,http://localhost:8081/api/sesiones,3,0,0
+1794786418781,60,POST /api/auth/login,200,,E4 Flujo completo 1-5,text,true,,891,261,1,1,http://localhost:8081/api/auth/login,60,0,0
+1794786418841,4,GET /api/sesiones,200,,E4 Flujo completo 1-5,text,true,,1894,377,1,1,http://localhost:8081/api/sesiones,4,0,0
+1794786418846,5,POST /api/diario,201,,E4 Flujo completo 1-5,text,true,,711,493,1,1,http://localhost:8081/api/diario,5,0,0
+1794786418852,5,PUT /api/diario/{id},200,,E4 Flujo completo 1-5,text,true,,703,495,1,1,http://localhost:8081/api/diario/3024,5,0,0
+1794786418858,4,GET /api/diario/{id} (final),200,,E4 Flujo completo 1-5,text,true,,700,380,1,1,http://localhost:8081/api/diario/3024,4,0,0
+1794786418862,3,GET /api/sesiones,200,,E4 Flujo completo 1-5,text,true,,1894,377,1,1,http://localhost:8081/api/sesiones,3,0,0
+1794786418866,60,POST /api/auth/login,200,,E4 Flujo completo 1-5,text,true,,891,261,1,1,http://localhost:8081/api/auth/login,60,0,0
+1794786418927,4,GET /api/sesiones,200,,E4 Flujo completo 1-5,text,true,,1894,377,1,1,http://localhost:8081/api/sesiones,4,0,0
+1794786418932,6,POST /api/diario,201,,E4 Flujo completo 1-5,text,true,,711,493,1,1,http://localhost:8081/api/diario,6,0,0
+1794786418939,5,PUT /api/diario/{id},200,,E4 Flujo completo 1-5,text,true,,703,495,1,1,http://localhost:8081/api/diario/3025,5,0,0
+1794786418945,5,GET /api/diario/{id} (final),200,,E4 Flujo completo 1-5,text,true,,700,380,1,1,http://localhost:8081/api/diario/3025,5,0,0
+1794786418950,4,GET /api/sesiones,200,,E4 Flujo completo 1-5,text,true,,1894,377,1,1,http://localhost:8081/api/sesiones,4,0,0
+1794786418954,61,POST /api/auth/login,200,,E4 Flujo completo 1-5,text,true,,891,261,1,1,http://localhost:8081/api/auth/login,61,0,0
+1794786419016,4,GET /api/sesiones,200,,E4 Flujo completo 1-5,text,true,,1893,377,1,1,http://localhost:8081/api/sesiones,4,0,0
+1794786419020,4,POST /api/diario,201,,E4 Flujo completo 1-5,text,true,,711,493,1,1,http://localhost:8081/api/diario,4,0,0
+1794786419025,5,PUT /api/diario/{id},200,,E4 Flujo completo 1-5,text,true,,703,495,1,1,http://localhost:8081/api/diario/3026,5,0,0
+1794786419030,4,GET /api/diario/{id} (final),200,,E4 Flujo completo 1-5,text,true,,700,380,1,1,http://localhost:8081/api/diario/3026,4,0,0
+1794786419034,3,GET /api/sesiones,200,,E4 Flujo completo 1-5,text,true,,1893,377,1,1,http://localhost:8081/api/sesiones,3,0,0
+1794786419277,62,POST /api/auth/login,200,,E4 Flujo completo 1-6,text,true,,891,261,1,1,http://localhost:8081/api/auth/login,62,0,2
+1794786419339,6,GET /api/sesiones,200,,E4 Flujo completo 1-6,text,true,,1892,377,1,1,http://localhost:8081/api/sesiones,6,0,0
+1794786419346,8,POST /api/diario,201,,E4 Flujo completo 1-6,text,true,,711,493,1,1,http://localhost:8081/api/diario,8,0,0
+1794786419356,9,PUT /api/diario/{id},200,,E4 Flujo completo 1-6,text,true,,703,495,1,1,http://localhost:8081/api/diario/3027,8,0,0
+1794786419366,5,GET /api/diario/{id} (final),200,,E4 Flujo completo 1-6,text,true,,700,380,1,1,http://localhost:8081/api/diario/3027,5,0,0
+1794786419372,7,GET /api/sesiones,200,,E4 Flujo completo 1-6,text,true,,1892,377,1,1,http://localhost:8081/api/sesiones,7,0,0
+1794786419380,64,POST /api/auth/login,200,,E4 Flujo completo 1-6,text,true,,891,261,1,1,http://localhost:8081/api/auth/login,64,0,0
+1794786419445,6,GET /api/sesiones,200,,E4 Flujo completo 1-6,text,true,,1894,377,1,1,http://localhost:8081/api/sesiones,5,0,0
+1794786419452,9,POST /api/diario,201,,E4 Flujo completo 1-6,text,true,,711,493,1,1,http://localhost:8081/api/diario,9,0,0
+1794786419462,9,PUT /api/diario/{id},200,,E4 Flujo completo 1-6,text,true,,703,495,1,1,http://localhost:8081/api/diario/3028,9,0,0
+1794786419472,7,GET /api/diario/{id} (final),200,,E4 Flujo completo 1-6,text,true,,700,380,1,1,http://localhost:8081/api/diario/3028,7,0,0
+1794786419480,4,GET /api/sesiones,200,,E4 Flujo completo 1-6,text,true,,1894,377,1,1,http://localhost:8081/api/sesiones,4,0,0
+1794786419485,64,POST /api/auth/login,200,,E4 Flujo completo 1-6,text,true,,891,261,1,1,http://localhost:8081/api/auth/login,64,0,0
+1794786419550,6,GET /api/sesiones,200,,E4 Flujo completo 1-6,text,true,,1893,377,1,1,http://localhost:8081/api/sesiones,6,0,0
+1794786419557,8,POST /api/diario,201,,E4 Flujo completo 1-6,text,true,,711,493,1,1,http://localhost:8081/api/diario,8,0,0
+1794786419566,8,PUT /api/diario/{id},200,,E4 Flujo completo 1-6,text,true,,703,495,1,1,http://localhost:8081/api/diario/3029,8,0,0
+1794786419575,6,GET /api/diario/{id} (final),200,,E4 Flujo completo 1-6,text,true,,700,380,1,1,http://localhost:8081/api/diario/3029,6,0,0
+1794786419581,7,GET /api/sesiones,200,,E4 Flujo completo 1-6,text,true,,1893,377,1,1,http://localhost:8081/api/sesiones,7,0,0
+1794786419588,61,POST /api/auth/login,200,,E4 Flujo completo 1-6,text,true,,891,261,1,1,http://localhost:8081/api/auth/login,61,0,0
+1794786419650,4,GET /api/sesiones,200,,E4 Flujo completo 1-6,text,true,,1893,377,1,1,http://localhost:8081/api/sesiones,3,0,0
+1794786419654,5,POST /api/diario,201,,E4 Flujo completo 1-6,text,true,,711,493,1,1,http://localhost:8081/api/diario,5,0,0
+1794786419660,5,PUT /api/diario/{id},200,,E4 Flujo completo 1-6,text,true,,701,495,1,1,http://localhost:8081/api/diario/3030,5,0,0
+1794786419666,3,GET /api/diario/{id} (final),200,,E4 Flujo completo 1-6,text,true,,698,380,1,1,http://localhost:8081/api/diario/3030,3,0,0
+1794786419669,3,GET /api/sesiones,200,,E4 Flujo completo 1-6,text,true,,1893,377,1,1,http://localhost:8081/api/sesiones,3,0,0
+1794786419672,57,POST /api/auth/login,200,,E4 Flujo completo 1-6,text,true,,891,261,1,1,http://localhost:8081/api/auth/login,57,0,0
+1794786419730,4,GET /api/sesiones,200,,E4 Flujo completo 1-6,text,true,,1894,377,1,1,http://localhost:8081/api/sesiones,4,0,0
+1794786419734,18,POST /api/diario,201,,E4 Flujo completo 1-6,text,true,,711,493,1,1,http://localhost:8081/api/diario,18,0,0
+1794786419753,5,PUT /api/diario/{id},200,,E4 Flujo completo 1-6,text,true,,703,495,1,1,http://localhost:8081/api/diario/3031,5,0,0
+1794786419759,3,GET /api/diario/{id} (final),200,,E4 Flujo completo 1-6,text,true,,700,380,1,1,http://localhost:8081/api/diario/3031,3,0,0
+1794786419763,3,GET /api/sesiones,200,,E4 Flujo completo 1-6,text,true,,1894,377,1,1,http://localhost:8081/api/sesiones,3,0,0
+1794786419931,60,POST /api/auth/login,200,,E4 Flujo completo 1-7,text,true,,891,261,1,1,http://localhost:8081/api/auth/login,60,0,1
+1794786419992,5,GET /api/sesiones,200,,E4 Flujo completo 1-7,text,true,,1893,377,1,1,http://localhost:8081/api/sesiones,5,0,0
+1794786419997,11,POST /api/diario,201,,E4 Flujo completo 1-7,text,true,,711,493,1,1,http://localhost:8081/api/diario,11,0,0
+1794786420009,9,PUT /api/diario/{id},200,,E4 Flujo completo 1-7,text,true,,701,495,1,1,http://localhost:8081/api/diario/3032,9,0,0
+1794786420021,5,GET /api/diario/{id} (final),200,,E4 Flujo completo 1-7,text,true,,698,380,1,1,http://localhost:8081/api/diario/3032,5,0,0
+1794786420027,5,GET /api/sesiones,200,,E4 Flujo completo 1-7,text,true,,1893,377,1,1,http://localhost:8081/api/sesiones,5,0,0
+1794786420033,59,POST /api/auth/login,200,,E4 Flujo completo 1-7,text,true,,891,261,1,1,http://localhost:8081/api/auth/login,59,0,0
+1794786420093,4,GET /api/sesiones,200,,E4 Flujo completo 1-7,text,true,,1894,377,1,1,http://localhost:8081/api/sesiones,4,0,0
+1794786420097,43,POST /api/diario,201,,E4 Flujo completo 1-7,text,true,,711,493,1,1,http://localhost:8081/api/diario,43,0,0
+1794786420141,5,PUT /api/diario/{id},200,,E4 Flujo completo 1-7,text,true,,703,495,1,1,http://localhost:8081/api/diario/3033,5,0,0
+1794786420147,3,GET /api/diario/{id} (final),200,,E4 Flujo completo 1-7,text,true,,700,380,1,1,http://localhost:8081/api/diario/3033,3,0,0
+1794786420151,4,GET /api/sesiones,200,,E4 Flujo completo 1-7,text,true,,1894,377,1,1,http://localhost:8081/api/sesiones,3,0,0
+1794786420155,57,POST /api/auth/login,200,,E4 Flujo completo 1-7,text,true,,891,261,1,1,http://localhost:8081/api/auth/login,57,0,0
+1794786420212,4,GET /api/sesiones,200,,E4 Flujo completo 1-7,text,true,,1891,377,1,1,http://localhost:8081/api/sesiones,4,0,0
+1794786420217,47,POST /api/diario,201,,E4 Flujo completo 1-7,text,true,,711,493,1,1,http://localhost:8081/api/diario,47,0,0
+1794786420265,6,PUT /api/diario/{id},200,,E4 Flujo completo 1-7,text,true,,702,495,1,1,http://localhost:8081/api/diario/3034,6,0,0
+1794786420271,4,GET /api/diario/{id} (final),200,,E4 Flujo completo 1-7,text,true,,700,380,1,1,http://localhost:8081/api/diario/3034,4,0,0
+1794786420276,4,GET /api/sesiones,200,,E4 Flujo completo 1-7,text,true,,1891,377,1,1,http://localhost:8081/api/sesiones,4,0,0
+1794786420281,61,POST /api/auth/login,200,,E4 Flujo completo 1-7,text,true,,891,261,1,1,http://localhost:8081/api/auth/login,61,0,0
+1794786420342,4,GET /api/sesiones,200,,E4 Flujo completo 1-7,text,true,,1893,377,1,1,http://localhost:8081/api/sesiones,4,0,0
+1794786420346,48,POST /api/diario,201,,E4 Flujo completo 1-7,text,true,,711,493,1,1,http://localhost:8081/api/diario,48,0,0
+1794786420394,6,PUT /api/diario/{id},200,,E4 Flujo completo 1-7,text,true,,703,495,1,1,http://localhost:8081/api/diario/3035,6,0,0
+1794786420400,4,GET /api/diario/{id} (final),200,,E4 Flujo completo 1-7,text,true,,699,380,1,1,http://localhost:8081/api/diario/3035,4,0,0
+1794786420404,3,GET /api/sesiones,200,,E4 Flujo completo 1-7,text,true,,1893,377,1,1,http://localhost:8081/api/sesiones,3,0,0
+1794786420407,62,POST /api/auth/login,200,,E4 Flujo completo 1-7,text,true,,891,261,1,1,http://localhost:8081/api/auth/login,62,0,0
+1794786420470,4,GET /api/sesiones,200,,E4 Flujo completo 1-7,text,true,,1893,377,1,1,http://localhost:8081/api/sesiones,4,0,0
+1794786420474,36,POST /api/diario,201,,E4 Flujo completo 1-7,text,true,,711,493,1,1,http://localhost:8081/api/diario,36,0,0
+1794786420511,8,PUT /api/diario/{id},200,,E4 Flujo completo 1-7,text,true,,703,495,1,1,http://localhost:8081/api/diario/3036,8,0,0
+1794786420520,4,GET /api/diario/{id} (final),200,,E4 Flujo completo 1-7,text,true,,700,380,1,1,http://localhost:8081/api/diario/3036,4,0,0
+1794786420525,3,GET /api/sesiones,200,,E4 Flujo completo 1-7,text,true,,1893,377,1,1,http://localhost:8081/api/sesiones,3,0,0
+1794786420607,61,POST /api/auth/login,200,,E4 Flujo completo 1-8,text,true,,891,261,1,1,http://localhost:8081/api/auth/login,61,0,2
+1794786420669,4,GET /api/sesiones,200,,E4 Flujo completo 1-8,text,true,,1894,377,1,1,http://localhost:8081/api/sesiones,4,0,0
+1794786420674,9,POST /api/diario,201,,E4 Flujo completo 1-8,text,true,,711,493,1,1,http://localhost:8081/api/diario,9,0,0
+1794786420685,12,PUT /api/diario/{id},200,,E4 Flujo completo 1-8,text,true,,703,495,1,1,http://localhost:8081/api/diario/3037,12,0,0
+1794786420698,11,GET /api/diario/{id} (final),200,,E4 Flujo completo 1-8,text,true,,700,380,1,1,http://localhost:8081/api/diario/3037,11,0,0
+1794786420710,9,GET /api/sesiones,200,,E4 Flujo completo 1-8,text,true,,1894,377,1,1,http://localhost:8081/api/sesiones,9,0,0
+1794786420720,61,POST /api/auth/login,200,,E4 Flujo completo 1-8,text,true,,891,261,1,1,http://localhost:8081/api/auth/login,61,0,0
+1794786420781,4,GET /api/sesiones,200,,E4 Flujo completo 1-8,text,true,,1892,377,1,1,http://localhost:8081/api/sesiones,4,0,0
+1794786420786,5,POST /api/diario,201,,E4 Flujo completo 1-8,text,true,,711,493,1,1,http://localhost:8081/api/diario,5,0,0
+1794786420792,8,PUT /api/diario/{id},200,,E4 Flujo completo 1-8,text,true,,701,495,1,1,http://localhost:8081/api/diario/3038,8,0,0
+1794786420801,8,GET /api/diario/{id} (final),200,,E4 Flujo completo 1-8,text,true,,698,380,1,1,http://localhost:8081/api/diario/3038,8,0,0
+1794786420810,8,GET /api/sesiones,200,,E4 Flujo completo 1-8,text,true,,1892,377,1,1,http://localhost:8081/api/sesiones,8,0,0
+1794786420818,64,POST /api/auth/login,200,,E4 Flujo completo 1-8,text,true,,891,261,1,1,http://localhost:8081/api/auth/login,64,0,0
+1794786420882,6,GET /api/sesiones,200,,E4 Flujo completo 1-8,text,true,,1893,377,1,1,http://localhost:8081/api/sesiones,6,0,0
+1794786420888,5,POST /api/diario,201,,E4 Flujo completo 1-8,text,true,,711,493,1,1,http://localhost:8081/api/diario,5,0,0
+1794786420894,7,PUT /api/diario/{id},200,,E4 Flujo completo 1-8,text,true,,703,495,1,1,http://localhost:8081/api/diario/3039,7,0,0
+1794786420901,4,GET /api/diario/{id} (final),200,,E4 Flujo completo 1-8,text,true,,700,380,1,1,http://localhost:8081/api/diario/3039,4,0,0
+1794786420905,4,GET /api/sesiones,200,,E4 Flujo completo 1-8,text,true,,1893,377,1,1,http://localhost:8081/api/sesiones,4,0,0
+1794786420909,60,POST /api/auth/login,200,,E4 Flujo completo 1-8,text,true,,891,261,1,1,http://localhost:8081/api/auth/login,60,0,0
+1794786420970,3,GET /api/sesiones,200,,E4 Flujo completo 1-8,text,true,,1894,377,1,1,http://localhost:8081/api/sesiones,3,0,0
+1794786420974,34,POST /api/diario,201,,E4 Flujo completo 1-8,text,true,,711,493,1,1,http://localhost:8081/api/diario,34,0,0
+1794786421008,6,PUT /api/diario/{id},200,,E4 Flujo completo 1-8,text,true,,703,495,1,1,http://localhost:8081/api/diario/3040,6,0,0
+1794786421015,4,GET /api/diario/{id} (final),200,,E4 Flujo completo 1-8,text,true,,699,380,1,1,http://localhost:8081/api/diario/3040,4,0,0
+1794786421019,4,GET /api/sesiones,200,,E4 Flujo completo 1-8,text,true,,1894,377,1,1,http://localhost:8081/api/sesiones,4,0,0
+1794786421024,59,POST /api/auth/login,200,,E4 Flujo completo 1-8,text,true,,891,261,1,1,http://localhost:8081/api/auth/login,59,0,0
+1794786421084,5,GET /api/sesiones,200,,E4 Flujo completo 1-8,text,true,,1893,377,1,1,http://localhost:8081/api/sesiones,5,0,0
+1794786421089,4,POST /api/diario,201,,E4 Flujo completo 1-8,text,true,,711,493,1,1,http://localhost:8081/api/diario,4,0,0
+1794786421094,6,PUT /api/diario/{id},200,,E4 Flujo completo 1-8,text,true,,703,495,1,1,http://localhost:8081/api/diario/3041,6,0,0
+1794786421100,5,GET /api/diario/{id} (final),200,,E4 Flujo completo 1-8,text,true,,700,380,1,1,http://localhost:8081/api/diario/3041,5,0,0
+1794786421105,5,GET /api/sesiones,200,,E4 Flujo completo 1-8,text,true,,1893,377,1,1,http://localhost:8081/api/sesiones,5,0,0
+1794786421262,60,POST /api/auth/login,200,,E4 Flujo completo 1-9,text,true,,891,261,1,1,http://localhost:8081/api/auth/login,60,0,1
+1794786421323,7,GET /api/sesiones,200,,E4 Flujo completo 1-9,text,true,,1894,377,1,1,http://localhost:8081/api/sesiones,7,0,0
+1794786421330,6,POST /api/diario,201,,E4 Flujo completo 1-9,text,true,,711,493,1,1,http://localhost:8081/api/diario,6,0,0
+1794786421337,7,PUT /api/diario/{id},200,,E4 Flujo completo 1-9,text,true,,703,495,1,1,http://localhost:8081/api/diario/3042,7,0,0
+1794786421344,5,GET /api/diario/{id} (final),200,,E4 Flujo completo 1-9,text,true,,700,380,1,1,http://localhost:8081/api/diario/3042,5,0,0
+1794786421349,3,GET /api/sesiones,200,,E4 Flujo completo 1-9,text,true,,1894,377,1,1,http://localhost:8081/api/sesiones,3,0,0
+1794786421353,58,POST /api/auth/login,200,,E4 Flujo completo 1-9,text,true,,891,261,1,1,http://localhost:8081/api/auth/login,58,0,0
+1794786421411,4,GET /api/sesiones,200,,E4 Flujo completo 1-9,text,true,,1894,377,1,1,http://localhost:8081/api/sesiones,4,0,0
+1794786421415,16,POST /api/diario,201,,E4 Flujo completo 1-9,text,true,,711,493,1,1,http://localhost:8081/api/diario,16,0,0
+1794786421431,7,PUT /api/diario/{id},200,,E4 Flujo completo 1-9,text,true,,703,495,1,1,http://localhost:8081/api/diario/3043,7,0,0
+1794786421438,4,GET /api/diario/{id} (final),200,,E4 Flujo completo 1-9,text,true,,700,380,1,1,http://localhost:8081/api/diario/3043,4,0,0
+1794786421442,4,GET /api/sesiones,200,,E4 Flujo completo 1-9,text,true,,1894,377,1,1,http://localhost:8081/api/sesiones,4,0,0
+1794786421447,56,POST /api/auth/login,200,,E4 Flujo completo 1-9,text,true,,891,261,1,1,http://localhost:8081/api/auth/login,56,0,0
+1794786421503,4,GET /api/sesiones,200,,E4 Flujo completo 1-9,text,true,,1893,377,1,1,http://localhost:8081/api/sesiones,4,0,0
+1794786421507,5,POST /api/diario,201,,E4 Flujo completo 1-9,text,true,,711,493,1,1,http://localhost:8081/api/diario,5,0,0
+1794786421513,6,PUT /api/diario/{id},200,,E4 Flujo completo 1-9,text,true,,703,495,1,1,http://localhost:8081/api/diario/3044,6,0,0
+1794786421519,4,GET /api/diario/{id} (final),200,,E4 Flujo completo 1-9,text,true,,700,380,1,1,http://localhost:8081/api/diario/3044,4,0,0
+1794786421523,3,GET /api/sesiones,200,,E4 Flujo completo 1-9,text,true,,1893,377,1,1,http://localhost:8081/api/sesiones,3,0,0
+1794786421527,56,POST /api/auth/login,200,,E4 Flujo completo 1-9,text,true,,891,261,1,1,http://localhost:8081/api/auth/login,56,0,0
+1794786421583,4,GET /api/sesiones,200,,E4 Flujo completo 1-9,text,true,,1894,377,1,1,http://localhost:8081/api/sesiones,4,0,0
+1794786421587,15,POST /api/diario,201,,E4 Flujo completo 1-9,text,true,,711,493,1,1,http://localhost:8081/api/diario,15,0,0
+1794786421602,6,PUT /api/diario/{id},200,,E4 Flujo completo 1-9,text,true,,702,495,1,1,http://localhost:8081/api/diario/3045,6,0,0
+1794786421609,3,GET /api/diario/{id} (final),200,,E4 Flujo completo 1-9,text,true,,700,380,1,1,http://localhost:8081/api/diario/3045,3,0,0
+1794786421613,3,GET /api/sesiones,200,,E4 Flujo completo 1-9,text,true,,1894,377,1,1,http://localhost:8081/api/sesiones,3,0,0
+1794786421616,57,POST /api/auth/login,200,,E4 Flujo completo 1-9,text,true,,891,261,1,1,http://localhost:8081/api/auth/login,57,0,0
+1794786421673,4,GET /api/sesiones,200,,E4 Flujo completo 1-9,text,true,,1892,377,1,1,http://localhost:8081/api/sesiones,4,0,0
+1794786421677,4,POST /api/diario,201,,E4 Flujo completo 1-9,text,true,,711,493,1,1,http://localhost:8081/api/diario,4,0,0
+1794786421682,5,PUT /api/diario/{id},200,,E4 Flujo completo 1-9,text,true,,703,495,1,1,http://localhost:8081/api/diario/3046,5,0,0
+1794786421687,4,GET /api/diario/{id} (final),200,,E4 Flujo completo 1-9,text,true,,700,380,1,1,http://localhost:8081/api/diario/3046,4,0,0
+1794786421691,4,GET /api/sesiones,200,,E4 Flujo completo 1-9,text,true,,1892,377,1,1,http://localhost:8081/api/sesiones,4,0,0
+1794786421929,58,POST /api/auth/login,200,,E4 Flujo completo 1-10,text,true,,891,261,1,1,http://localhost:8081/api/auth/login,58,0,1
+1794786421988,3,GET /api/sesiones,200,,E4 Flujo completo 1-10,text,true,,1894,377,1,1,http://localhost:8081/api/sesiones,3,0,0
+1794786421992,15,POST /api/diario,201,,E4 Flujo completo 1-10,text,true,,712,494,1,1,http://localhost:8081/api/diario,15,0,0
+1794786422007,5,PUT /api/diario/{id},200,,E4 Flujo completo 1-10,text,true,,704,496,1,1,http://localhost:8081/api/diario/3047,5,0,0
+1794786422012,4,GET /api/diario/{id} (final),200,,E4 Flujo completo 1-10,text,true,,701,380,1,1,http://localhost:8081/api/diario/3047,4,0,0
+1794786422016,3,GET /api/sesiones,200,,E4 Flujo completo 1-10,text,true,,1894,377,1,1,http://localhost:8081/api/sesiones,3,0,0
+1794786422019,56,POST /api/auth/login,200,,E4 Flujo completo 1-10,text,true,,891,261,1,1,http://localhost:8081/api/auth/login,56,0,0
+1794786422076,3,GET /api/sesiones,200,,E4 Flujo completo 1-10,text,true,,1894,377,1,1,http://localhost:8081/api/sesiones,3,0,0
+1794786422079,17,POST /api/diario,201,,E4 Flujo completo 1-10,text,true,,712,494,1,1,http://localhost:8081/api/diario,17,0,0
+1794786422097,5,PUT /api/diario/{id},200,,E4 Flujo completo 1-10,text,true,,704,496,1,1,http://localhost:8081/api/diario/3048,5,0,0
+1794786422102,3,GET /api/diario/{id} (final),200,,E4 Flujo completo 1-10,text,true,,701,380,1,1,http://localhost:8081/api/diario/3048,3,0,0
+1794786422105,3,GET /api/sesiones,200,,E4 Flujo completo 1-10,text,true,,1894,377,1,1,http://localhost:8081/api/sesiones,3,0,0
+1794786422108,55,POST /api/auth/login,200,,E4 Flujo completo 1-10,text,true,,891,261,1,1,http://localhost:8081/api/auth/login,55,0,0
+1794786422164,3,GET /api/sesiones,200,,E4 Flujo completo 1-10,text,true,,1892,377,1,1,http://localhost:8081/api/sesiones,3,0,0
+1794786422168,17,POST /api/diario,201,,E4 Flujo completo 1-10,text,true,,709,494,1,1,http://localhost:8081/api/diario,17,0,0
+1794786422186,5,PUT /api/diario/{id},200,,E4 Flujo completo 1-10,text,true,,703,496,1,1,http://localhost:8081/api/diario/3049,5,0,0
+1794786422192,3,GET /api/diario/{id} (final),200,,E4 Flujo completo 1-10,text,true,,701,380,1,1,http://localhost:8081/api/diario/3049,3,0,0
+1794786422195,3,GET /api/sesiones,200,,E4 Flujo completo 1-10,text,true,,1892,377,1,1,http://localhost:8081/api/sesiones,3,0,0
+1794786422198,57,POST /api/auth/login,200,,E4 Flujo completo 1-10,text,true,,891,261,1,1,http://localhost:8081/api/auth/login,57,0,0
+1794786422256,3,GET /api/sesiones,200,,E4 Flujo completo 1-10,text,true,,1893,377,1,1,http://localhost:8081/api/sesiones,3,0,0
+1794786422260,15,POST /api/diario,201,,E4 Flujo completo 1-10,text,true,,712,494,1,1,http://localhost:8081/api/diario,15,0,0
+1794786422275,8,PUT /api/diario/{id},200,,E4 Flujo completo 1-10,text,true,,704,496,1,1,http://localhost:8081/api/diario/3050,8,0,0
+1794786422283,4,GET /api/diario/{id} (final),200,,E4 Flujo completo 1-10,text,true,,701,380,1,1,http://localhost:8081/api/diario/3050,4,0,0
+1794786422287,3,GET /api/sesiones,200,,E4 Flujo completo 1-10,text,true,,1893,377,1,1,http://localhost:8081/api/sesiones,3,0,0
+1794786422291,57,POST /api/auth/login,200,,E4 Flujo completo 1-10,text,true,,891,261,1,1,http://localhost:8081/api/auth/login,57,0,0
+1794786422349,3,GET /api/sesiones,200,,E4 Flujo completo 1-10,text,true,,1894,377,1,1,http://localhost:8081/api/sesiones,3,0,0
+1794786422353,13,POST /api/diario,201,,E4 Flujo completo 1-10,text,true,,712,494,1,1,http://localhost:8081/api/diario,13,0,0
+1794786422366,6,PUT /api/diario/{id},200,,E4 Flujo completo 1-10,text,true,,704,496,1,1,http://localhost:8081/api/diario/3051,6,0,0
+1794786422372,4,GET /api/diario/{id} (final),200,,E4 Flujo completo 1-10,text,true,,701,380,1,1,http://localhost:8081/api/diario/3051,4,0,0
+1794786422376,2,GET /api/sesiones,200,,E4 Flujo completo 1-10,text,true,,1894,377,1,1,http://localhost:8081/api/sesiones,2,0,0
+1794786422594,61,POST /api/auth/login,200,,E4 Flujo completo 1-11,text,true,,891,261,1,1,http://localhost:8081/api/auth/login,61,0,1
+1794786422656,3,GET /api/sesiones,200,,E4 Flujo completo 1-11,text,true,,1894,377,1,1,http://localhost:8081/api/sesiones,3,0,0
+1794786422659,15,POST /api/diario,201,,E4 Flujo completo 1-11,text,true,,712,494,1,1,http://localhost:8081/api/diario,15,0,0
+1794786422674,5,PUT /api/diario/{id},200,,E4 Flujo completo 1-11,text,true,,704,496,1,1,http://localhost:8081/api/diario/3052,5,0,0
+1794786422679,3,GET /api/diario/{id} (final),200,,E4 Flujo completo 1-11,text,true,,701,380,1,1,http://localhost:8081/api/diario/3052,3,0,0
+1794786422683,2,GET /api/sesiones,200,,E4 Flujo completo 1-11,text,true,,1894,377,1,1,http://localhost:8081/api/sesiones,2,0,0
+1794786422686,56,POST /api/auth/login,200,,E4 Flujo completo 1-11,text,true,,891,261,1,1,http://localhost:8081/api/auth/login,56,0,0
+1794786422742,4,GET /api/sesiones,200,,E4 Flujo completo 1-11,text,true,,1893,377,1,1,http://localhost:8081/api/sesiones,4,0,0
+1794786422747,15,POST /api/diario,201,,E4 Flujo completo 1-11,text,true,,712,494,1,1,http://localhost:8081/api/diario,15,0,0
+1794786422762,5,PUT /api/diario/{id},200,,E4 Flujo completo 1-11,text,true,,704,496,1,1,http://localhost:8081/api/diario/3053,5,0,0
+1794786422768,2,GET /api/diario/{id} (final),200,,E4 Flujo completo 1-11,text,true,,701,380,1,1,http://localhost:8081/api/diario/3053,2,0,0
+1794786422771,2,GET /api/sesiones,200,,E4 Flujo completo 1-11,text,true,,1893,377,1,1,http://localhost:8081/api/sesiones,2,0,0
+1794786422773,57,POST /api/auth/login,200,,E4 Flujo completo 1-11,text,true,,891,261,1,1,http://localhost:8081/api/auth/login,57,0,0
+1794786422830,4,GET /api/sesiones,200,,E4 Flujo completo 1-11,text,true,,1893,377,1,1,http://localhost:8081/api/sesiones,4,0,0
+1794786422834,16,POST /api/diario,201,,E4 Flujo completo 1-11,text,true,,712,494,1,1,http://localhost:8081/api/diario,16,0,0
+1794786422850,6,PUT /api/diario/{id},200,,E4 Flujo completo 1-11,text,true,,704,496,1,1,http://localhost:8081/api/diario/3054,6,0,0
+1794786422856,4,GET /api/diario/{id} (final),200,,E4 Flujo completo 1-11,text,true,,701,380,1,1,http://localhost:8081/api/diario/3054,4,0,0
+1794786422860,3,GET /api/sesiones,200,,E4 Flujo completo 1-11,text,true,,1893,377,1,1,http://localhost:8081/api/sesiones,3,0,0
+1794786422863,58,POST /api/auth/login,200,,E4 Flujo completo 1-11,text,true,,891,261,1,1,http://localhost:8081/api/auth/login,58,0,0
+1794786422921,5,GET /api/sesiones,200,,E4 Flujo completo 1-11,text,true,,1892,377,1,1,http://localhost:8081/api/sesiones,5,0,0
+1794786422926,13,POST /api/diario,201,,E4 Flujo completo 1-11,text,true,,712,494,1,1,http://localhost:8081/api/diario,13,0,0
+1794786422939,6,PUT /api/diario/{id},200,,E4 Flujo completo 1-11,text,true,,704,496,1,1,http://localhost:8081/api/diario/3055,6,0,0
+1794786422945,5,GET /api/diario/{id} (final),200,,E4 Flujo completo 1-11,text,true,,701,380,1,1,http://localhost:8081/api/diario/3055,5,0,0
+1794786422950,4,GET /api/sesiones,200,,E4 Flujo completo 1-11,text,true,,1892,377,1,1,http://localhost:8081/api/sesiones,4,0,0
+1794786422954,58,POST /api/auth/login,200,,E4 Flujo completo 1-11,text,true,,891,261,1,1,http://localhost:8081/api/auth/login,57,0,0
+1794786423012,4,GET /api/sesiones,200,,E4 Flujo completo 1-11,text,true,,1893,377,1,1,http://localhost:8081/api/sesiones,4,0,0
+1794786423016,12,POST /api/diario,201,,E4 Flujo completo 1-11,text,true,,712,494,1,1,http://localhost:8081/api/diario,12,0,0
+1794786423029,11,PUT /api/diario/{id},200,,E4 Flujo completo 1-11,text,true,,704,496,1,1,http://localhost:8081/api/diario/3056,10,0,0
+1794786423040,4,GET /api/diario/{id} (final),200,,E4 Flujo completo 1-11,text,true,,701,380,1,1,http://localhost:8081/api/diario/3056,4,0,0
+1794786423044,3,GET /api/sesiones,200,,E4 Flujo completo 1-11,text,true,,1893,377,1,1,http://localhost:8081/api/sesiones,3,0,0
+1794786423262,59,POST /api/auth/login,200,,E4 Flujo completo 1-12,text,true,,891,261,1,1,http://localhost:8081/api/auth/login,59,0,1
+1794786423321,5,GET /api/sesiones,200,,E4 Flujo completo 1-12,text,true,,1894,377,1,1,http://localhost:8081/api/sesiones,5,0,0
+1794786423326,13,POST /api/diario,201,,E4 Flujo completo 1-12,text,true,,712,494,1,1,http://localhost:8081/api/diario,13,0,0
+1794786423339,5,PUT /api/diario/{id},200,,E4 Flujo completo 1-12,text,true,,704,496,1,1,http://localhost:8081/api/diario/3057,5,0,0
+1794786423345,2,GET /api/diario/{id} (final),200,,E4 Flujo completo 1-12,text,true,,701,380,1,1,http://localhost:8081/api/diario/3057,2,0,0
+1794786423348,2,GET /api/sesiones,200,,E4 Flujo completo 1-12,text,true,,1894,377,1,1,http://localhost:8081/api/sesiones,2,0,0
+1794786423351,56,POST /api/auth/login,200,,E4 Flujo completo 1-12,text,true,,891,261,1,1,http://localhost:8081/api/auth/login,56,0,0
+1794786423408,3,GET /api/sesiones,200,,E4 Flujo completo 1-12,text,true,,1894,377,1,1,http://localhost:8081/api/sesiones,3,0,0
+1794786423411,6,POST /api/diario,201,,E4 Flujo completo 1-12,text,true,,712,494,1,1,http://localhost:8081/api/diario,6,0,0
+1794786423417,7,PUT /api/diario/{id},200,,E4 Flujo completo 1-12,text,true,,704,496,1,1,http://localhost:8081/api/diario/3058,7,0,0
+1794786423424,4,GET /api/diario/{id} (final),200,,E4 Flujo completo 1-12,text,true,,701,380,1,1,http://localhost:8081/api/diario/3058,4,0,0
+1794786423428,3,GET /api/sesiones,200,,E4 Flujo completo 1-12,text,true,,1894,377,1,1,http://localhost:8081/api/sesiones,3,0,0
+1794786423432,56,POST /api/auth/login,200,,E4 Flujo completo 1-12,text,true,,891,261,1,1,http://localhost:8081/api/auth/login,55,0,0
+1794786423488,4,GET /api/sesiones,200,,E4 Flujo completo 1-12,text,true,,1893,377,1,1,http://localhost:8081/api/sesiones,4,0,0
+1794786423492,6,POST /api/diario,201,,E4 Flujo completo 1-12,text,true,,709,494,1,1,http://localhost:8081/api/diario,6,0,0
+1794786423499,5,PUT /api/diario/{id},200,,E4 Flujo completo 1-12,text,true,,702,496,1,1,http://localhost:8081/api/diario/3059,5,0,0
+1794786423504,3,GET /api/diario/{id} (final),200,,E4 Flujo completo 1-12,text,true,,699,380,1,1,http://localhost:8081/api/diario/3059,3,0,0
+1794786423507,3,GET /api/sesiones,200,,E4 Flujo completo 1-12,text,true,,1893,377,1,1,http://localhost:8081/api/sesiones,3,0,0
+1794786423511,56,POST /api/auth/login,200,,E4 Flujo completo 1-12,text,true,,891,261,1,1,http://localhost:8081/api/auth/login,56,0,0
+1794786423568,3,GET /api/sesiones,200,,E4 Flujo completo 1-12,text,true,,1893,377,1,1,http://localhost:8081/api/sesiones,3,0,0
+1794786423572,5,POST /api/diario,201,,E4 Flujo completo 1-12,text,true,,712,494,1,1,http://localhost:8081/api/diario,5,0,0
+1794786423577,5,PUT /api/diario/{id},200,,E4 Flujo completo 1-12,text,true,,704,496,1,1,http://localhost:8081/api/diario/3060,5,0,0
+1794786423582,4,GET /api/diario/{id} (final),200,,E4 Flujo completo 1-12,text,true,,701,380,1,1,http://localhost:8081/api/diario/3060,4,0,0
+1794786423586,3,GET /api/sesiones,200,,E4 Flujo completo 1-12,text,true,,1893,377,1,1,http://localhost:8081/api/sesiones,3,0,0
+1794786423590,60,POST /api/auth/login,200,,E4 Flujo completo 1-12,text,true,,891,261,1,1,http://localhost:8081/api/auth/login,60,0,0
+1794786423650,4,GET /api/sesiones,200,,E4 Flujo completo 1-12,text,true,,1893,377,1,1,http://localhost:8081/api/sesiones,4,0,0
+1794786423654,6,POST /api/diario,201,,E4 Flujo completo 1-12,text,true,,712,494,1,1,http://localhost:8081/api/diario,6,0,0
+1794786423661,5,PUT /api/diario/{id},200,,E4 Flujo completo 1-12,text,true,,704,496,1,1,http://localhost:8081/api/diario/3061,5,0,0
+1794786423666,4,GET /api/diario/{id} (final),200,,E4 Flujo completo 1-12,text,true,,700,380,1,1,http://localhost:8081/api/diario/3061,4,0,0
+1794786423670,3,GET /api/sesiones,200,,E4 Flujo completo 1-12,text,true,,1893,377,1,1,http://localhost:8081/api/sesiones,3,0,0
+1794786423929,59,POST /api/auth/login,200,,E4 Flujo completo 1-13,text,true,,891,261,1,1,http://localhost:8081/api/auth/login,59,0,1
+1794786423989,4,GET /api/sesiones,200,,E4 Flujo completo 1-13,text,true,,1894,377,1,1,http://localhost:8081/api/sesiones,4,0,0
+1794786423993,6,POST /api/diario,201,,E4 Flujo completo 1-13,text,true,,712,494,1,1,http://localhost:8081/api/diario,6,0,0
+1794786423999,5,PUT /api/diario/{id},200,,E4 Flujo completo 1-13,text,true,,704,496,1,1,http://localhost:8081/api/diario/3062,5,0,0
+1794786424005,3,GET /api/diario/{id} (final),200,,E4 Flujo completo 1-13,text,true,,701,380,1,1,http://localhost:8081/api/diario/3062,3,0,0
+1794786424008,3,GET /api/sesiones,200,,E4 Flujo completo 1-13,text,true,,1894,377,1,1,http://localhost:8081/api/sesiones,3,0,0
+1794786424012,56,POST /api/auth/login,200,,E4 Flujo completo 1-13,text,true,,891,261,1,1,http://localhost:8081/api/auth/login,56,0,0
+1794786424068,4,GET /api/sesiones,200,,E4 Flujo completo 1-13,text,true,,1894,377,1,1,http://localhost:8081/api/sesiones,4,0,0
+1794786424072,6,POST /api/diario,201,,E4 Flujo completo 1-13,text,true,,712,494,1,1,http://localhost:8081/api/diario,6,0,0
+1794786424078,5,PUT /api/diario/{id},200,,E4 Flujo completo 1-13,text,true,,704,496,1,1,http://localhost:8081/api/diario/3063,5,0,0
+1794786424084,4,GET /api/diario/{id} (final),200,,E4 Flujo completo 1-13,text,true,,701,380,1,1,http://localhost:8081/api/diario/3063,4,0,0
+1794786424088,3,GET /api/sesiones,200,,E4 Flujo completo 1-13,text,true,,1894,377,1,1,http://localhost:8081/api/sesiones,3,0,0
+1794786424091,56,POST /api/auth/login,200,,E4 Flujo completo 1-13,text,true,,891,261,1,1,http://localhost:8081/api/auth/login,56,0,0
+1794786424148,4,GET /api/sesiones,200,,E4 Flujo completo 1-13,text,true,,1894,377,1,1,http://localhost:8081/api/sesiones,4,0,0
+1794786424153,5,POST /api/diario,201,,E4 Flujo completo 1-13,text,true,,712,494,1,1,http://localhost:8081/api/diario,5,0,0
+1794786424159,5,PUT /api/diario/{id},200,,E4 Flujo completo 1-13,text,true,,704,496,1,1,http://localhost:8081/api/diario/3064,5,0,0
+1794786424165,3,GET /api/diario/{id} (final),200,,E4 Flujo completo 1-13,text,true,,701,380,1,1,http://localhost:8081/api/diario/3064,3,0,0
+1794786424168,3,GET /api/sesiones,200,,E4 Flujo completo 1-13,text,true,,1894,377,1,1,http://localhost:8081/api/sesiones,3,0,0
+1794786424171,55,POST /api/auth/login,200,,E4 Flujo completo 1-13,text,true,,891,261,1,1,http://localhost:8081/api/auth/login,55,0,0
+1794786424227,4,GET /api/sesiones,200,,E4 Flujo completo 1-13,text,true,,1893,377,1,1,http://localhost:8081/api/sesiones,4,0,0
+1794786424231,6,POST /api/diario,201,,E4 Flujo completo 1-13,text,true,,712,494,1,1,http://localhost:8081/api/diario,6,0,0
+1794786424237,6,PUT /api/diario/{id},200,,E4 Flujo completo 1-13,text,true,,702,496,1,1,http://localhost:8081/api/diario/3065,6,0,0
+1794786424243,3,GET /api/diario/{id} (final),200,,E4 Flujo completo 1-13,text,true,,699,380,1,1,http://localhost:8081/api/diario/3065,3,0,0
+1794786424247,3,GET /api/sesiones,200,,E4 Flujo completo 1-13,text,true,,1893,377,1,1,http://localhost:8081/api/sesiones,3,0,0
+1794786424251,61,POST /api/auth/login,200,,E4 Flujo completo 1-13,text,true,,891,261,1,1,http://localhost:8081/api/auth/login,61,0,0
+1794786424313,4,GET /api/sesiones,200,,E4 Flujo completo 1-13,text,true,,1891,377,1,1,http://localhost:8081/api/sesiones,4,0,0
+1794786424318,6,POST /api/diario,201,,E4 Flujo completo 1-13,text,true,,712,494,1,1,http://localhost:8081/api/diario,5,0,0
+1794786424324,7,PUT /api/diario/{id},200,,E4 Flujo completo 1-13,text,true,,704,496,1,1,http://localhost:8081/api/diario/3066,7,0,0
+1794786424332,4,GET /api/diario/{id} (final),200,,E4 Flujo completo 1-13,text,true,,701,380,1,1,http://localhost:8081/api/diario/3066,4,0,0
+1794786424336,4,GET /api/sesiones,200,,E4 Flujo completo 1-13,text,true,,1891,377,1,1,http://localhost:8081/api/sesiones,4,0,0
+1794786424594,58,POST /api/auth/login,200,,E4 Flujo completo 1-14,text,true,,891,261,1,1,http://localhost:8081/api/auth/login,58,0,1
+1794786424653,3,GET /api/sesiones,200,,E4 Flujo completo 1-14,text,true,,1894,377,1,1,http://localhost:8081/api/sesiones,3,0,0
+1794786424656,6,POST /api/diario,201,,E4 Flujo completo 1-14,text,true,,712,494,1,1,http://localhost:8081/api/diario,6,0,0
+1794786424663,5,PUT /api/diario/{id},200,,E4 Flujo completo 1-14,text,true,,704,496,1,1,http://localhost:8081/api/diario/3067,5,0,0
+1794786424668,3,GET /api/diario/{id} (final),200,,E4 Flujo completo 1-14,text,true,,701,380,1,1,http://localhost:8081/api/diario/3067,3,0,0
+1794786424671,3,GET /api/sesiones,200,,E4 Flujo completo 1-14,text,true,,1894,377,1,1,http://localhost:8081/api/sesiones,3,0,0
+1794786424674,56,POST /api/auth/login,200,,E4 Flujo completo 1-14,text,true,,891,261,1,1,http://localhost:8081/api/auth/login,56,0,0
+1794786424730,4,GET /api/sesiones,200,,E4 Flujo completo 1-14,text,true,,1894,377,1,1,http://localhost:8081/api/sesiones,3,0,0
+1794786424734,5,POST /api/diario,201,,E4 Flujo completo 1-14,text,true,,712,494,1,1,http://localhost:8081/api/diario,5,0,0
+1794786424739,5,PUT /api/diario/{id},200,,E4 Flujo completo 1-14,text,true,,704,496,1,1,http://localhost:8081/api/diario/3068,5,0,0
+1794786424744,3,GET /api/diario/{id} (final),200,,E4 Flujo completo 1-14,text,true,,701,380,1,1,http://localhost:8081/api/diario/3068,3,0,0
+1794786424747,2,GET /api/sesiones,200,,E4 Flujo completo 1-14,text,true,,1894,377,1,1,http://localhost:8081/api/sesiones,2,0,0
+1794786424750,57,POST /api/auth/login,200,,E4 Flujo completo 1-14,text,true,,891,261,1,1,http://localhost:8081/api/auth/login,57,0,0
+1794786424808,3,GET /api/sesiones,200,,E4 Flujo completo 1-14,text,true,,1892,377,1,1,http://localhost:8081/api/sesiones,3,0,0
+1794786424811,5,POST /api/diario,201,,E4 Flujo completo 1-14,text,true,,712,494,1,1,http://localhost:8081/api/diario,5,0,0
+1794786424817,6,PUT /api/diario/{id},200,,E4 Flujo completo 1-14,text,true,,704,496,1,1,http://localhost:8081/api/diario/3069,6,0,0
+1794786424823,3,GET /api/diario/{id} (final),200,,E4 Flujo completo 1-14,text,true,,701,380,1,1,http://localhost:8081/api/diario/3069,3,0,0
+1794786424826,3,GET /api/sesiones,200,,E4 Flujo completo 1-14,text,true,,1892,377,1,1,http://localhost:8081/api/sesiones,3,0,0
+1794786424829,59,POST /api/auth/login,200,,E4 Flujo completo 1-14,text,true,,891,261,1,1,http://localhost:8081/api/auth/login,59,0,0
+1794786424888,4,GET /api/sesiones,200,,E4 Flujo completo 1-14,text,true,,1894,377,1,1,http://localhost:8081/api/sesiones,4,0,0
+1794786424892,6,POST /api/diario,201,,E4 Flujo completo 1-14,text,true,,712,494,1,1,http://localhost:8081/api/diario,6,0,0
+1794786424898,7,PUT /api/diario/{id},200,,E4 Flujo completo 1-14,text,true,,704,496,1,1,http://localhost:8081/api/diario/3070,7,0,0
+1794786424905,5,GET /api/diario/{id} (final),200,,E4 Flujo completo 1-14,text,true,,700,380,1,1,http://localhost:8081/api/diario/3070,5,0,0
+1794786424910,4,GET /api/sesiones,200,,E4 Flujo completo 1-14,text,true,,1894,377,1,1,http://localhost:8081/api/sesiones,4,0,0
+1794786424914,57,POST /api/auth/login,200,,E4 Flujo completo 1-14,text,true,,891,261,1,1,http://localhost:8081/api/auth/login,57,0,0
+1794786424971,4,GET /api/sesiones,200,,E4 Flujo completo 1-14,text,true,,1894,377,1,1,http://localhost:8081/api/sesiones,4,0,0
+1794786424975,6,POST /api/diario,201,,E4 Flujo completo 1-14,text,true,,712,494,1,1,http://localhost:8081/api/diario,6,0,0
+1794786424981,4,PUT /api/diario/{id},200,,E4 Flujo completo 1-14,text,true,,703,496,1,1,http://localhost:8081/api/diario/3071,4,0,0
+1794786424985,3,GET /api/diario/{id} (final),200,,E4 Flujo completo 1-14,text,true,,701,380,1,1,http://localhost:8081/api/diario/3071,3,0,0
+1794786424988,2,GET /api/sesiones,200,,E4 Flujo completo 1-14,text,true,,1894,377,1,1,http://localhost:8081/api/sesiones,2,0,0
+1794786425261,60,POST /api/auth/login,200,,E4 Flujo completo 1-15,text,true,,891,261,1,1,http://localhost:8081/api/auth/login,60,0,1
+1794786425322,4,GET /api/sesiones,200,,E4 Flujo completo 1-15,text,true,,1890,377,1,1,http://localhost:8081/api/sesiones,4,0,0
+1794786425326,6,POST /api/diario,201,,E4 Flujo completo 1-15,text,true,,712,494,1,1,http://localhost:8081/api/diario,6,0,0
+1794786425332,5,PUT /api/diario/{id},200,,E4 Flujo completo 1-15,text,true,,704,496,1,1,http://localhost:8081/api/diario/3072,5,0,0
+1794786425337,3,GET /api/diario/{id} (final),200,,E4 Flujo completo 1-15,text,true,,701,380,1,1,http://localhost:8081/api/diario/3072,3,0,0
+1794786425340,3,GET /api/sesiones,200,,E4 Flujo completo 1-15,text,true,,1890,377,1,1,http://localhost:8081/api/sesiones,3,0,0
+1794786425343,57,POST /api/auth/login,200,,E4 Flujo completo 1-15,text,true,,891,261,1,1,http://localhost:8081/api/auth/login,57,0,0
+1794786425401,3,GET /api/sesiones,200,,E4 Flujo completo 1-15,text,true,,1894,377,1,1,http://localhost:8081/api/sesiones,3,0,0
+1794786425404,5,POST /api/diario,201,,E4 Flujo completo 1-15,text,true,,706,494,1,1,http://localhost:8081/api/diario,5,0,0
+1794786425410,4,PUT /api/diario/{id},200,,E4 Flujo completo 1-15,text,true,,704,496,1,1,http://localhost:8081/api/diario/3073,4,0,0
+1794786425414,3,GET /api/diario/{id} (final),200,,E4 Flujo completo 1-15,text,true,,700,380,1,1,http://localhost:8081/api/diario/3073,3,0,0
+1794786425417,2,GET /api/sesiones,200,,E4 Flujo completo 1-15,text,true,,1894,377,1,1,http://localhost:8081/api/sesiones,2,0,0
+1794786425420,56,POST /api/auth/login,200,,E4 Flujo completo 1-15,text,true,,891,261,1,1,http://localhost:8081/api/auth/login,56,0,0
+1794786425476,4,GET /api/sesiones,200,,E4 Flujo completo 1-15,text,true,,1894,377,1,1,http://localhost:8081/api/sesiones,4,0,0
+1794786425481,4,POST /api/diario,201,,E4 Flujo completo 1-15,text,true,,712,494,1,1,http://localhost:8081/api/diario,4,0,0
+1794786425485,6,PUT /api/diario/{id},200,,E4 Flujo completo 1-15,text,true,,701,496,1,1,http://localhost:8081/api/diario/3074,6,0,0
+1794786425491,3,GET /api/diario/{id} (final),200,,E4 Flujo completo 1-15,text,true,,699,380,1,1,http://localhost:8081/api/diario/3074,3,0,0
+1794786425494,3,GET /api/sesiones,200,,E4 Flujo completo 1-15,text,true,,1894,377,1,1,http://localhost:8081/api/sesiones,3,0,0
+1794786425497,56,POST /api/auth/login,200,,E4 Flujo completo 1-15,text,true,,891,261,1,1,http://localhost:8081/api/auth/login,56,0,0
+1794786425553,4,GET /api/sesiones,200,,E4 Flujo completo 1-15,text,true,,1893,377,1,1,http://localhost:8081/api/sesiones,4,0,0
+1794786425557,6,POST /api/diario,201,,E4 Flujo completo 1-15,text,true,,712,494,1,1,http://localhost:8081/api/diario,6,0,0
+1794786425563,4,PUT /api/diario/{id},200,,E4 Flujo completo 1-15,text,true,,703,496,1,1,http://localhost:8081/api/diario/3075,4,0,0
+1794786425568,3,GET /api/diario/{id} (final),200,,E4 Flujo completo 1-15,text,true,,701,380,1,1,http://localhost:8081/api/diario/3075,3,0,0
+1794786425571,3,GET /api/sesiones,200,,E4 Flujo completo 1-15,text,true,,1893,377,1,1,http://localhost:8081/api/sesiones,3,0,0
+1794786425574,56,POST /api/auth/login,200,,E4 Flujo completo 1-15,text,true,,891,261,1,1,http://localhost:8081/api/auth/login,56,0,0
+1794786425631,4,GET /api/sesiones,200,,E4 Flujo completo 1-15,text,true,,1892,377,1,1,http://localhost:8081/api/sesiones,4,0,0
+1794786425635,5,POST /api/diario,201,,E4 Flujo completo 1-15,text,true,,712,494,1,1,http://localhost:8081/api/diario,5,0,0
+1794786425641,4,PUT /api/diario/{id},200,,E4 Flujo completo 1-15,text,true,,704,496,1,1,http://localhost:8081/api/diario/3076,4,0,0
+1794786425645,3,GET /api/diario/{id} (final),200,,E4 Flujo completo 1-15,text,true,,701,380,1,1,http://localhost:8081/api/diario/3076,3,0,0
+1794786425648,3,GET /api/sesiones,200,,E4 Flujo completo 1-15,text,true,,1892,377,1,1,http://localhost:8081/api/sesiones,3,0,0
