@@ -131,7 +131,11 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ConflictException.class)
     public ResponseEntity<ProblemDetail> conflicto(ConflictException ex, HttpServletRequest request) {
-        return problem(HttpStatus.CONFLICT, ex.getMessage(), request);
+        ProblemDetail detail = createProblem(HttpStatus.CONFLICT, ex.getMessage(), request);
+        if (ex.getCode() != null) {
+            detail.setProperty("codigo", ex.getCode());
+        }
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(detail);
     }
 
     @ExceptionHandler(IllegalStateException.class)

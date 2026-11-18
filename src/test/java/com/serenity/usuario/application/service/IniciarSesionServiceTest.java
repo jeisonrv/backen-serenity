@@ -256,8 +256,9 @@ class IniciarSesionServiceTest {
         when(usuarios.buscarPorEmailIgnorandoMayusculas("ana@b.co"))
                 .thenReturn(Optional.of(new Usuario()));
 
-        assertThrows(ConflictException.class,
+        ConflictException conflict = assertThrows(ConflictException.class,
                 () -> servicio.iniciarSesionConGoogle("credential"));
+        assertEquals("GOOGLE_ACCOUNT_NOT_LINKED", conflict.getCode());
         verify(usuarios, never()).guardar(any());
     }
 
@@ -272,6 +273,39 @@ class IniciarSesionServiceTest {
 
         assertEquals("sub", usuario.getGoogleSubject());
         verify(usuarios).guardar(usuario);
+    }
+
+    @Test void vincularGoogleEsIdempotenteYPermitePosteriorLoginConGoogle() {
+        Usuario usuario = new Usuario(1L, "ana", "ana@b.co", "$2hash", 1, 0, 0, 0);
+        when(google.verificar("credential")).thenReturn(Optional.of(
+                new IdentidadGoogle("sub", "ana@b.co", true, "Ana")));
+        when(usuarios.buscarPorId(1L)).thenReturn(Optional.of(usuario));
+        when(usuarios.buscarPorGoogleSubject("sub"))
+                .thenReturn(Optional.empty(), Optional.of(usuario), Optional.of(usuario));
+        when(jwt.generarToken(1L, "ana@b.co", Rol.USUARIO)).thenReturn("jwt-google");
+
+        servicio.vincularGoogle(1L, "credential");
+        servicio.vincularGoogle(1L, "credential");
+        var resultado = servicio.iniciarSesionConGoogle("credential");
+
+        assertEquals("sub", usuario.getGoogleSubject());
+        assertSame(usuario, resultado.usuario());
+        assertEquals("jwt-google", resultado.token());
+        verify(usuarios, times(1)).guardar(usuario);
+    }
+
+    @Test void cuentaVinculadaConservaLoginConPassword() {
+        Usuario usuario = new Usuario(1L, "ana", "ana@b.co", "$2hash", 1, 0, 0, 0);
+        usuario.setGoogleSubject("sub");
+        when(usuarios.buscarPorEmailIgnorandoMayusculas("ana@b.co"))
+                .thenReturn(Optional.of(usuario));
+        when(encoder.matches("correcta", "$2hash")).thenReturn(true);
+        when(jwt.generarToken(1L, "ana@b.co", Rol.USUARIO)).thenReturn("jwt-password");
+
+        var resultado = servicio.iniciarSesion("ana@b.co", "correcta");
+
+        assertSame(usuario, resultado.usuario());
+        assertEquals("jwt-password", resultado.token());
     }
 
     @Test void vincularGoogleRechazaUsuarioInexistenteYSubjectDeOtraCuenta() {
@@ -301,7 +335,7 @@ class IniciarSesionServiceTest {
         assertThrows(ConflictException.class, () -> servicio.vincularGoogle(1L, "credential"));
         usuario.setGoogleSubject("sub");
         servicio.vincularGoogle(1L, "credential");
-        verify(usuarios).guardar(usuario);
+        verify(usuarios, never()).guardar(any());
     }
 
     @Test void vincularGoogleRechazaSubjectVinculadoAOtroUsuario() {
@@ -355,7 +389,7 @@ class IniciarSesionServiceTest {
 
         servicio.vincularGoogle(1L, "credential");
 
-        verify(usuarios).guardar(usuario);
+        verify(usuarios, never()).guardar(any());
     }
 
     private IniciarSesionService servicioCon(PasswordEncoder passwordEncoder) {

@@ -86,6 +86,11 @@ public class SecurityConfig {
                                 "/api/auth/cambiar-password"
                         ).authenticated()
 
+                        .requestMatchers(
+                                HttpMethod.POST,
+                                "/api/auth/crear-password"
+                        ).authenticated()
+
                         // Rutas públicas de autenticación
                         .requestMatchers("/api/auth/**").permitAll()
 

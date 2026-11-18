@@ -7,4 +7,6 @@ public interface CambiarPasswordUseCase {
             String passwordActual,
             String passwordNueva
     );
+
+    void crear(Long usuarioId, String passwordNueva);
 }

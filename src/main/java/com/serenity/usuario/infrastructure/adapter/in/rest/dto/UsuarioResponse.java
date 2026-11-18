@@ -6,10 +6,12 @@ import java.time.LocalDateTime;
 public record UsuarioResponse(Long id, String username, String email, int nivel, int xp,
                               Long idUsuario, String nombreUsuario, String correo,
                               int experiencia, int racha, int mejorRacha,
-                              java.time.LocalDate ultimaActividad, LocalDateTime fechaRegistro, String rol) {
+                              java.time.LocalDate ultimaActividad, LocalDateTime fechaRegistro, String rol,
+                              boolean googleVinculado) {
     public static UsuarioResponse desde(Usuario u) {
         return new UsuarioResponse(u.getId(), u.getUsername(), u.getEmail(), u.getNivel(), u.getXp(),
                 u.getId(), u.getUsername(), u.getEmail(), u.getXp(), u.getRacha(), u.getMejorRacha(),
-                u.getUltimaActividad(), null, u.getRol().name());
+                u.getUltimaActividad(), null, u.getRol().name(),
+                u.getGoogleSubject() != null && !u.getGoogleSubject().isBlank());
     }
 }

@@ -44,6 +44,13 @@ public class UsuarioController {
             String passwordNueva
     ) {}
 
+    public record CrearPasswordRequest(
+            @NotBlank
+            @Size(min = 8, max = 72,
+                    message = "La contraseña debe tener entre 8 y 72 caracteres")
+            String passwordNueva
+    ) {}
+
     private final RegistrarUsuarioUseCase registrarUsuario;
     private final IniciarSesionUseCase iniciarSesion;
     private final CambiarPasswordUseCase cambiarPassword;
@@ -136,6 +143,15 @@ public class UsuarioController {
                 request.passwordNueva()
         );
 
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/crear-password")
+    public ResponseEntity<Void> crearPassword(
+            @Valid @RequestBody CrearPasswordRequest request,
+            @AuthenticationPrincipal AuthenticatedUser user
+    ) {
+        cambiarPassword.crear(user.id(), request.passwordNueva());
         return ResponseEntity.noContent().build();
     }
 }

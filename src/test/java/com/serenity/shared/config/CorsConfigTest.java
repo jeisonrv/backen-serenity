@@ -11,7 +11,7 @@ class CorsConfigTest {
     @Test void configuraOrigenesMetodosCabecerasYCredenciales() {
         CorsConfig config = new CorsConfig();
         ReflectionTestUtils.setField(config, "allowedOrigins",
-                "https://brave-ocean-059a058103.azurestaticapps.net, http://localhost:4200 ");
+                "https://brave-ocean-059a05810.3.azurestaticapps.net , http://localhost:4200 ");
 
         CorsConfigurationSource source = config.corsConfigurationSource();
         CorsConfiguration cors = source.getCorsConfiguration(
@@ -19,10 +19,13 @@ class CorsConfigTest {
 
         assertNotNull(cors);
         assertEquals(java.util.List.of(
-                "https://brave-ocean-059a058103.azurestaticapps.net",
+                "https://brave-ocean-059a05810.3.azurestaticapps.net",
                 "http://localhost:4200"), cors.getAllowedOrigins());
         assertEquals(java.util.List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"), cors.getAllowedMethods());
         assertEquals(java.util.List.of("*"), cors.getAllowedHeaders());
+        assertTrue(cors.checkOrigin("https://brave-ocean-059a05810.3.azurestaticapps.net") != null);
+        assertTrue(cors.checkHeaders(java.util.List.of("Authorization", "Content-Type"))
+                .containsAll(java.util.List.of("Authorization", "Content-Type")));
         assertEquals(java.util.List.of("Authorization"), cors.getExposedHeaders());
         assertTrue(cors.getAllowCredentials());
     }

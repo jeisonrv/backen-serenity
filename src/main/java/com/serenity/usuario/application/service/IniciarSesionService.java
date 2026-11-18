@@ -188,6 +188,10 @@ public class IniciarSesionService implements IniciarSesionUseCase {
             );
         }
 
+        if (identidad.subject().equals(usuario.getGoogleSubject())) {
+            return;
+        }
+
         usuario.setGoogleSubject(identidad.subject());
         repositorio.guardar(usuario);
     }
@@ -200,7 +204,8 @@ public class IniciarSesionService implements IniciarSesionUseCase {
                 .isPresent()) {
             throw new ConflictException(
                     "Ya existe una cuenta con este correo. "
-                            + "Inicia sesión y vincula Google desde tu cuenta"
+                            + "Inicia sesión y vincula Google desde tu cuenta",
+                    "GOOGLE_ACCOUNT_NOT_LINKED"
             );
         }
 

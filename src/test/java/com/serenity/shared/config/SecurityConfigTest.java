@@ -76,6 +76,16 @@ class SecurityConfigTest {
         verify(acceso).verificarAcceso(5L);
     }
 
+    @Test void crearPasswordRequiereAutenticacionJwtReal() throws Exception {
+        mvc.perform(post("/api/auth/crear-password"))
+                .andExpect(status().isUnauthorized());
+
+        mvc.perform(post("/api/auth/crear-password")
+                        .header("Authorization", "Bearer " + tokenJwt(Rol.USUARIO)))
+                .andExpect(status().isNotFound());
+        verify(acceso).verificarAcceso(5L);
+    }
+
     @Test void registroEInicioDeSesionContinuanPublicos() throws Exception {
         mvc.perform(post("/api/auth/registro"))
                 .andExpect(status().isNotFound());
