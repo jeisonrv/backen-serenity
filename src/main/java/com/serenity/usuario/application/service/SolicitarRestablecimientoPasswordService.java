@@ -51,12 +51,8 @@ public class SolicitarRestablecimientoPasswordService implements SolicitarRestab
   String texto="Restablece tu contraseña de Serenity (válido por 30 minutos): "+link+"\nSi no solicitaste este cambio, ignora este mensaje.";
   try { correo.enviar(usuario.getEmail(),"Recupera tu contraseña de Serenity",html,texto); }
   catch (RuntimeException ex) {
-   // Mantener una respuesta genérica al cliente y registrar la causa para diagnóstico.
-   log.warn(
-           "No se pudo enviar un correo de recuperación. Causa: {}",
-           ex.getMessage(),
-           ex
-   );
+   // Mantener una respuesta genérica y no registrar detalles de la solicitud ni del proveedor.
+   log.warn("No se pudo enviar un correo de recuperación");
   }
  }
  static String sha256(String value){

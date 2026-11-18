@@ -1,12 +1,14 @@
 package com.serenity.shared.config;
 
 import com.serenity.frase.application.port.in.ObtenerFraseDelDiaUseCase;
+import com.serenity.shared.consent.ConsentService;
 import com.serenity.shared.security.JwtUtil;
 import com.serenity.usuario.application.port.in.GestionarAccesoUseCase;
 import com.serenity.usuario.domain.model.Rol;
-import io.jsonwebtoken.Claims;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
+import org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
@@ -18,11 +20,19 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(controllers = com.serenity.frase.infrastructure.adapter.in.rest.FraseMotivacionalController.class)
-@Import(SecurityConfig.class)
+@WebMvcTest(
+        controllers = com.serenity.frase.infrastructure.adapter.in.rest.FraseMotivacionalController.class,
+        properties = {
+                "jwt.secret=security-config-test-key-with-at-least-32-bytes",
+                "jwt.expiration=60000"
+        }
+)
+@Import({SecurityConfig.class, JwtUtil.class})
+@ImportAutoConfiguration(exclude = UserDetailsServiceAutoConfiguration.class)
 class SecurityConfigTest {
     @Autowired MockMvc mvc;
-    @MockBean JwtUtil jwt;
+    @Autowired JwtUtil jwt;
+    @MockBean ConsentService consentService;
     @MockBean GestionarAccesoUseCase acceso;
     @MockBean ObtenerFraseDelDiaUseCase frases;
 
@@ -50,26 +60,41 @@ class SecurityConfigTest {
                 .andExpect(status().isNotFound());
     }
 
-    @Test void rutasDeOyenteRechazanRolUsuarioConProblemDetail403() throws Exception {
-        prepararJwt(Rol.USUARIO);
+    @Test void cambiarPasswordRequiereAutenticacionJwtReal() throws Exception {
+        mvc.perform(post("/api/auth/cambiar-password"))
+                .andExpect(status().isUnauthorized());
 
-        mvc.perform(get("/api/oyente/recurso").header("Authorization", "Bearer token-valido"))
+        mvc.perform(post("/api/auth/cambiar-password")
+                        .header("Authorization", "Bearer " + tokenJwt(Rol.USUARIO)))
+                .andExpect(status().isNotFound());
+        verify(acceso).verificarAcceso(5L);
+    }
+
+    @Test void registroEInicioDeSesionContinuanPublicos() throws Exception {
+        mvc.perform(post("/api/auth/registro"))
+                .andExpect(status().isNotFound());
+
+        mvc.perform(post("/api/auth/login"))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test void rutasDeOyenteRechazanRolUsuarioConProblemDetail403() throws Exception {
+        mvc.perform(get("/api/oyente/recurso")
+                        .header("Authorization", "Bearer " + tokenJwt(Rol.USUARIO)))
                 .andExpect(status().isForbidden())
                 .andExpect(content().contentTypeCompatibleWith("application/problem+json"))
                 .andExpect(jsonPath("$.detail").value("Acceso denegado"));
     }
 
     @Test void rutasDeModeracionRechazanRolOyente() throws Exception {
-        prepararJwt(Rol.OYENTE);
-
-        mvc.perform(get("/api/moderacion/reportes").header("Authorization", "Bearer token-valido"))
+        mvc.perform(get("/api/moderacion/reportes")
+                        .header("Authorization", "Bearer " + tokenJwt(Rol.OYENTE)))
                 .andExpect(status().isForbidden());
     }
 
     @Test void rolCorrectoPuedePasarLaReglaDeAutorizacion() throws Exception {
-        prepararJwt(Rol.OYENTE);
-
-        mvc.perform(get("/api/oyente/recurso").header("Authorization", "Bearer token-valido"))
+        mvc.perform(get("/api/oyente/recurso")
+                        .header("Authorization", "Bearer " + tokenJwt(Rol.OYENTE)))
                 .andExpect(status().isNotFound());
         verify(acceso).verificarAcceso(5L);
     }
@@ -79,11 +104,8 @@ class SecurityConfigTest {
                 .andExpect(status().isNotFound());
     }
 
-    private void prepararJwt(Rol rol) {
-        Claims claims = mock(Claims.class);
-        when(jwt.validarToken("token-valido")).thenReturn(claims);
-        when(claims.get("usuarioId", Number.class)).thenReturn(5L);
-        when(claims.getSubject()).thenReturn("masked-user");
+    private String tokenJwt(Rol rol) {
         when(acceso.verificarAcceso(5L)).thenReturn(rol);
+        return jwt.generarToken(5L, "user@example.test");
     }
 }

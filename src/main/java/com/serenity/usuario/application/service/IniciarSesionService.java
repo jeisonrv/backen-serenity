@@ -83,28 +83,13 @@ public class IniciarSesionService implements IniciarSesionUseCase {
         }
 
         boolean credencialesValidas;
-
-        if (passwordAlmacenada.startsWith("$2")) {
-            // Contraseña almacenada como hash BCrypt.
+        try {
             credencialesValidas = passwordEncoder.matches(
                     passwordPlano,
                     passwordAlmacenada
             );
-        } else {
-            /*
-             * Compatibilidad con registros antiguos que guardaban
-             * la contraseña en texto plano.
-             *
-             * Si coincide, migramos al hash BCrypt.
-             */
-            credencialesValidas = passwordPlano.equals(passwordAlmacenada);
-
-            if (credencialesValidas) {
-                usuario.setPasswordHash(
-                        passwordEncoder.encode(passwordPlano)
-                );
-                repositorio.guardar(usuario);
-            }
+        } catch (IllegalArgumentException ex) {
+            credencialesValidas = false;
         }
 
         if (!credencialesValidas) {

@@ -81,6 +81,11 @@ public class SecurityConfig {
                                 "/api/auth/google/vincular"
                         ).authenticated()
 
+                        .requestMatchers(
+                                HttpMethod.POST,
+                                "/api/auth/cambiar-password"
+                        ).authenticated()
+
                         // Rutas públicas de autenticación
                         .requestMatchers("/api/auth/**").permitAll()
 

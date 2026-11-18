@@ -1,6 +1,7 @@
 package com.serenity.usuario.application.service;
 
 import com.serenity.notificacion.application.port.in.EnviarCorreoTransaccionalUseCase;
+import com.serenity.shared.consent.ConsentService;
 import com.serenity.shared.exception.AccesoRestringidoException;
 import com.serenity.shared.exception.ConflictException;
 import com.serenity.shared.exception.CredencialesInvalidasException;
@@ -15,6 +16,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
@@ -30,9 +32,12 @@ class IniciarSesionServiceTest {
     @Mock PasswordEncoder encoder;
     @Mock VerificarIdentidadGooglePort google;
     @Mock EnviarCorreoTransaccionalUseCase correo;
+    @Mock ConsentService consentimientos;
     IniciarSesionService servicio;
 
-    @BeforeEach void crearServicio() { servicio = new IniciarSesionService(usuarios, jwt, encoder, google, correo); }
+    @BeforeEach void crearServicio() {
+        servicio = new IniciarSesionService(usuarios, jwt, encoder, google, correo, consentimientos);
+    }
 
     @Test void emailNuloBlancoYPasswordNulaOVaciaSonInvalidos() {
         assertThrows(CredencialesInvalidasException.class, () -> servicio.iniciarSesion(null, "x"));
@@ -69,18 +74,19 @@ class IniciarSesionServiceTest {
         verifyNoInteractions(encoder, jwt);
     }
 
-    @Test void passwordEnTextoPlanoSeMigraABcryptCuandoCoincide() {
+    @Test void passwordEnTextoPlanoSeRechazaSinGuardarNiModificarUsuario() {
         Usuario usuario = new Usuario(1L, "ana", "a@b.co", "clave-antigua", 1, 0, 0, 0);
         when(usuarios.buscarPorEmail("a@b.co")).thenReturn(Optional.of(usuario));
-        when(encoder.encode("clave-antigua")).thenReturn("$2nuevo-hash");
-        when(jwt.generarToken(1L, "a@b.co")).thenReturn("jwt-firmado");
+        when(encoder.matches("clave-antigua", "clave-antigua")).thenReturn(false);
 
-        var resultado = servicio.iniciarSesion("a@b.co", "clave-antigua");
+        assertThrows(CredencialesInvalidasException.class,
+                () -> servicio.iniciarSesion("a@b.co", "clave-antigua"));
 
-        assertEquals("$2nuevo-hash", usuario.getPasswordHash());
-        assertEquals("jwt-firmado", resultado.token());
-        verify(usuarios).guardar(usuario);
-        verify(encoder, never()).matches(anyString(), anyString());
+        assertEquals("clave-antigua", usuario.getPasswordHash());
+        verify(usuarios, never()).guardar(any());
+        verify(encoder).matches("clave-antigua", "clave-antigua");
+        verify(encoder, never()).encode(anyString());
+        verifyNoInteractions(jwt);
     }
 
     @Test void passwordEnTextoPlanoIncorrectaNoGuardaUsuario() {
@@ -90,7 +96,38 @@ class IniciarSesionServiceTest {
         assertThrows(CredencialesInvalidasException.class,
                 () -> servicio.iniciarSesion("a@b.co", "clave-incorrecta"));
         verify(usuarios, never()).guardar(any());
-        verifyNoInteractions(encoder, jwt);
+        verify(encoder).matches("clave-incorrecta", "clave-antigua");
+        verifyNoInteractions(jwt);
+    }
+
+    @Test void bcryptRealPermiteClaveCorrectaYRechazaIncorrectaSinCambiarElHash() {
+        BCryptPasswordEncoder bcrypt = new BCryptPasswordEncoder();
+        String password = "clave-de-prueba-segura";
+        String hash = bcrypt.encode(password);
+        Usuario usuario = new Usuario(1L, "ana", "a@b.co", hash, 1, 0, 0, 0);
+        when(usuarios.buscarPorEmail("a@b.co")).thenReturn(Optional.of(usuario));
+        when(jwt.generarToken(1L, "a@b.co")).thenReturn("jwt-firmado");
+        IniciarSesionService servicioConBcryptReal = servicioCon(bcrypt);
+
+        var resultado = servicioConBcryptReal.iniciarSesion("a@b.co", password);
+
+        assertSame(usuario, resultado.usuario());
+        assertEquals("jwt-firmado", resultado.token());
+        assertEquals(hash, usuario.getPasswordHash());
+        assertThrows(CredencialesInvalidasException.class,
+                () -> servicioConBcryptReal.iniciarSesion("a@b.co", "clave-incorrecta"));
+        verify(usuarios, never()).guardar(any());
+    }
+
+    @Test void hashBcryptInvalidoSeRechaza() {
+        Usuario usuario = new Usuario(1L, "ana", "a@b.co", "$2a$hash-invalido", 1, 0, 0, 0);
+        when(usuarios.buscarPorEmail("a@b.co")).thenReturn(Optional.of(usuario));
+        IniciarSesionService servicioConBcryptReal = servicioCon(new BCryptPasswordEncoder());
+
+        assertThrows(CredencialesInvalidasException.class,
+                () -> servicioConBcryptReal.iniciarSesion("a@b.co", "cualquier-clave"));
+        verify(usuarios, never()).guardar(any());
+        verifyNoInteractions(jwt);
     }
 
     @Test void usuarioRestringidoNoPuedeIniciarSesion() {
@@ -116,12 +153,18 @@ class IniciarSesionServiceTest {
         when(google.verificar("credential")).thenReturn(Optional.of(identidad));
         when(usuarios.buscarPorGoogleSubject("sub-1")).thenReturn(Optional.empty());
         when(usuarios.buscarPorEmailIgnorandoMayusculas("ana@b.co")).thenReturn(Optional.empty());
-        when(usuarios.guardar(any(Usuario.class))).thenAnswer(inv -> inv.getArgument(0));
+        when(usuarios.guardar(any(Usuario.class))).thenAnswer(inv -> {
+            Usuario usuario = inv.getArgument(0);
+            usuario.setId(10L);
+            return usuario;
+        });
         when(jwt.generarToken(any(), eq("ana@b.co"))).thenReturn("jwt-google");
-        var resultado = servicio.iniciarSesionConGoogle("credential");
+        var resultado = servicio.iniciarSesionConGoogle("credential", "Ana_Pérez", true, false);
         assertEquals("jwt-google", resultado.token());
         assertEquals("Ana_Pérez", resultado.usuario().getUsername());
         verify(correo).enviarBienvenida(resultado.usuario());
+        verify(consentimientos).prepareRegistration(resultado.usuario(), false);
+        verify(consentimientos).recordRegistration(10L, false);
     }
 
     @Test void googleIniciaSesionConUsuarioYaVinculadoSinCrearCuentaNueva() {
@@ -240,7 +283,7 @@ class IniciarSesionServiceTest {
         verify(usuarios, never()).guardar(any());
     }
 
-    @Test void nombreGoogleAusenteUsaPrefijoDeCorreoYLimitaNombresLargos() {
+    @Test void nombreGoogleAusenteUsaUsernameSolicitadoYLimitaNombresLargos() {
         var identidadNombreAusente = new IdentidadGoogle("sub-corto", "a@b.co", true, null);
         var identidadNombreLargo = new IdentidadGoogle("sub-largo", "larga@b.co", true, "A".repeat(55));
         var identidadCorreoSinSeparador = new IdentidadGoogle("sub-sin-email", "sin-separador", true, null);
@@ -256,11 +299,11 @@ class IniciarSesionServiceTest {
         when(usuarios.guardar(any(Usuario.class))).thenAnswer(inv -> inv.getArgument(0));
         when(jwt.generarToken(any(), anyString())).thenReturn("jwt-firmado");
 
-        var corto = servicio.iniciarSesionConGoogle("corto");
-        var largo = servicio.iniciarSesionConGoogle("largo");
-        var sinSeparador = servicio.iniciarSesionConGoogle("sin-separador");
+        var corto = servicio.iniciarSesionConGoogle("corto", "usuario_corto", true, false);
+        var largo = servicio.iniciarSesionConGoogle("largo", "A".repeat(50), true, false);
+        var sinSeparador = servicio.iniciarSesionConGoogle("sin-separador", "google_user", true, false);
 
-        assertEquals("g_a", corto.usuario().getUsername());
+        assertEquals("usuario_corto", corto.usuario().getUsername());
         assertEquals(50, largo.usuario().getUsername().codePointCount(0, largo.usuario().getUsername().length()));
         assertEquals("google_user", sinSeparador.usuario().getUsername());
         verify(correo).enviarBienvenida(corto.usuario());
@@ -279,5 +322,16 @@ class IniciarSesionServiceTest {
         servicio.vincularGoogle(1L, "credential");
 
         verify(usuarios).guardar(usuario);
+    }
+
+    private IniciarSesionService servicioCon(PasswordEncoder passwordEncoder) {
+        return new IniciarSesionService(
+                usuarios,
+                jwt,
+                passwordEncoder,
+                google,
+                correo,
+                consentimientos
+        );
     }
 }

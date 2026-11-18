@@ -31,12 +31,20 @@ class RecordatorioDiarioServiceTest {
             registrado.set(true);
             return inv.getArgument(0);
         });
-        var servicio = new RecordatorioDiarioService(usuarios, sesiones, enviados, correo);
+        var servicio = new RecordatorioDiarioService(usuarios, sesiones, enviados, correo, true);
 
         servicio.enviarRecordatoriosPendientes();
         servicio.enviarRecordatoriosPendientes();
 
         verify(correo, times(1)).enviar(eq("ana@b.co"), anyString(), anyString(), anyString());
         verify(enviados, times(1)).saveAndFlush(any(RecordatorioEnviadoJpaEntity.class));
+    }
+
+    @Test void emailDeshabilitadoNoConsultaNiEnviaRecordatorios() {
+        var servicio = new RecordatorioDiarioService(usuarios, sesiones, enviados, correo, false);
+
+        servicio.enviarRecordatoriosPendientes();
+
+        verifyNoInteractions(usuarios, sesiones, enviados, correo);
     }
 }
