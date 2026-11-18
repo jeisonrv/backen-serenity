@@ -78,7 +78,8 @@ public class SecurityConfig {
                         // Vinculación de Google: requiere autenticación
                         .requestMatchers(
                                 HttpMethod.POST,
-                                "/api/auth/google/vincular"
+                                "/api/auth/google/vincular",
+                                "/api/auth/vincular"
                         ).authenticated()
 
                         .requestMatchers(

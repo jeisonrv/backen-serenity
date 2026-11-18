@@ -125,6 +125,35 @@ class UsuarioControllerLoginTest {
     }
 
     @Test
+    void vincularGoogleAceptaLaRutaCortaConSesionSerenity() throws Exception {
+        when(gestionarAcceso.verificarAcceso(34L)).thenReturn(Rol.USUARIO);
+        String jwt = jwtUtil.generarToken(34L, "perfil@example.com", Rol.USUARIO);
+
+        mvc.perform(post("/api/auth/vincular")
+                        .header("Authorization", "Bearer " + jwt)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {"credential":"google-id-token"}
+                                """))
+                .andExpect(status().isNoContent());
+
+        verify(iniciarSesion).vincularGoogle(34L, "google-id-token");
+    }
+
+    @Test
+    void vincularGoogleNoAceptaIdTokenGoogleComoBearerDeSerenity() throws Exception {
+        mvc.perform(post("/api/auth/vincular")
+                        .header("Authorization", "Bearer google-id-token")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {"credential":"google-id-token"}
+                                """))
+                .andExpect(status().isUnauthorized());
+
+        verify(iniciarSesion, never()).vincularGoogle(anyLong(), anyString());
+    }
+
+    @Test
     void perfilActualSinSesionDevuelve401() throws Exception {
         mvc.perform(get("/api/usuarios/me"))
                 .andExpect(status().isUnauthorized());

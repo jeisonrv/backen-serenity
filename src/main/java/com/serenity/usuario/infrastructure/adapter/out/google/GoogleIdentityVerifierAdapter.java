@@ -22,19 +22,24 @@ import java.util.Optional;
 public class GoogleIdentityVerifierAdapter implements VerificarIdentidadGooglePort {
     private static final Logger log = LoggerFactory.getLogger(GoogleIdentityVerifierAdapter.class);
 
-    private final String clientId;
     private final GoogleIdTokenVerifier verifier;
 
     public GoogleIdentityVerifierAdapter(@Value("${google.oauth.client-id:}") String clientId) {
-        this.clientId = clientId == null ? "" : clientId.strip();
-        if (this.clientId.isBlank()) {
-            this.verifier = null;
-            return;
-        }
+        String normalizedClientId = clientId == null ? "" : clientId.strip();
+        this.verifier = normalizedClientId.isBlank()
+                ? null
+                : crearVerificador(normalizedClientId);
+    }
+
+    GoogleIdentityVerifierAdapter(GoogleIdTokenVerifier verifier) {
+        this.verifier = verifier;
+    }
+
+    static GoogleIdTokenVerifier crearVerificador(String clientId) {
         try {
-            this.verifier = new GoogleIdTokenVerifier.Builder(
+            return new GoogleIdTokenVerifier.Builder(
                     GoogleNetHttpTransport.newTrustedTransport(), GsonFactory.getDefaultInstance())
-                    .setAudience(List.of(this.clientId))
+                    .setAudience(List.of(clientId))
                     .build();
         } catch (GeneralSecurityException | IOException ex) {
             throw new IllegalStateException("No se pudo inicializar la verificación de Google", ex);

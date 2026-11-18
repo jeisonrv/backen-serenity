@@ -119,7 +119,7 @@ public class UsuarioController {
         );
     }
 
-    @PostMapping("/google/vincular")
+    @PostMapping({"/google/vincular", "/vincular"})
     public ResponseEntity<Void> vincularGoogle(
             @Valid @RequestBody GoogleLoginRequest req,
             @AuthenticationPrincipal AuthenticatedUser user

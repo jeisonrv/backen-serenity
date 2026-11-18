@@ -56,6 +56,9 @@ class SecurityConfigTest {
         mvc.perform(post("/api/auth/google/vincular"))
                 .andExpect(status().isUnauthorized());
 
+        mvc.perform(post("/api/auth/vincular"))
+                .andExpect(status().isUnauthorized());
+
         mvc.perform(get("/api/auth/ruta-no-mapeada"))
                 .andExpect(status().isNotFound());
     }
