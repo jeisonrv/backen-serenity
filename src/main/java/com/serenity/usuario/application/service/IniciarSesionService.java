@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.Optional;
 
 @Service
 public class IniciarSesionService implements IniciarSesionUseCase {
@@ -55,13 +56,14 @@ public class IniciarSesionService implements IniciarSesionUseCase {
 
     @Override
     public ResultadoLogin iniciarSesion(String email, String passwordPlano) {
-        String correo = enmascararCorreo(email);
+        log.info("login.stage=start");
         try {
             ResultadoLogin resultado = autenticar(email, passwordPlano);
-            log.info("Inicio de sesión exitoso para {}", correo);
+            log.info("login.stage=complete outcome=success");
             return resultado;
         } catch (RuntimeException ex) {
-            log.warn("Fallo de inicio de sesión para {}", correo);
+            log.warn("login.stage=complete outcome=error exceptionType={}",
+                    ex.getClass().getSimpleName());
             throw ex;
         }
     }
@@ -73,12 +75,23 @@ public class IniciarSesionService implements IniciarSesionUseCase {
             throw new CredencialesInvalidasException();
         }
 
-        Usuario usuario = repositorio.buscarPorEmailIgnorandoMayusculas(email.strip())
-                .orElseThrow(CredencialesInvalidasException::new);
+        Optional<Usuario> usuarioEncontrado;
+        try {
+            usuarioEncontrado = repositorio.buscarPorEmailIgnorandoMayusculas(email.strip());
+        } catch (RuntimeException ex) {
+            log.warn("login.stage=user_lookup outcome=error exceptionType={}",
+                    ex.getClass().getSimpleName());
+            throw ex;
+        }
+        boolean encontrado = usuarioEncontrado.isPresent();
+        log.info("login.stage=user_lookup userFound={}", encontrado);
+        Usuario usuario = usuarioEncontrado.orElseThrow(CredencialesInvalidasException::new);
 
         String passwordAlmacenada = usuario.getPasswordHash();
+        boolean hashPresente = passwordAlmacenada != null && !passwordAlmacenada.isBlank();
+        log.info("login.stage=password_hash hashPresent={}", hashPresente);
 
-        if (passwordAlmacenada == null || passwordAlmacenada.isBlank()) {
+        if (!hashPresente) {
             throw new CredencialesInvalidasException();
         }
 
@@ -89,14 +102,22 @@ public class IniciarSesionService implements IniciarSesionUseCase {
                     passwordAlmacenada
             );
         } catch (IllegalArgumentException ex) {
+            log.warn("login.stage=bcrypt outcome=exception exceptionType={}",
+                    ex.getClass().getSimpleName());
             credencialesValidas = false;
+        } catch (RuntimeException ex) {
+            log.warn("login.stage=bcrypt outcome=exception exceptionType={}",
+                    ex.getClass().getSimpleName());
+            throw ex;
         }
+        log.info("login.stage=bcrypt bcryptMatched={}", credencialesValidas);
 
         if (!credencialesValidas) {
             throw new CredencialesInvalidasException();
         }
 
-        return crearResultadoLogin(usuario);
+        log.info("login.stage=credentials outcome=accepted");
+        return crearResultadoLogin(usuario, true);
     }
 
     @Override
@@ -246,18 +267,41 @@ public class IniciarSesionService implements IniciarSesionUseCase {
     }
 
     private ResultadoLogin crearResultadoLogin(Usuario usuario) {
+        return crearResultadoLogin(usuario, false);
+    }
+
+    private ResultadoLogin crearResultadoLogin(Usuario usuario, boolean registrarDiagnostico) {
 
         if (usuario.estaRestringido(LocalDateTime.now(ZONA_HORARIA))) {
+            if (registrarDiagnostico) {
+                log.warn("login.stage=access_check outcome=restricted exceptionType={}",
+                        AccesoRestringidoException.class.getSimpleName());
+            }
             throw new AccesoRestringidoException(
                     usuario.getRestringidoHasta()
             );
         }
 
-        String token = jwtUtil.generarToken(
-                usuario.getId(),
-                usuario.getEmail(),
-                usuario.getRol()
-        );
+        if (registrarDiagnostico) {
+            log.info("login.stage=jwt_generation outcome=started");
+        }
+        String token;
+        try {
+            token = jwtUtil.generarToken(
+                    usuario.getId(),
+                    usuario.getEmail(),
+                    usuario.getRol()
+            );
+        } catch (RuntimeException ex) {
+            if (registrarDiagnostico) {
+                log.error("login.stage=jwt_generation outcome=error exceptionType={}",
+                        ex.getClass().getSimpleName());
+            }
+            throw ex;
+        }
+        if (registrarDiagnostico) {
+            log.info("login.stage=jwt_generation outcome=success");
+        }
 
         return new ResultadoLogin(usuario, token);
     }
