@@ -1,0 +1,9 @@
+serenitybienestar.site, www.serenitybienestar.site {
+	encode zstd gzip
+
+	reverse_proxy frontend:8080 {
+		# Caddy conserva Host y gestiona X-Forwarded-For/Proto/Host por defecto.
+		header_up Host {host}
+		header_up X-Real-IP {remote_host}
+	}
+}

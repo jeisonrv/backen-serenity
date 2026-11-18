@@ -184,14 +184,13 @@ class ChatServiceTest {
         verify(repository).guardarMensaje(mensajes.get(0));
     }
 
-    @Test void enviarMensajeEnEsperaGuardaRespuestaAutomatica() {
+    @Test void enviarMensajeEnEsperaGuardaSoloMensajeDelUsuario() {
         when(repository.buscarParticipante(4L, 2L)).thenReturn(new Conversacion(4L, 2L, null, null, null));
         var mensajes = servicio.enviarMensaje(4L, 2L, "hola");
-        assertEquals(2, mensajes.size());
+        assertEquals(1, mensajes.size());
         assertEquals("usuario", mensajes.get(0).remitente());
-        assertEquals("oyente", mensajes.get(1).remitente());
-        assertEquals(mensajes.get(0).fechaEnvio(), mensajes.get(1).fechaEnvio());
-        verify(repository, times(2)).guardarMensaje(any());
+        assertEquals("hola", mensajes.get(0).contenido());
+        verify(repository).guardarMensaje(mensajes.get(0));
     }
 
     @Test void enviarMensajeIgnoraContenidoVacioYRechazaConversacionFinalizada() {
