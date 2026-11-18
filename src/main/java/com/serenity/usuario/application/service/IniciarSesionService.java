@@ -73,7 +73,7 @@ public class IniciarSesionService implements IniciarSesionUseCase {
             throw new CredencialesInvalidasException();
         }
 
-        Usuario usuario = repositorio.buscarPorEmail(email.strip())
+        Usuario usuario = repositorio.buscarPorEmailIgnorandoMayusculas(email.strip())
                 .orElseThrow(CredencialesInvalidasException::new);
 
         String passwordAlmacenada = usuario.getPasswordHash();
@@ -255,7 +255,8 @@ public class IniciarSesionService implements IniciarSesionUseCase {
 
         String token = jwtUtil.generarToken(
                 usuario.getId(),
-                usuario.getEmail()
+                usuario.getEmail(),
+                usuario.getRol()
         );
 
         return new ResultadoLogin(usuario, token);

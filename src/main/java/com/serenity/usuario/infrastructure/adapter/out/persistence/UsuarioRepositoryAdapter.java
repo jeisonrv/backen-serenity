@@ -4,6 +4,7 @@ package com.serenity.usuario.infrastructure.adapter.out.persistence;
 import com.serenity.usuario.application.port.out.UsuarioRepositoryPort;
 import com.serenity.usuario.domain.model.Usuario;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -22,6 +23,23 @@ public class UsuarioRepositoryAdapter implements UsuarioRepositoryPort {
         UsuarioJpaEntity entity = toEntity(usuario);
         UsuarioJpaEntity guardado = jpaRepository.save(entity);
         return toDomain(guardado);
+    }
+
+    @Override
+    @Transactional
+    public boolean guardarSiNoExiste(Usuario usuario) {
+        if (jpaRepository.findByEmailIgnoreCase(usuario.getEmail()).isPresent()) {
+            return false;
+        }
+        return jpaRepository.insertarSiEmailNoExiste(
+                usuario.getUsername(),
+                usuario.getEmail(),
+                usuario.getPasswordHash(),
+                usuario.getNivel(),
+                usuario.getXp(),
+                usuario.getRacha(),
+                usuario.getMejorRacha(),
+                usuario.getRol().name()) == 1;
     }
 
     @Override

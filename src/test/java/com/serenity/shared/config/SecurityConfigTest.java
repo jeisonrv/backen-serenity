@@ -92,11 +92,34 @@ class SecurityConfigTest {
                 .andExpect(status().isForbidden());
     }
 
+    @Test void rutaDeModeracionPermiteRolModerador() throws Exception {
+        mvc.perform(get("/api/moderacion/reportes")
+                        .header("Authorization", "Bearer " + tokenJwt(Rol.MODERADOR)))
+                .andExpect(status().isNotFound());
+        verify(acceso).verificarAcceso(5L);
+    }
+
+    @Test void jwtIncluyeElRolSinReemplazarLaValidacionActualDeLaBaseDeDatos() {
+        var claimsOyente = jwt.validarToken(
+                jwt.generarToken(5L, "user@example.test", Rol.OYENTE));
+        var claimsModerador = jwt.validarToken(
+                jwt.generarToken(5L, "mod@example.test", Rol.MODERADOR));
+
+        org.junit.jupiter.api.Assertions.assertEquals("OYENTE", claimsOyente.get("rol", String.class));
+        org.junit.jupiter.api.Assertions.assertEquals("MODERADOR", claimsModerador.get("rol", String.class));
+    }
+
     @Test void rolCorrectoPuedePasarLaReglaDeAutorizacion() throws Exception {
         mvc.perform(get("/api/oyente/recurso")
                         .header("Authorization", "Bearer " + tokenJwt(Rol.OYENTE)))
                 .andExpect(status().isNotFound());
         verify(acceso).verificarAcceso(5L);
+    }
+
+    @Test void moderadorNoPuedeUsarRutasExclusivasDeOyente() throws Exception {
+        mvc.perform(get("/api/oyente/recurso")
+                        .header("Authorization", "Bearer " + tokenJwt(Rol.MODERADOR)))
+                .andExpect(status().isForbidden());
     }
 
     @Test void solicitudesPreflightOptionsSonPublicas() throws Exception {
@@ -106,6 +129,6 @@ class SecurityConfigTest {
 
     private String tokenJwt(Rol rol) {
         when(acceso.verificarAcceso(5L)).thenReturn(rol);
-        return jwt.generarToken(5L, "user@example.test");
+        return jwt.generarToken(5L, "user@example.test", rol);
     }
 }

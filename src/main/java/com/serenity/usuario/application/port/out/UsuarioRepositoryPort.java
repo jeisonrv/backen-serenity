@@ -6,6 +6,7 @@ import java.util.List;
 
 public interface UsuarioRepositoryPort {
     Usuario guardar(Usuario usuario);
+    boolean guardarSiNoExiste(Usuario usuario);
     Optional<Usuario> buscarPorEmail(String email);
     Optional<Usuario> buscarPorEmailIgnorandoMayusculas(String email);
     Optional<Usuario> buscarPorGoogleSubject(String googleSubject);

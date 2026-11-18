@@ -10,6 +10,7 @@ import com.serenity.shared.security.JwtUtil;
 import com.serenity.usuario.application.port.out.UsuarioRepositoryPort;
 import com.serenity.usuario.application.port.out.VerificarIdentidadGooglePort;
 import com.serenity.usuario.domain.model.IdentidadGoogle;
+import com.serenity.usuario.domain.model.Rol;
 import com.serenity.usuario.domain.model.Usuario;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -47,19 +48,19 @@ class IniciarSesionServiceTest {
     }
 
     @Test void usuarioInexistenteEsInvalido() {
-        when(usuarios.buscarPorEmail("a@b.co")).thenReturn(Optional.empty());
+        when(usuarios.buscarPorEmailIgnorandoMayusculas("a@b.co")).thenReturn(Optional.empty());
         assertThrows(CredencialesInvalidasException.class, () -> servicio.iniciarSesion("a@b.co", "pass"));
     }
 
     @Test void correoSinFormatoEmailNoEncuentraCuentaYSeRechaza() {
-        when(usuarios.buscarPorEmail("sin-formato")).thenReturn(Optional.empty());
+        when(usuarios.buscarPorEmailIgnorandoMayusculas("sin-formato")).thenReturn(Optional.empty());
         assertThrows(CredencialesInvalidasException.class,
                 () -> servicio.iniciarSesion("sin-formato", "pass"));
     }
 
     @Test void passwordIncorrectaEsInvalida() {
         Usuario usuario = new Usuario(1L, "ana", "a@b.co", "$2hash", 1, 0, 0, 0);
-        when(usuarios.buscarPorEmail("a@b.co")).thenReturn(Optional.of(usuario));
+        when(usuarios.buscarPorEmailIgnorandoMayusculas("a@b.co")).thenReturn(Optional.of(usuario));
         when(encoder.matches("mala", "$2hash")).thenReturn(false);
         assertThrows(CredencialesInvalidasException.class, () -> servicio.iniciarSesion("a@b.co", "mala"));
     }
@@ -67,7 +68,7 @@ class IniciarSesionServiceTest {
     @Test void passwordAlmacenadaNulaOVaciaEsInvalida() {
         for (String almacenada : new String[]{null, "  "}) {
             Usuario usuario = new Usuario(1L, "ana", "a@b.co", almacenada, 1, 0, 0, 0);
-            when(usuarios.buscarPorEmail("a@b.co")).thenReturn(Optional.of(usuario));
+            when(usuarios.buscarPorEmailIgnorandoMayusculas("a@b.co")).thenReturn(Optional.of(usuario));
             assertThrows(CredencialesInvalidasException.class,
                     () -> servicio.iniciarSesion("a@b.co", "cualquier-clave"));
         }
@@ -76,7 +77,7 @@ class IniciarSesionServiceTest {
 
     @Test void passwordEnTextoPlanoSeRechazaSinGuardarNiModificarUsuario() {
         Usuario usuario = new Usuario(1L, "ana", "a@b.co", "clave-antigua", 1, 0, 0, 0);
-        when(usuarios.buscarPorEmail("a@b.co")).thenReturn(Optional.of(usuario));
+        when(usuarios.buscarPorEmailIgnorandoMayusculas("a@b.co")).thenReturn(Optional.of(usuario));
         when(encoder.matches("clave-antigua", "clave-antigua")).thenReturn(false);
 
         assertThrows(CredencialesInvalidasException.class,
@@ -91,7 +92,7 @@ class IniciarSesionServiceTest {
 
     @Test void passwordEnTextoPlanoIncorrectaNoGuardaUsuario() {
         Usuario usuario = new Usuario(1L, "ana", "a@b.co", "clave-antigua", 1, 0, 0, 0);
-        when(usuarios.buscarPorEmail("a@b.co")).thenReturn(Optional.of(usuario));
+        when(usuarios.buscarPorEmailIgnorandoMayusculas("a@b.co")).thenReturn(Optional.of(usuario));
 
         assertThrows(CredencialesInvalidasException.class,
                 () -> servicio.iniciarSesion("a@b.co", "clave-incorrecta"));
@@ -105,8 +106,8 @@ class IniciarSesionServiceTest {
         String password = "clave-de-prueba-segura";
         String hash = bcrypt.encode(password);
         Usuario usuario = new Usuario(1L, "ana", "a@b.co", hash, 1, 0, 0, 0);
-        when(usuarios.buscarPorEmail("a@b.co")).thenReturn(Optional.of(usuario));
-        when(jwt.generarToken(1L, "a@b.co")).thenReturn("jwt-firmado");
+        when(usuarios.buscarPorEmailIgnorandoMayusculas("a@b.co")).thenReturn(Optional.of(usuario));
+        when(jwt.generarToken(1L, "a@b.co", Rol.USUARIO)).thenReturn("jwt-firmado");
         IniciarSesionService servicioConBcryptReal = servicioCon(bcrypt);
 
         var resultado = servicioConBcryptReal.iniciarSesion("a@b.co", password);
@@ -119,9 +120,42 @@ class IniciarSesionServiceTest {
         verify(usuarios, never()).guardar(any());
     }
 
+    @Test void loginOyenteInstitucionalValidaBCryptYDevuelveElRolOyente() {
+        BCryptPasswordEncoder bcrypt = new BCryptPasswordEncoder();
+        String email = "oyente.serenity@example.com";
+        String hash = bcrypt.encode("Oyente123#");
+        Usuario usuario = new Usuario(21L, "serenity.oyente", email, hash, 1, 0, 0, 0);
+        usuario.setRol(Rol.OYENTE);
+        when(usuarios.buscarPorEmailIgnorandoMayusculas(email.toUpperCase()))
+                .thenReturn(Optional.of(usuario));
+        when(jwt.generarToken(21L, email, Rol.OYENTE)).thenReturn("jwt-oyente");
+
+        var resultado = servicioCon(bcrypt).iniciarSesion(email.toUpperCase(), "Oyente123#");
+
+        assertEquals(Rol.OYENTE, resultado.usuario().getRol());
+        assertEquals("jwt-oyente", resultado.token());
+        verify(jwt).generarToken(21L, email, Rol.OYENTE);
+    }
+
+    @Test void loginModeradorInstitucionalValidaBCryptYDevuelveElRolModerador() {
+        BCryptPasswordEncoder bcrypt = new BCryptPasswordEncoder();
+        String email = "moderador.serenity@example.com";
+        String hash = bcrypt.encode("Mod123#");
+        Usuario usuario = new Usuario(22L, "serenity.moderador", email, hash, 1, 0, 0, 0);
+        usuario.setRol(Rol.MODERADOR);
+        when(usuarios.buscarPorEmailIgnorandoMayusculas(email)).thenReturn(Optional.of(usuario));
+        when(jwt.generarToken(22L, email, Rol.MODERADOR)).thenReturn("jwt-moderador");
+
+        var resultado = servicioCon(bcrypt).iniciarSesion(email, "Mod123#");
+
+        assertEquals(Rol.MODERADOR, resultado.usuario().getRol());
+        assertEquals("jwt-moderador", resultado.token());
+        verify(jwt).generarToken(22L, email, Rol.MODERADOR);
+    }
+
     @Test void hashBcryptInvalidoSeRechaza() {
         Usuario usuario = new Usuario(1L, "ana", "a@b.co", "$2a$hash-invalido", 1, 0, 0, 0);
-        when(usuarios.buscarPorEmail("a@b.co")).thenReturn(Optional.of(usuario));
+        when(usuarios.buscarPorEmailIgnorandoMayusculas("a@b.co")).thenReturn(Optional.of(usuario));
         IniciarSesionService servicioConBcryptReal = servicioCon(new BCryptPasswordEncoder());
 
         assertThrows(CredencialesInvalidasException.class,
@@ -133,16 +167,16 @@ class IniciarSesionServiceTest {
     @Test void usuarioRestringidoNoPuedeIniciarSesion() {
         Usuario usuario = new Usuario(1L, "ana", "a@b.co", "$2hash", 1, 0, 0, 0);
         usuario.restringir("motivo", LocalDateTime.now().plusDays(1), LocalDateTime.now(), 2L);
-        when(usuarios.buscarPorEmail("a@b.co")).thenReturn(Optional.of(usuario));
+        when(usuarios.buscarPorEmailIgnorandoMayusculas("a@b.co")).thenReturn(Optional.of(usuario));
         when(encoder.matches("bien", "$2hash")).thenReturn(true);
         assertThrows(AccesoRestringidoException.class, () -> servicio.iniciarSesion("a@b.co", "bien"));
     }
 
     @Test void inicioExitosoDevuelveTokenJwt() {
         Usuario usuario = new Usuario(1L, "ana", "a@b.co", "$2hash", 1, 0, 0, 0);
-        when(usuarios.buscarPorEmail("a@b.co")).thenReturn(Optional.of(usuario));
+        when(usuarios.buscarPorEmailIgnorandoMayusculas("a@b.co")).thenReturn(Optional.of(usuario));
         when(encoder.matches("bien", "$2hash")).thenReturn(true);
-        when(jwt.generarToken(1L, "a@b.co")).thenReturn("jwt-firmado");
+        when(jwt.generarToken(1L, "a@b.co", Rol.USUARIO)).thenReturn("jwt-firmado");
         var resultado = servicio.iniciarSesion(" a@b.co ", "bien");
         assertSame(usuario, resultado.usuario());
         assertEquals("jwt-firmado", resultado.token());
@@ -158,7 +192,7 @@ class IniciarSesionServiceTest {
             usuario.setId(10L);
             return usuario;
         });
-        when(jwt.generarToken(any(), eq("ana@b.co"))).thenReturn("jwt-google");
+        when(jwt.generarToken(any(), eq("ana@b.co"), any())).thenReturn("jwt-google");
         var resultado = servicio.iniciarSesionConGoogle("credential", "Ana_Pérez", true, false);
         assertEquals("jwt-google", resultado.token());
         assertEquals("Ana_Pérez", resultado.usuario().getUsername());
@@ -172,7 +206,7 @@ class IniciarSesionServiceTest {
         Usuario existente = new Usuario(8L, "ana", "ana@b.co", null, 1, 0, 0, 0);
         when(google.verificar("credential")).thenReturn(Optional.of(identidad));
         when(usuarios.buscarPorGoogleSubject("sub-existente")).thenReturn(Optional.of(existente));
-        when(jwt.generarToken(8L, "ana@b.co")).thenReturn("jwt-google");
+        when(jwt.generarToken(8L, "ana@b.co", Rol.USUARIO)).thenReturn("jwt-google");
 
         var resultado = servicio.iniciarSesionConGoogle("credential");
 
@@ -297,7 +331,7 @@ class IniciarSesionServiceTest {
         when(usuarios.buscarPorGoogleSubject("sub-sin-email")).thenReturn(Optional.empty());
         when(usuarios.buscarPorEmailIgnorandoMayusculas("sin-separador")).thenReturn(Optional.empty());
         when(usuarios.guardar(any(Usuario.class))).thenAnswer(inv -> inv.getArgument(0));
-        when(jwt.generarToken(any(), anyString())).thenReturn("jwt-firmado");
+        when(jwt.generarToken(any(), anyString(), any())).thenReturn("jwt-firmado");
 
         var corto = servicio.iniciarSesionConGoogle("corto", "usuario_corto", true, false);
         var largo = servicio.iniciarSesionConGoogle("largo", "A".repeat(50), true, false);
