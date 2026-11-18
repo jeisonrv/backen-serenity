@@ -6,6 +6,8 @@ import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.json.gson.GsonFactory;
 import com.serenity.usuario.application.port.out.VerificarIdentidadGooglePort;
 import com.serenity.usuario.domain.model.IdentidadGoogle;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -18,6 +20,8 @@ import java.util.Optional;
 
 @Component
 public class GoogleIdentityVerifierAdapter implements VerificarIdentidadGooglePort {
+    private static final Logger log = LoggerFactory.getLogger(GoogleIdentityVerifierAdapter.class);
+
     private final String clientId;
     private final GoogleIdTokenVerifier verifier;
 
@@ -40,12 +44,16 @@ public class GoogleIdentityVerifierAdapter implements VerificarIdentidadGooglePo
     @Override
     public Optional<IdentidadGoogle> verificar(String credential) {
         if (verifier == null) {
+            log.warn("google.id_token_verification outcome=not_configured");
             throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE,
                     "El inicio con Google no está configurado");
         }
         try {
             GoogleIdToken token = verifier.verify(credential);
-            if (token == null) return Optional.empty();
+            if (token == null) {
+                log.info("google.id_token_verification outcome=invalid");
+                return Optional.empty();
+            }
 
             GoogleIdToken.Payload payload = token.getPayload();
             Object emailVerificadoClaim = payload.get("email_verified");
@@ -56,8 +64,12 @@ public class GoogleIdentityVerifierAdapter implements VerificarIdentidadGooglePo
             return Optional.of(new IdentidadGoogle(
                     payload.getSubject(), payload.getEmail(), emailVerificado, nombre));
         } catch (GeneralSecurityException ex) {
+            log.warn("google.id_token_verification outcome=error exceptionType={}",
+                    ex.getClass().getSimpleName());
             return Optional.empty();
         } catch (IOException ex) {
+            log.warn("google.id_token_verification outcome=error exceptionType={}",
+                    ex.getClass().getSimpleName());
             throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE,
                     "No se pudo verificar la identidad con Google", ex);
         }

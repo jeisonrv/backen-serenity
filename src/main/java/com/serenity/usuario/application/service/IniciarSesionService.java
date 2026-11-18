@@ -143,7 +143,8 @@ public class IniciarSesionService implements IniciarSesionUseCase {
                     enmascararCorreo(resultado.usuario().getEmail()));
             return resultado;
         } catch (RuntimeException ex) {
-            log.warn("Fallo de inicio de sesión con Google");
+            log.warn("google.login outcome=error exceptionType={}",
+                    ex.getClass().getSimpleName());
             throw ex;
         }
     }

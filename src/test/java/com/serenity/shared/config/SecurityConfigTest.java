@@ -60,6 +60,12 @@ class SecurityConfigTest {
                 .andExpect(status().isNotFound());
     }
 
+    @Test void loginGoogleIgnoraUnBearerInvalidoPorqueEsPublico() throws Exception {
+        mvc.perform(post("/api/auth/google")
+                        .header("Authorization", "Bearer invalid-token"))
+                .andExpect(status().isNotFound());
+    }
+
     @Test void cambiarPasswordRequiereAutenticacionJwtReal() throws Exception {
         mvc.perform(post("/api/auth/cambiar-password"))
                 .andExpect(status().isUnauthorized());
