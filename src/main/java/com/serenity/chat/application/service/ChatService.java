@@ -38,7 +38,7 @@ public class ChatService implements ChatUseCase {
         log.info("Solicitud de chat recibida");
         acceso.verificarAcceso(id);
         Long oyente = disponibilidad.listarDisponibles().stream()
-                .filter(o -> !o.equals(id) && acceso.esOyenteActivo(o) && repository.contarActivasDeOyente(o) == 0)
+                .filter(o -> !o.equals(id) && acceso.esOyenteActivo(o))
                 .findFirst().orElse(null);
         Conversacion conversacion = repository.abrir(id, oyente);
         log.info("Solicitud de chat procesada");
@@ -53,7 +53,6 @@ public class ChatService implements ChatUseCase {
     @Override public Conversacion aceptar(Long id,Long oyente){
         if(acceso.verificarAcceso(oyente)!=Rol.OYENTE) throw new IllegalArgumentException("Solo un oyente puede aceptar una charla");
         if(!disponibilidad.estaDisponible(oyente)) throw new ConflictException("Debes marcarte como disponible para aceptar una charla");
-        if(repository.contarActivasDeOyente(oyente) > 0) throw new ConflictException("Ya tienes una charla activa");
         repository.asignarOyente(id,oyente);
         return repository.buscarParticipante(id,oyente);
     }

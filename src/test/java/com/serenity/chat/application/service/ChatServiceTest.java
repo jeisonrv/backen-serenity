@@ -37,7 +37,6 @@ class ChatServiceTest {
         when(disponibilidad.listarDisponibles()).thenReturn(List.of(3L, 11L, 12L, 13L));
         when(acceso.esOyenteActivo(11L)).thenReturn(false);
         when(acceso.esOyenteActivo(12L)).thenReturn(true);
-        when(repository.contarActivasDeOyente(12L)).thenReturn(0L);
         when(repository.abrir(3L, 12L)).thenReturn(conversacion);
 
         assertSame(conversacion, servicio.solicitar(3L));
@@ -46,15 +45,14 @@ class ChatServiceTest {
         verifyNoMoreInteractions(repository);
     }
 
-    @Test void solicitarAbreEnEsperaCuandoNoHayOyentesElegibles() {
+    @Test void solicitarPermiteAsignarOtraConversacionAUnOyenteConConversacionesActivas() {
         when(disponibilidad.listarDisponibles()).thenReturn(List.of(3L, 11L));
         when(acceso.esOyenteActivo(11L)).thenReturn(true);
-        when(repository.contarActivasDeOyente(11L)).thenReturn(1L);
-        var conversacion = new Conversacion(21L, 3L, null, LocalDateTime.now(), null);
-        when(repository.abrir(3L, null)).thenReturn(conversacion);
+        var conversacion = new Conversacion(21L, 3L, 11L, LocalDateTime.now(), null);
+        when(repository.abrir(3L, 11L)).thenReturn(conversacion);
 
         assertSame(conversacion, servicio.solicitar(3L));
-        verify(repository).abrir(3L, null);
+        verify(repository).abrir(3L, 11L);
     }
 
     @Test void delegaBusquedasListasYFinalizacion() {
@@ -74,11 +72,10 @@ class ChatServiceTest {
         verify(repository).finalizar(4L, 2L);
     }
 
-    @Test void aceptarAsignaOyenteYDevuelveConversacion() {
+    @Test void aceptarPermiteOyenteConOtraConversacionActiva() {
         var conversacion = new Conversacion(4L, 2L, 8L, LocalDateTime.now(), null);
         when(acceso.verificarAcceso(8L)).thenReturn(Rol.OYENTE);
         when(disponibilidad.estaDisponible(8L)).thenReturn(true);
-        when(repository.contarActivasDeOyente(8L)).thenReturn(0L);
         when(repository.buscarParticipante(4L, 8L)).thenReturn(conversacion);
 
         assertSame(conversacion, servicio.aceptar(4L, 8L));
@@ -94,14 +91,6 @@ class ChatServiceTest {
     @Test void aceptarRechazaOyenteNoDisponible() {
         when(acceso.verificarAcceso(8L)).thenReturn(Rol.OYENTE);
         when(disponibilidad.estaDisponible(8L)).thenReturn(false);
-        assertThrows(ConflictException.class, () -> servicio.aceptar(4L, 8L));
-        verify(repository, never()).asignarOyente(anyLong(), anyLong());
-    }
-
-    @Test void aceptarRechazaOyenteConOtraConversacionActiva() {
-        when(acceso.verificarAcceso(8L)).thenReturn(Rol.OYENTE);
-        when(disponibilidad.estaDisponible(8L)).thenReturn(true);
-        when(repository.contarActivasDeOyente(8L)).thenReturn(1L);
         assertThrows(ConflictException.class, () -> servicio.aceptar(4L, 8L));
         verify(repository, never()).asignarOyente(anyLong(), anyLong());
     }
@@ -182,6 +171,29 @@ class ChatServiceTest {
         assertEquals("oyente", mensajes.get(0).remitente());
         assertEquals("hola", mensajes.get(0).contenido());
         verify(repository).guardarMensaje(mensajes.get(0));
+    }
+
+    @Test void mantieneMensajesUnicodeSeparadosPorConversacion() {
+        when(repository.buscarParticipante(4L, 8L)).thenReturn(new Conversacion(4L, 2L, 8L, null, null));
+        when(repository.buscarParticipante(5L, 8L)).thenReturn(new Conversacion(5L, 3L, 8L, null, null));
+
+        var primerMensaje = servicio.enviarMensaje(4L, 8L, "¡Hola! 😊🌿");
+        var segundoMensaje = servicio.enviarMensaje(5L, 8L, "Café — 東京");
+
+        assertEquals(4L, primerMensaje.get(0).idConversacion());
+        assertEquals("¡Hola! 😊🌿", primerMensaje.get(0).contenido());
+        assertEquals(5L, segundoMensaje.get(0).idConversacion());
+        assertEquals("Café — 東京", segundoMensaje.get(0).contenido());
+        verify(repository).guardarMensaje(primerMensaje.get(0));
+        verify(repository).guardarMensaje(segundoMensaje.get(0));
+    }
+
+    @Test void finalizaSoloLaConversacionSolicitada() {
+        servicio.finalizar(4L, 8L);
+        servicio.finalizar(5L, 8L);
+
+        verify(repository).finalizar(4L, 8L);
+        verify(repository).finalizar(5L, 8L);
     }
 
     @Test void enviarMensajeEnEsperaGuardaSoloMensajeDelUsuario() {

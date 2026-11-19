@@ -103,20 +103,18 @@ class OyenteControllerTest {
     @Test
     void activas_mapeaConversacionesDelOyente() {
         LocalDateTime inicio = LocalDateTime.of(2026, 10, 27, 18, 0);
-        LocalDateTime fin = LocalDateTime.of(2026, 10, 27, 18, 30);
-        Conversacion c = mock(Conversacion.class);
-        when(c.idConversacion()).thenReturn(5L);
-        when(c.idUsuario()).thenReturn(11L);
-        when(c.fechaInicio()).thenReturn(inicio);
-        when(c.fechaFin()).thenReturn(fin);
-        when(chat.listarActivasDeOyente(7L)).thenReturn(List.of(c));
+        Conversacion primera = new Conversacion(5L, 11L, 7L, inicio, null);
+        Conversacion segunda = new Conversacion(6L, 12L, 7L, inicio.plusMinutes(5), null);
+        when(chat.listarActivasDeOyente(7L)).thenReturn(List.of(primera, segunda));
 
         var r = controller.activas(user);
 
-        assertEquals(1, r.size());
+        assertEquals(2, r.size());
         assertEquals(5L, r.get(0).idConversacion());
         assertEquals(inicio, r.get(0).fechaInicio());
-        assertEquals(fin, r.get(0).fechaFin());
+        assertNull(r.get(0).fechaFin());
+        assertEquals(6L, r.get(1).idConversacion());
+        assertNull(r.get(1).fechaFin());
     }
 
     @Test

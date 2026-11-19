@@ -80,4 +80,28 @@ class ChatControllerMensajesTest {
         assertEquals("recibido", captor.getAllValues().get(1).contenido());
         assertEquals(f2, captor.getAllValues().get(1).fechaEnvio());
     }
+
+    @Test
+    void enviarVariasConversacionesPublicaUnicodeEnTopicsSeparados() {
+        when(chat.buscarParticipante(3L, 7L)).thenReturn(new Conversacion(3L, 7L, 8L, null, null));
+        when(chat.buscarParticipante(4L, 7L)).thenReturn(new Conversacion(4L, 7L, 9L, null, null));
+        when(chat.enviarMensaje(3L, 7L, "Hola 😊")).thenReturn(
+                List.of(new MensajeChat(3L, "usuario", "Hola 😊", LocalDateTime.now())));
+        when(chat.enviarMensaje(4L, 7L, "Café 東京")).thenReturn(
+                List.of(new MensajeChat(4L, "usuario", "Café 東京", LocalDateTime.now())));
+        var headers = SimpMessageHeaderAccessor.create();
+        headers.setUser(new UsernamePasswordAuthenticationToken(user, null));
+
+        controller.enviar(3L, new MensajeRequest("Hola 😊"), headers);
+        controller.enviar(4L, new MensajeRequest("Café 東京"), headers);
+
+        ArgumentCaptor<ChatController.Mensaje> mensajesCaptor =
+                ArgumentCaptor.forClass(ChatController.Mensaje.class);
+        verify(messaging).convertAndSend(eq("/topic/conversacion/3"), mensajesCaptor.capture());
+        verify(messaging).convertAndSend(eq("/topic/conversacion/4"), mensajesCaptor.capture());
+        assertEquals("Hola 😊", mensajesCaptor.getAllValues().get(0).contenido());
+        assertEquals(3L, mensajesCaptor.getAllValues().get(0).idConversacion());
+        assertEquals("Café 東京", mensajesCaptor.getAllValues().get(1).contenido());
+        assertEquals(4L, mensajesCaptor.getAllValues().get(1).idConversacion());
+    }
 }
