@@ -52,6 +52,16 @@ public class ChatService implements ChatUseCase {
     @Override public List<Conversacion> listarActivasDeOyente(Long oyente){return repository.listarActivasDeOyente(oyente);}
     @Override public Conversacion aceptar(Long id,Long oyente){
         if(acceso.verificarAcceso(oyente)!=Rol.OYENTE) throw new IllegalArgumentException("Solo un oyente puede aceptar una charla");
+        Conversacion actual = repository.buscarPorId(id);
+        if (actual.fechaFin() != null) {
+            throw new ConflictException("La conversación ya finalizó");
+        }
+        if (oyente.equals(actual.idOyente())) {
+            return actual;
+        }
+        if (actual.idOyente() != null) {
+            throw new ConflictException("La charla ya fue tomada por otro oyente");
+        }
         if(!disponibilidad.estaDisponible(oyente)) throw new ConflictException("Debes marcarte como disponible para aceptar una charla");
         repository.asignarOyente(id,oyente);
         return repository.buscarParticipante(id,oyente);

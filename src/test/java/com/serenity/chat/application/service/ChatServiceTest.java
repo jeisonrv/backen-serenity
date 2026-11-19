@@ -76,10 +76,41 @@ class ChatServiceTest {
         var conversacion = new Conversacion(4L, 2L, 8L, LocalDateTime.now(), null);
         when(acceso.verificarAcceso(8L)).thenReturn(Rol.OYENTE);
         when(disponibilidad.estaDisponible(8L)).thenReturn(true);
+        when(repository.buscarPorId(4L)).thenReturn(new Conversacion(4L, 2L, null, LocalDateTime.now(), null));
         when(repository.buscarParticipante(4L, 8L)).thenReturn(conversacion);
 
         assertSame(conversacion, servicio.aceptar(4L, 8L));
         verify(repository).asignarOyente(4L, 8L);
+    }
+
+    @Test void aceptaVariasConversacionesYReintentarLaMismaEsIdempotente() {
+        var primera = new Conversacion(4L, 2L, 8L, LocalDateTime.now(), null);
+        var segunda = new Conversacion(5L, 3L, 8L, LocalDateTime.now(), null);
+        when(acceso.verificarAcceso(8L)).thenReturn(Rol.OYENTE);
+        when(repository.buscarPorId(4L)).thenReturn(
+                new Conversacion(4L, 2L, null, LocalDateTime.now(), null), primera);
+        when(repository.buscarPorId(5L)).thenReturn(new Conversacion(5L, 3L, null, LocalDateTime.now(), null));
+        when(repository.buscarParticipante(4L, 8L)).thenReturn(primera);
+        when(repository.buscarParticipante(5L, 8L)).thenReturn(segunda);
+        when(disponibilidad.estaDisponible(8L)).thenReturn(true, true);
+
+        assertSame(primera, servicio.aceptar(4L, 8L));
+        assertSame(segunda, servicio.aceptar(5L, 8L));
+        assertSame(primera, servicio.aceptar(4L, 8L));
+
+        verify(repository).asignarOyente(4L, 8L);
+        verify(repository).asignarOyente(5L, 8L);
+        verify(disponibilidad, times(2)).estaDisponible(8L);
+    }
+
+    @Test void aceptarRechazaConversacionAsignadaAOtroOyente() {
+        when(acceso.verificarAcceso(8L)).thenReturn(Rol.OYENTE);
+        when(repository.buscarPorId(4L)).thenReturn(new Conversacion(4L, 2L, 9L, LocalDateTime.now(), null));
+
+        assertThrows(ConflictException.class, () -> servicio.aceptar(4L, 8L));
+
+        verifyNoInteractions(disponibilidad);
+        verify(repository, never()).asignarOyente(anyLong(), anyLong());
     }
 
     @Test void aceptarRechazaUsuariosQueNoSonOyentes() {
@@ -90,6 +121,7 @@ class ChatServiceTest {
 
     @Test void aceptarRechazaOyenteNoDisponible() {
         when(acceso.verificarAcceso(8L)).thenReturn(Rol.OYENTE);
+        when(repository.buscarPorId(4L)).thenReturn(new Conversacion(4L, 2L, null, LocalDateTime.now(), null));
         when(disponibilidad.estaDisponible(8L)).thenReturn(false);
         assertThrows(ConflictException.class, () -> servicio.aceptar(4L, 8L));
         verify(repository, never()).asignarOyente(anyLong(), anyLong());
