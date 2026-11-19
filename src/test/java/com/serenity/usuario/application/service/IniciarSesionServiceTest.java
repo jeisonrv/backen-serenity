@@ -201,6 +201,43 @@ class IniciarSesionServiceTest {
         verify(consentimientos).recordRegistration(10L, false);
     }
 
+    @Test void googleCreaCuentaSinUsernameSolicitadoUsandoElLocalPartDelCorreo() {
+        var identidad = new IdentidadGoogle("sub-2", "persona.nueva@example.com", true, "Persona Nueva");
+        when(google.verificar("credential")).thenReturn(Optional.of(identidad));
+        when(usuarios.buscarPorGoogleSubject("sub-2")).thenReturn(Optional.empty());
+        when(usuarios.buscarPorEmailIgnorandoMayusculas("persona.nueva@example.com"))
+                .thenReturn(Optional.empty());
+        when(usuarios.guardar(any(Usuario.class))).thenAnswer(inv -> {
+            Usuario usuario = inv.getArgument(0);
+            usuario.setId(11L);
+            return usuario;
+        });
+        when(jwt.generarToken(11L, "persona.nueva@example.com", Rol.USUARIO)).thenReturn("jwt-google");
+
+        var resultado = servicio.iniciarSesionConGoogle("credential", null, true, false);
+
+        assertEquals("persona.nueva", resultado.usuario().getUsername());
+        assertEquals("jwt-google", resultado.token());
+        assertNull(resultado.usuario().getPasswordHash());
+        assertEquals("sub-2", resultado.usuario().getGoogleSubject());
+        verify(consentimientos).prepareRegistration(resultado.usuario(), false);
+        verify(consentimientos).recordRegistration(11L, false);
+    }
+
+    @Test void googleNoCreaCuentaNuevaSinAceptacionExplicitaDeTerminos() {
+        var identidad = new IdentidadGoogle("sub-3", "persona@example.com", true, "Persona");
+        when(google.verificar("credential")).thenReturn(Optional.of(identidad));
+        when(usuarios.buscarPorGoogleSubject("sub-3")).thenReturn(Optional.empty());
+        when(usuarios.buscarPorEmailIgnorandoMayusculas("persona@example.com")).thenReturn(Optional.empty());
+
+        IllegalArgumentException error = assertThrows(IllegalArgumentException.class,
+                () -> servicio.iniciarSesionConGoogle("credential", null, null, false));
+
+        assertTrue(error.getMessage().contains("aceptar los términos"));
+        verify(usuarios, never()).guardar(any());
+        verifyNoInteractions(jwt, correo, consentimientos);
+    }
+
     @Test void googleIniciaSesionConUsuarioYaVinculadoSinCrearCuentaNueva() {
         var identidad = new IdentidadGoogle("sub-existente", "ana@b.co", true, "Ana");
         Usuario existente = new Usuario(8L, "ana", "ana@b.co", null, 1, 0, 0, 0);

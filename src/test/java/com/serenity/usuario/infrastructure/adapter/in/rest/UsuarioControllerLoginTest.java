@@ -108,6 +108,37 @@ class UsuarioControllerLoginTest {
     }
 
     @Test
+    void loginConBearerExpiradoNoBloqueaLasCredenciales() throws Exception {
+        Usuario usuario = new Usuario(36L, "usuario", "usuario@example.com", "hash", 1, 0, 0, 0);
+        when(iniciarSesion.iniciarSesion("usuario@example.com", "password-correcta"))
+                .thenReturn(new IniciarSesionUseCase.ResultadoLogin(usuario, "jwt-nuevo"));
+
+        mvc.perform(post("/api/auth/login")
+                        .header("Authorization", "Bearer token-serenity-expirado")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {"email":"usuario@example.com","password":"password-correcta"}
+                                """))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.token").value("jwt-nuevo"));
+
+        verify(iniciarSesion).iniciarSesion("usuario@example.com", "password-correcta");
+    }
+
+    @Test
+    void bearerExpiradoSigueBloqueandoOperacionesQueRequierenSesion() throws Exception {
+        mvc.perform(post("/api/auth/crear-password")
+                        .header("Authorization", "Bearer token-serenity-expirado")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {"passwordNueva":"password-correcta"}
+                                """))
+                .andExpect(status().isUnauthorized());
+
+        verifyNoInteractions(cambiarPassword);
+    }
+
+    @Test
     void loginGoogleIncluyeGoogleVinculado() throws Exception {
         Usuario usuario = new Usuario(33L, "google", "google@example.com", null, 1, 0, 0, 0);
         usuario.setGoogleSubject("google-subject");

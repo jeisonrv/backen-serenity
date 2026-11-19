@@ -216,7 +216,7 @@ public class IniciarSesionService implements IniciarSesionUseCase {
         }
 
         Usuario nuevo = new Usuario(
-                usernameElegido(username),
+                usernameElegido(username, identidad),
                 identidad.email(),
                 null
         );
@@ -234,14 +234,10 @@ public class IniciarSesionService implements IniciarSesionUseCase {
         return guardado;
     }
 
-    private String usernameElegido(String username) {
-        if (username == null || username.isBlank()) {
-            throw new IllegalArgumentException(
-                    "Elige un nombre de usuario para crear tu cuenta con Google desde Registro"
-            );
-        }
-
-        String elegido = username.strip();
+    private String usernameElegido(String username, IdentidadGoogle identidad) {
+        String elegido = username == null || username.isBlank()
+                ? usernameDesdeIdentidad(identidad)
+                : username.strip();
         int longitud = elegido.codePointCount(0, elegido.length());
         if (longitud < 3 || longitud > 50) {
             throw new IllegalArgumentException(
@@ -249,6 +245,24 @@ public class IniciarSesionService implements IniciarSesionUseCase {
             );
         }
         return elegido;
+    }
+
+    private String usernameDesdeIdentidad(IdentidadGoogle identidad) {
+        String correo = identidad.email();
+        int separador = correo.indexOf('@');
+        String candidato = separador > 0 ? correo.substring(0, separador).strip() : "";
+        int longitud = candidato.codePointCount(0, candidato.length());
+
+        if (longitud < 3) {
+            String subject = identidad.subject().replaceAll("[^A-Za-z0-9]", "");
+            candidato = "google_" + subject.substring(0, Math.min(subject.length(), 43));
+            longitud = candidato.codePointCount(0, candidato.length());
+        }
+
+        if (longitud > 50) {
+            candidato = candidato.substring(0, candidato.offsetByCodePoints(0, 50));
+        }
+        return candidato;
     }
 
     private IdentidadGoogle identidadGoogle(String credential) {
