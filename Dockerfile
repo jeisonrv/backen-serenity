@@ -3,7 +3,20 @@ FROM eclipse-temurin:21-jdk-alpine AS build
 WORKDIR /workspace
 COPY .mvn/ .mvn/
 COPY mvnw pom.xml ./
-RUN chmod +x mvnw && ./mvnw -B dependency:go-offline
+RUN set -e; \
+    chmod +x mvnw; \
+    attempt=1; \
+    max_attempts=5; \
+    while ! ./mvnw -B dependency:go-offline; do \
+      if [ "$attempt" -ge "$max_attempts" ]; then \
+        echo "Maven dependency prefetch failed after $max_attempts attempts"; \
+        exit 1; \
+      fi; \
+      delay=$((attempt * 10)); \
+      echo "Maven dependency prefetch failed; retrying in ${delay}s (attempt $((attempt + 1))/$max_attempts)"; \
+      sleep "$delay"; \
+      attempt=$((attempt + 1)); \
+    done
 COPY src/ src/
 RUN ./mvnw -B package -DskipTests
 
