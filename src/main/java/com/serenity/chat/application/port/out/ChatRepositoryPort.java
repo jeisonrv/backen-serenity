@@ -8,7 +8,6 @@ public interface ChatRepositoryPort {
  List<MensajeChat> listarMensajes(Long idConversacion);
  List<Conversacion> listarEnEspera();
  List<Conversacion> listarActivasDeOyente(Long oyenteId);
- long contarActivasDeOyente(Long oyenteId);
  void asignarOyente(Long id, Long oyenteId);
  void finalizar(Long id,Long usuarioId);
  void guardarMensaje(MensajeChat mensaje);

@@ -4,6 +4,7 @@ import com.serenity.animo.application.port.in.ListarAnimoUseCase;
 import com.serenity.animo.application.port.in.RegistrarAnimoUseCase;
 import com.serenity.animo.domain.model.EstadoAnimo;
 import com.serenity.shared.security.AuthenticatedUser;
+import com.serenity.shared.consent.RequireSensitiveConsent;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
@@ -19,11 +20,11 @@ public class EstadoAnimoController {
     public record RegistrarRequest(@NotNull @Min(1) @Max(5) Integer valor) {}
     private final RegistrarAnimoUseCase registrar; private final ListarAnimoUseCase listar;
     public EstadoAnimoController(RegistrarAnimoUseCase registrar, ListarAnimoUseCase listar){this.registrar=registrar;this.listar=listar;}
-    @PostMapping public EstadoAnimo registrar(@Valid @RequestBody RegistrarRequest request, @AuthenticationPrincipal AuthenticatedUser user){return registrar.registrar(user.id(),request.valor());}
-    @GetMapping public List<EstadoAnimo> listar(@AuthenticationPrincipal AuthenticatedUser user){return listar.listar(user.id());}
-    @GetMapping("/hoy") public ResponseEntity<EstadoAnimo> hoy(@AuthenticationPrincipal AuthenticatedUser user){
+    @PostMapping @RequireSensitiveConsent public EstadoAnimo registrar(@Valid @RequestBody RegistrarRequest request, @AuthenticationPrincipal AuthenticatedUser user){return registrar.registrar(user.id(),request.valor());}
+    @GetMapping @RequireSensitiveConsent public List<EstadoAnimo> listar(@AuthenticationPrincipal AuthenticatedUser user){return listar.listar(user.id());}
+    @GetMapping("/hoy") @RequireSensitiveConsent public ResponseEntity<EstadoAnimo> hoy(@AuthenticationPrincipal AuthenticatedUser user){
         return listar.obtenerHoy(user.id()).map(ResponseEntity::ok).orElseGet(()->ResponseEntity.noContent().build());
     }
-    @GetMapping("/historial") public List<EstadoAnimo> historial(@RequestParam(defaultValue="30") int dias,
+    @GetMapping("/historial") @RequireSensitiveConsent public List<EstadoAnimo> historial(@RequestParam(defaultValue="30") int dias,
             @AuthenticationPrincipal AuthenticatedUser user){return listar.historial(user.id(),dias);}
 }

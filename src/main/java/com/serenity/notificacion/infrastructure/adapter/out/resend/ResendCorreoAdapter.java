@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.JdkClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestClient;
 
 import java.net.http.HttpClient;
@@ -41,17 +42,21 @@ public class ResendCorreoAdapter implements ProveedorCorreoPort {
             throw new IllegalStateException("Falta configurar RESEND_API_KEY o RESEND_FROM");
         }
 
-        cliente.post()
-                .uri("/emails")
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer " + apiKey)
-                .body(Map.of(
-                        "from", remitente,
-                        "to", List.of(destinatario),
-                        "subject", asunto,
-                        "html", contenidoHtml,
-                        "text", contenidoTexto))
-                .retrieve()
-                .toBodilessEntity();
+        try {
+            cliente.post()
+                    .uri("/emails")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header("Authorization", "Bearer " + apiKey)
+                    .body(Map.of(
+                            "from", remitente,
+                            "to", List.of(destinatario),
+                            "subject", asunto,
+                            "html", contenidoHtml,
+                            "text", contenidoTexto))
+                    .retrieve()
+                    .toBodilessEntity();
+        } catch (RestClientException ex) {
+            throw new IllegalStateException("No se pudo enviar correo mediante Resend");
+        }
     }
 }

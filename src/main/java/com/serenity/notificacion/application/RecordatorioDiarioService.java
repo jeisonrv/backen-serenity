@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Value;
 
 import com.serenity.notificacion.application.port.out.ProveedorCorreoPort;
 import com.serenity.notificacion.infrastructure.persistence.RecordatorioEnviadoJpaEntity;
@@ -30,20 +31,25 @@ public class RecordatorioDiarioService {
     private final SesionJpaRepository sesionRepository;
     private final RecordatorioEnviadoJpaRepository recordatorioRepository;
     private final ProveedorCorreoPort proveedorCorreo;
+    private final boolean emailHabilitado;
 
     public RecordatorioDiarioService(
             UsuarioJpaRepository usuarioRepository,
             SesionJpaRepository sesionRepository,
             RecordatorioEnviadoJpaRepository recordatorioRepository,
-            ProveedorCorreoPort proveedorCorreo) {
+            ProveedorCorreoPort proveedorCorreo,
+            @Value("${app.correo.habilitado:false}") boolean emailHabilitado) {
 
         this.usuarioRepository = usuarioRepository;
         this.sesionRepository = sesionRepository;
         this.recordatorioRepository = recordatorioRepository;
         this.proveedorCorreo = proveedorCorreo;
+        this.emailHabilitado = emailHabilitado;
     }
 
     public void enviarRecordatoriosPendientes() {
+
+        if (!emailHabilitado) return;
 
         LocalDate hoy = LocalDate.now(ZONA_COLOMBIA);
         LocalDateTime inicio = hoy.atStartOfDay();

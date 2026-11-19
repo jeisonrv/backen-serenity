@@ -21,6 +21,7 @@ import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
+import com.serenity.shared.consent.SensitiveConsentRequiredException;
 
 import java.net.URI;
 import java.util.LinkedHashMap;
@@ -29,6 +30,14 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
     private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+
+    @ExceptionHandler(SensitiveConsentRequiredException.class)
+    public ResponseEntity<ProblemDetail> consentimientoSensibleRequerido(
+            SensitiveConsentRequiredException ex, HttpServletRequest request) {
+        ProblemDetail detail = createProblem(HttpStatus.FORBIDDEN, ex.getMessage(), request);
+        detail.setProperty("codigo", "SENSITIVE_CONSENT_REQUIRED");
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(detail);
+    }
 
     @ExceptionHandler(AccesoRestringidoException.class)
     public ResponseEntity<ProblemDetail> accesoRestringido(AccesoRestringidoException ex, HttpServletRequest request) {
@@ -122,7 +131,11 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ConflictException.class)
     public ResponseEntity<ProblemDetail> conflicto(ConflictException ex, HttpServletRequest request) {
-        return problem(HttpStatus.CONFLICT, ex.getMessage(), request);
+        ProblemDetail detail = createProblem(HttpStatus.CONFLICT, ex.getMessage(), request);
+        if (ex.getCode() != null) {
+            detail.setProperty("codigo", ex.getCode());
+        }
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(detail);
     }
 
     @ExceptionHandler(IllegalStateException.class)

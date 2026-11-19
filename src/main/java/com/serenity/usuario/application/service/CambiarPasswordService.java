@@ -1,6 +1,7 @@
 package com.serenity.usuario.application.service;
 
 import com.serenity.shared.exception.ConflictException;
+import com.serenity.shared.exception.ResourceNotFoundException;
 import com.serenity.usuario.application.port.in.CambiarPasswordUseCase;
 import com.serenity.usuario.application.port.out.UsuarioRepositoryPort;
 import com.serenity.usuario.domain.model.Usuario;
@@ -51,6 +52,26 @@ public class CambiarPasswordService implements CambiarPasswordUseCase {
             throw new IllegalArgumentException(
                     "La contraseña actual es incorrecta."
             );
+        }
+
+        usuario.setPasswordHash(passwordEncoder.encode(passwordNueva));
+        repositorio.guardar(usuario);
+    }
+
+    @Override
+    public void crear(Long usuarioId, String passwordNueva) {
+        if (passwordNueva == null || passwordNueva.isBlank()
+                || passwordNueva.length() < 8 || passwordNueva.length() > 72) {
+            throw new IllegalArgumentException(
+                    "La contraseña debe tener entre 8 y 72 caracteres."
+            );
+        }
+
+        Usuario usuario = repositorio.buscarPorId(usuarioId)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado."));
+
+        if (usuario.getPasswordHash() != null) {
+            throw new ConflictException("Esta cuenta ya tiene una contraseña configurada.");
         }
 
         usuario.setPasswordHash(passwordEncoder.encode(passwordNueva));

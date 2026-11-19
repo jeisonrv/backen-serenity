@@ -24,7 +24,11 @@ public class UsuarioController {
     public record GoogleLoginRequest(
             @NotBlank
             @Size(max = 8192)
-            String credential
+            String credential,
+            @Size(min = 3, max = 50)
+            String username,
+            Boolean acceptTerms,
+            Boolean acceptSensitiveData
     ) {}
 
     public record CambiarPasswordRequest(
@@ -37,6 +41,13 @@ public class UsuarioController {
                     max = 72,
                     message = "La nueva contraseña debe tener entre 8 y 72 caracteres"
             )
+            String passwordNueva
+    ) {}
+
+    public record CrearPasswordRequest(
+            @NotBlank
+            @Size(min = 8, max = 72,
+                    message = "La contraseña debe tener entre 8 y 72 caracteres")
             String passwordNueva
     ) {}
 
@@ -62,7 +73,9 @@ public class UsuarioController {
         Usuario usuario = registrarUsuario.registrar(
                 req.username(),
                 req.email(),
-                req.password()
+                req.password(),
+                req.acceptTerms(),
+                req.acceptSensitiveData()
         );
 
         return ResponseEntity
@@ -92,7 +105,10 @@ public class UsuarioController {
             @Valid @RequestBody GoogleLoginRequest req
     ) {
         var resultado = iniciarSesion.iniciarSesionConGoogle(
-                req.credential()
+                req.credential(),
+                req.username(),
+                req.acceptTerms(),
+                req.acceptSensitiveData()
         );
 
         return ResponseEntity.ok(
@@ -103,7 +119,7 @@ public class UsuarioController {
         );
     }
 
-    @PostMapping("/google/vincular")
+    @PostMapping({"/google/vincular", "/vincular"})
     public ResponseEntity<Void> vincularGoogle(
             @Valid @RequestBody GoogleLoginRequest req,
             @AuthenticationPrincipal AuthenticatedUser user
@@ -127,6 +143,15 @@ public class UsuarioController {
                 request.passwordNueva()
         );
 
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/crear-password")
+    public ResponseEntity<Void> crearPassword(
+            @Valid @RequestBody CrearPasswordRequest request,
+            @AuthenticationPrincipal AuthenticatedUser user
+    ) {
+        cambiarPassword.crear(user.id(), request.passwordNueva());
         return ResponseEntity.noContent().build();
     }
 }

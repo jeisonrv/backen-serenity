@@ -21,12 +21,21 @@ import com.serenity.shared.exception.ResourceNotFoundException;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 import java.net.URI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private static final Logger log = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
+    private static final Set<String> PUBLIC_AUTHENTICATION_PATHS = Set.of(
+            "/api/auth/registro",
+            "/api/auth/register",
+            "/api/auth/login",
+            "/api/auth/google",
+            "/api/auth/olvide-password",
+            "/api/auth/restablecer-password"
+    );
     private final JwtUtil jwtUtil;
     private final ObjectMapper objectMapper;
     private final GestionarAccesoUseCase acceso;
@@ -39,11 +48,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
-        String path = request.getServletPath();
+        String path = request.getRequestURI().substring(request.getContextPath().length());
         return path.equals("/swagger-ui.html")
                 || path.startsWith("/swagger-ui/")
                 || path.startsWith("/v3/api-docs/")
-                || path.equals("/v3/api-docs");
+                || path.equals("/v3/api-docs")
+                || PUBLIC_AUTHENTICATION_PATHS.contains(path);
     }
 
     @Override

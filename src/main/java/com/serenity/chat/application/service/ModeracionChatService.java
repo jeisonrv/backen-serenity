@@ -7,6 +7,8 @@ import com.serenity.shared.exception.ConflictException;
 import com.serenity.shared.exception.ResourceNotFoundException;
 import com.serenity.usuario.application.port.in.GestionarAccesoUseCase;
 import com.serenity.usuario.domain.model.Usuario;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +17,7 @@ import java.util.List;
 
 @Service @Transactional
 public class ModeracionChatService implements ModeracionChatUseCase {
+ private static final Logger log=LoggerFactory.getLogger(ModeracionChatService.class);
  private final ReporteChatRepositoryPort reportes; private final ChatRepositoryPort chat; private final GestionarAccesoUseCase acceso;
  private final int umbral;
  public ModeracionChatService(ReporteChatRepositoryPort reportes,ChatRepositoryPort chat,GestionarAccesoUseCase acceso,
@@ -27,7 +30,8 @@ public class ModeracionChatService implements ModeracionChatUseCase {
   Conversacion c=chat.buscarPorId(r.idConversacion());Long reportado=resolverReportado(r,c);
   if(procedente&&reportado==null)throw new IllegalArgumentException("No se pudo identificar al usuario reportado");
   ReporteChat resuelto=r.resolver(procedente,reportado,moderador,observacion);reportes.guardar(resuelto);
-  if(procedente){long total=reportes.contarPorReportadoYEstado(reportado,EstadoReporte.PROCEDENTE);if(total>=umbral)acceso.restringirSiAplica(reportado,"Acumuló "+total+" reportes procedentes por mal uso del chat");}
+  if(procedente){long total=reportes.contarPorReportadoYEstado(reportado,EstadoReporte.PROCEDENTE);if(total>=umbral){acceso.restringirSiAplica(reportado,"Acumuló "+total+" reportes procedentes por mal uso del chat");log.warn("Usuario restringido tras alcanzar el umbral de reportes procedentes");}}
+  log.info("Reporte de chat resuelto; procedente={}",procedente);
   return resuelto;
  }
  @Override public Usuario restringirUsuario(Long id,Long moderador,String motivo,LocalDateTime hasta){return acceso.restringir(id,motivo,hasta,moderador);}

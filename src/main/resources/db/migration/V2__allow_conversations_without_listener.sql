@@ -1,0 +1,2 @@
+ALTER TABLE IF EXISTS conversaciones
+    ALTER COLUMN id_oyente DROP NOT NULL;

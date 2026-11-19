@@ -9,7 +9,6 @@ public interface ConversacionJpaRepository extends JpaRepository<ConversacionJpa
  @Query("select c from ConversacionJpaEntity c where c.idConversacion=:id and (c.idUsuario=:u or c.idOyente=:u)") Optional<ConversacionJpaEntity> buscarParticipante(@Param("id") Long id,@Param("u") Long usuarioId);
  List<ConversacionJpaEntity> findByIdOyenteIsNullAndFechaFinIsNullOrderByFechaInicioAsc();
  List<ConversacionJpaEntity> findByIdOyenteAndFechaFinIsNullOrderByFechaInicioAsc(Long oyente);
- long countByIdOyenteAndFechaFinIsNull(Long oyente);
  @Modifying(clearAutomatically=true,flushAutomatically=true)
  @Query("update ConversacionJpaEntity c set c.idOyente=:oyente where c.idConversacion=:id and c.idOyente is null and c.fechaFin is null and c.idUsuario <> :oyente") int asignarOyente(@Param("id") Long id,@Param("oyente") Long oyente);
 }

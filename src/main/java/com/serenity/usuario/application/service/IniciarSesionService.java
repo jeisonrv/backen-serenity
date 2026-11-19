@@ -4,129 +4,337 @@ import com.serenity.shared.security.JwtUtil;
 import com.serenity.shared.exception.CredencialesInvalidasException;
 import com.serenity.shared.exception.AccesoRestringidoException;
 import com.serenity.shared.exception.ResourceNotFoundException;
+import com.serenity.shared.exception.ConflictException;
 import com.serenity.usuario.application.port.in.IniciarSesionUseCase;
 import com.serenity.usuario.application.port.out.UsuarioRepositoryPort;
 import com.serenity.usuario.application.port.out.VerificarIdentidadGooglePort;
 import com.serenity.usuario.domain.model.IdentidadGoogle;
 import com.serenity.usuario.domain.model.Usuario;
-import com.serenity.shared.exception.ConflictException;
+import com.serenity.notificacion.application.port.in.EnviarCorreoTransaccionalUseCase;
+import com.serenity.shared.consent.ConsentService;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import com.serenity.notificacion.application.port.in.EnviarCorreoTransaccionalUseCase;
+import org.springframework.transaction.annotation.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.Optional;
 
 @Service
 public class IniciarSesionService implements IniciarSesionUseCase {
-    private static final ZoneId ZONA_HORARIA = ZoneId.of("America/Bogota");
+
+    private static final Logger log = LoggerFactory.getLogger(IniciarSesionService.class);
+
+    private static final ZoneId ZONA_HORARIA =
+            ZoneId.of("America/Bogota");
 
     private final UsuarioRepositoryPort repositorio;
     private final JwtUtil jwtUtil;
     private final PasswordEncoder passwordEncoder;
     private final VerificarIdentidadGooglePort verificarIdentidadGoogle;
     private final EnviarCorreoTransaccionalUseCase correoTransaccional;
+    private final ConsentService consentimientos;
 
-    public IniciarSesionService(UsuarioRepositoryPort repositorio, JwtUtil jwtUtil,
-                                PasswordEncoder passwordEncoder,
-                                VerificarIdentidadGooglePort verificarIdentidadGoogle,
-                                EnviarCorreoTransaccionalUseCase correoTransaccional) {
+    public IniciarSesionService(
+            UsuarioRepositoryPort repositorio,
+            JwtUtil jwtUtil,
+            PasswordEncoder passwordEncoder,
+            VerificarIdentidadGooglePort verificarIdentidadGoogle,
+            EnviarCorreoTransaccionalUseCase correoTransaccional,
+            ConsentService consentimientos) {
+
         this.repositorio = repositorio;
         this.jwtUtil = jwtUtil;
         this.passwordEncoder = passwordEncoder;
         this.verificarIdentidadGoogle = verificarIdentidadGoogle;
         this.correoTransaccional = correoTransaccional;
+        this.consentimientos = consentimientos;
     }
 
     @Override
     public ResultadoLogin iniciarSesion(String email, String passwordPlano) {
-        Usuario usuario = repositorio.buscarPorEmail(email)
-                .orElseThrow(CredencialesInvalidasException::new);
+        log.info("login.stage=start");
+        try {
+            ResultadoLogin resultado = autenticar(email, passwordPlano);
+            log.info("login.stage=complete outcome=success");
+            return resultado;
+        } catch (RuntimeException ex) {
+            log.warn("login.stage=complete outcome=error exceptionType={}",
+                    ex.getClass().getSimpleName());
+            throw ex;
+        }
+    }
+
+    private ResultadoLogin autenticar(String email, String passwordPlano) {
+
+        if (email == null || email.isBlank()
+                || passwordPlano == null || passwordPlano.isEmpty()) {
+            throw new CredencialesInvalidasException();
+        }
+
+        Optional<Usuario> usuarioEncontrado;
+        try {
+            usuarioEncontrado = repositorio.buscarPorEmailIgnorandoMayusculas(email.strip());
+        } catch (RuntimeException ex) {
+            log.warn("login.stage=user_lookup outcome=error exceptionType={}",
+                    ex.getClass().getSimpleName());
+            throw ex;
+        }
+        boolean encontrado = usuarioEncontrado.isPresent();
+        log.info("login.stage=user_lookup userFound={}", encontrado);
+        Usuario usuario = usuarioEncontrado.orElseThrow(CredencialesInvalidasException::new);
 
         String passwordAlmacenada = usuario.getPasswordHash();
-        boolean credencialesValidas;
-        if (passwordAlmacenada != null && passwordAlmacenada.startsWith("$2")) {
-            credencialesValidas = passwordEncoder.matches(passwordPlano, passwordAlmacenada);
-        } else {
-            // Migra al primer inicio de sesión los registros heredados sin hash.
-            credencialesValidas = passwordPlano.equals(passwordAlmacenada);
-            if (credencialesValidas) {
-                usuario.setPasswordHash(passwordEncoder.encode(passwordPlano));
-                repositorio.guardar(usuario);
-            }
+        boolean hashPresente = passwordAlmacenada != null && !passwordAlmacenada.isBlank();
+        log.info("login.stage=password_hash hashPresent={}", hashPresente);
+
+        if (!hashPresente) {
+            throw new CredencialesInvalidasException();
         }
+
+        boolean credencialesValidas;
+        try {
+            credencialesValidas = passwordEncoder.matches(
+                    passwordPlano,
+                    passwordAlmacenada
+            );
+        } catch (IllegalArgumentException ex) {
+            log.warn("login.stage=bcrypt outcome=exception exceptionType={}",
+                    ex.getClass().getSimpleName());
+            credencialesValidas = false;
+        } catch (RuntimeException ex) {
+            log.warn("login.stage=bcrypt outcome=exception exceptionType={}",
+                    ex.getClass().getSimpleName());
+            throw ex;
+        }
+        log.info("login.stage=bcrypt bcryptMatched={}", credencialesValidas);
+
         if (!credencialesValidas) {
             throw new CredencialesInvalidasException();
         }
-        return crearResultadoLogin(usuario);
+
+        log.info("login.stage=credentials outcome=accepted");
+        return crearResultadoLogin(usuario, true);
     }
 
     @Override
+    @Transactional
     public ResultadoLogin iniciarSesionConGoogle(String credential) {
+        return iniciarSesionConGoogle(credential, null);
+    }
+
+    @Override
+    @Transactional
+    public ResultadoLogin iniciarSesionConGoogle(String credential, String username) {
+        return iniciarSesionConGoogle(credential, username, null, null);
+    }
+
+    @Override
+    @Transactional
+    public ResultadoLogin iniciarSesionConGoogle(String credential, String username,
+                                                  Boolean acceptTerms, Boolean acceptSensitiveData) {
+        try {
+            ResultadoLogin resultado = autenticarConGoogle(
+                    credential, username, acceptTerms, Boolean.TRUE.equals(acceptSensitiveData));
+            log.info("Inicio de sesión con Google exitoso para {}",
+                    enmascararCorreo(resultado.usuario().getEmail()));
+            return resultado;
+        } catch (RuntimeException ex) {
+            log.warn("google.login outcome=error exceptionType={}",
+                    ex.getClass().getSimpleName());
+            throw ex;
+        }
+    }
+
+    private ResultadoLogin autenticarConGoogle(String credential, String username,
+                                               Boolean acceptTerms, boolean acceptSensitiveData) {
+
         IdentidadGoogle identidad = identidadGoogle(credential);
 
-        Usuario usuario = repositorio.buscarPorGoogleSubject(identidad.subject())
-                .orElseGet(() -> buscarOCrearUsuario(identidad));
+        Usuario usuario = repositorio
+                .buscarPorGoogleSubject(identidad.subject())
+                .orElseGet(() -> buscarOCrearUsuario(identidad, username, acceptTerms, acceptSensitiveData));
+
         return crearResultadoLogin(usuario);
     }
 
     @Override
     public void vincularGoogle(Long usuarioId, String credential) {
-        IdentidadGoogle identidad = identidadGoogle(credential);
-        Usuario usuario = repositorio.buscarPorId(usuarioId)
-                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
 
-        Usuario vinculado = repositorio.buscarPorGoogleSubject(identidad.subject()).orElse(null);
-        if (vinculado != null && !vinculado.getId().equals(usuarioId)) {
-            throw new ConflictException("Esta cuenta de Google ya está vinculada a otro usuario");
+        IdentidadGoogle identidad = identidadGoogle(credential);
+
+        Usuario usuario = repositorio.buscarPorId(usuarioId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Usuario no encontrado"));
+
+        Usuario vinculado = repositorio
+                .buscarPorGoogleSubject(identidad.subject())
+                .orElse(null);
+
+        if (vinculado != null
+                && !vinculado.getId().equals(usuarioId)) {
+            throw new ConflictException(
+                    "Esta cuenta de Google ya está vinculada a otro usuario"
+            );
         }
-        if (usuario.getGoogleSubject() != null && !usuario.getGoogleSubject().equals(identidad.subject())) {
-            throw new ConflictException("La cuenta ya está vinculada a otra cuenta de Google");
+
+        if (usuario.getGoogleSubject() != null
+                && !usuario.getGoogleSubject().equals(identidad.subject())) {
+            throw new ConflictException(
+                    "La cuenta ya está vinculada a otra cuenta de Google"
+            );
         }
+
+        if (identidad.subject().equals(usuario.getGoogleSubject())) {
+            return;
+        }
+
         usuario.setGoogleSubject(identidad.subject());
         repositorio.guardar(usuario);
     }
 
-    private Usuario buscarOCrearUsuario(IdentidadGoogle identidad) {
-        if (repositorio.buscarPorEmailIgnorandoMayusculas(identidad.email()).isPresent()) {
+    private Usuario buscarOCrearUsuario(IdentidadGoogle identidad, String username,
+                                        Boolean acceptTerms, boolean acceptSensitiveData) {
+
+        if (repositorio
+                .buscarPorEmailIgnorandoMayusculas(identidad.email())
+                .isPresent()) {
             throw new ConflictException(
-                    "Ya existe una cuenta con este correo. Inicia sesión y vincula Google desde tu cuenta");
+                    "Ya existe una cuenta con este correo. "
+                            + "Inicia sesión y vincula Google desde tu cuenta",
+                    "GOOGLE_ACCOUNT_NOT_LINKED"
+            );
         }
-        Usuario nuevo = new Usuario(nombreUsuario(identidad), identidad.email(), null);
+
+        if (!Boolean.TRUE.equals(acceptTerms)) {
+            throw new IllegalArgumentException(
+                    "Debes aceptar los términos y confirmar que fuiste informado de la Política de Tratamiento de Datos"
+            );
+        }
+
+        Usuario nuevo = new Usuario(
+                usernameElegido(username, identidad),
+                identidad.email(),
+                null
+        );
+
+        consentimientos.prepareRegistration(nuevo, acceptSensitiveData);
+
         nuevo.setGoogleSubject(identidad.subject());
+
         Usuario guardado = repositorio.guardar(nuevo);
+
+        consentimientos.recordRegistration(guardado.getId(), acceptSensitiveData);
+
         correoTransaccional.enviarBienvenida(guardado);
+
         return guardado;
     }
 
+    private String usernameElegido(String username, IdentidadGoogle identidad) {
+        String elegido = username == null || username.isBlank()
+                ? usernameDesdeIdentidad(identidad)
+                : username.strip();
+        int longitud = elegido.codePointCount(0, elegido.length());
+        if (longitud < 3 || longitud > 50) {
+            throw new IllegalArgumentException(
+                    "El nombre de usuario debe tener entre 3 y 50 caracteres"
+            );
+        }
+        return elegido;
+    }
+
+    private String usernameDesdeIdentidad(IdentidadGoogle identidad) {
+        String correo = identidad.email();
+        int separador = correo.indexOf('@');
+        String candidato = separador > 0 ? correo.substring(0, separador).strip() : "";
+        int longitud = candidato.codePointCount(0, candidato.length());
+
+        if (longitud < 3) {
+            String subject = identidad.subject().replaceAll("[^A-Za-z0-9]", "");
+            candidato = "google_" + subject.substring(0, Math.min(subject.length(), 43));
+            longitud = candidato.codePointCount(0, candidato.length());
+        }
+
+        if (longitud > 50) {
+            candidato = candidato.substring(0, candidato.offsetByCodePoints(0, 50));
+        }
+        return candidato;
+    }
+
     private IdentidadGoogle identidadGoogle(String credential) {
-        IdentidadGoogle identidad = verificarIdentidadGoogle.verificar(credential)
-                .orElseThrow(CredencialesInvalidasException::new);
-        if (!identidad.emailVerificado() || identidad.subject() == null || identidad.subject().isBlank()
-                || identidad.email() == null || identidad.email().isBlank()) {
+
+        if (credential == null || credential.isBlank()) {
             throw new CredencialesInvalidasException();
         }
+
+        IdentidadGoogle identidad = verificarIdentidadGoogle
+                .verificar(credential)
+                .orElseThrow(CredencialesInvalidasException::new);
+
+        if (!identidad.emailVerificado()
+                || identidad.subject() == null
+                || identidad.subject().isBlank()
+                || identidad.email() == null
+                || identidad.email().isBlank()) {
+            throw new CredencialesInvalidasException();
+        }
+
         return identidad;
     }
 
-    private String nombreUsuario(IdentidadGoogle identidad) {
-        String nombre = identidad.nombre() == null ? "" : identidad.nombre().strip();
-        if (nombre.isBlank()) {
-            int separador = identidad.email().indexOf('@');
-            nombre = separador > 0 ? identidad.email().substring(0, separador) : "google_user";
-        }
-        nombre = nombre.replaceAll("\\s+", "_");
-        if (nombre.codePointCount(0, nombre.length()) < 3) nombre = "g_" + nombre;
-        if (nombre.codePointCount(0, nombre.length()) > 50) {
-            nombre = nombre.substring(0, nombre.offsetByCodePoints(0, 50));
-        }
-        return nombre;
+    private ResultadoLogin crearResultadoLogin(Usuario usuario) {
+        return crearResultadoLogin(usuario, false);
     }
 
-    private ResultadoLogin crearResultadoLogin(Usuario usuario) {
+    private ResultadoLogin crearResultadoLogin(Usuario usuario, boolean registrarDiagnostico) {
+
         if (usuario.estaRestringido(LocalDateTime.now(ZONA_HORARIA))) {
-            throw new AccesoRestringidoException(usuario.getRestringidoHasta());
+            if (registrarDiagnostico) {
+                log.warn("login.stage=access_check outcome=restricted exceptionType={}",
+                        AccesoRestringidoException.class.getSimpleName());
+            }
+            throw new AccesoRestringidoException(
+                    usuario.getRestringidoHasta()
+            );
         }
-        String token = jwtUtil.generarToken(usuario.getId(), usuario.getEmail());
+
+        if (registrarDiagnostico) {
+            log.info("login.stage=jwt_generation outcome=started");
+        }
+        String token;
+        try {
+            token = jwtUtil.generarToken(
+                    usuario.getId(),
+                    usuario.getEmail(),
+                    usuario.getRol()
+            );
+        } catch (RuntimeException ex) {
+            if (registrarDiagnostico) {
+                log.error("login.stage=jwt_generation outcome=error exceptionType={}",
+                        ex.getClass().getSimpleName());
+            }
+            throw ex;
+        }
+        if (registrarDiagnostico) {
+            log.info("login.stage=jwt_generation outcome=success");
+        }
+
         return new ResultadoLogin(usuario, token);
+    }
+
+    private String enmascararCorreo(String email) {
+        if (email == null || email.isBlank()) {
+            return "desconocido";
+        }
+        String normalizado = email.strip();
+        int separador = normalizado.indexOf('@');
+        if (separador < 1) {
+            return "***";
+        }
+        return normalizado.charAt(0) + "***@***";
     }
 }

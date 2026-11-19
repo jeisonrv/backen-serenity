@@ -3,6 +3,7 @@ package com.serenity.usuario.domain.model;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 public class Usuario {
 
@@ -23,6 +24,10 @@ public class Usuario {
     private Long restringidoPor;
     private String googleSubject;
     private boolean recordatoriosEmail;
+    private OffsetDateTime termsAcceptedAt;
+    private String termsVersion;
+    private OffsetDateTime sensitiveConsentAt;
+    private String sensitiveConsentVersion;
 
     public Usuario() {
     }
@@ -230,5 +235,14 @@ public class Usuario {
     public void setGoogleSubject(String googleSubject) {
         this.googleSubject = googleSubject;
     }
+
+    public OffsetDateTime getTermsAcceptedAt() { return termsAcceptedAt; }
+    public void setTermsAcceptedAt(OffsetDateTime termsAcceptedAt) { this.termsAcceptedAt = termsAcceptedAt; }
+    public String getTermsVersion() { return termsVersion; }
+    public void setTermsVersion(String termsVersion) { this.termsVersion = termsVersion; }
+    public OffsetDateTime getSensitiveConsentAt() { return sensitiveConsentAt; }
+    public void setSensitiveConsentAt(OffsetDateTime sensitiveConsentAt) { this.sensitiveConsentAt = sensitiveConsentAt; }
+    public String getSensitiveConsentVersion() { return sensitiveConsentVersion; }
+    public void setSensitiveConsentVersion(String sensitiveConsentVersion) { this.sensitiveConsentVersion = sensitiveConsentVersion; }
 }
 

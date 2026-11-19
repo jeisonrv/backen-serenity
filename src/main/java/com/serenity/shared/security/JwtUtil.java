@@ -4,6 +4,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.security.Keys;
+import com.serenity.usuario.domain.model.Rol;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -20,11 +21,15 @@ public class JwtUtil {
     @Value("${jwt.expiration}")
     private long expiration;
 
-    public String generarToken(Long usuarioId, String email) {
+    public String generarToken(Long usuarioId, String email, Rol rol) {
+        if (rol == null) {
+            throw new IllegalArgumentException("El rol del usuario es obligatorio");
+        }
         SecretKey key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
         return Jwts.builder()
                 .setSubject(email)
                 .claim("usuarioId", usuarioId)
+                .claim("rol", rol.name())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(key, SignatureAlgorithm.HS256)

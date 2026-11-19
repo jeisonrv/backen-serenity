@@ -9,6 +9,7 @@ public interface ChatUseCase {
  void guardarMensaje(MensajeChat mensaje,Long usuarioId);
  List<MensajeChat> enviarMensaje(Long idConversacion, Long usuarioId, String contenido);
  Conversacion buscarParticipante(Long id, Long usuarioId);
+ Conversacion buscarPorId(Long id);
  List<MensajeChat> listarMensajes(Long id, Long usuarioId);
  List<Conversacion> listarEnEspera();
  List<Conversacion> listarActivasDeOyente(Long oyenteId);

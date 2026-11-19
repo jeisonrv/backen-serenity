@@ -1,0 +1,20 @@
+# Los 12 factores en Serenity Backend
+
+Esta tabla describe el estado actual del backend con referencias a archivos concretos. “Parcial” indica que existe una práctica útil, pero no cubre todo el factor.
+
+| Factor | Estado | Evidencia en el repositorio |
+|---|---|---|
+| 1. Base de código | Cumple | `.git/` mantiene el código en Git; `.github/workflows/ci.yml` automatiza el trabajo sobre la rama y las solicitudes de cambio. El backend se desarrolla en este repositorio. |
+| 2. Dependencias | Cumple | `pom.xml` declara dependencias y versiones; `mvnw` y `.mvn/wrapper/maven-wrapper.properties` permiten ejecutar Maven con el wrapper. |
+| 3. Configuración | Cumple | `src/main/resources/application.properties` obtiene base de datos, JWT, CORS, correo y puerto desde variables de entorno. `.env.example` documenta valores de ejemplo sin ser la configuración de producción. |
+| 4. Servicios de soporte | Cumple | `src/main/resources/application.properties` configura PostgreSQL externo por `DB_URL`, `DB_USER` y `DB_PASSWORD`. `docker-compose.yml` define PostgreSQL como servicio separado; `src/main/java/com/serenity/notificacion/infrastructure/adapter/out/resend/ResendCorreoAdapter.java` integra correo externo por configuración. |
+| 5. Construir, publicar, ejecutar | Parcial | `Dockerfile` separa una etapa de compilación Java de la imagen JRE de ejecución y `.github/workflows/ci.yml` ejecuta `verify`. La publicación de una versión inmutable y su promoción entre entornos no está automatizada en este repositorio. |
+| 6. Procesos | Parcial | La autenticación por JWT es sin sesión de servidor (`src/main/java/com/serenity/shared/security/JwtUtil.java` y `src/main/java/com/serenity/shared/security/JwtAuthenticationFilter.java`) y el estado de negocio se guarda en PostgreSQL. El recordatorio programado sí corre dentro del proceso web: `src/main/java/com/serenity/notificacion/infrastructure/scheduler/RecordatorioDiarioScheduler.java`. |
+| 7. Vinculación de puertos | Cumple | `src/main/resources/application.properties` configura `server.port=${PORT:8081}`. `Dockerfile` expone `8081` y `docker-compose.yml` publica el puerto configurado. |
+| 8. Concurrencia | Parcial | El backend no guarda sesiones de usuario en memoria y persiste los datos en PostgreSQL, lo que permite ejecutar instancias web separadas. `docker-compose.yml` no configura escalado/orquestación; los recordatorios se programan en cada proceso y la deduplicación se apoya en `RecordatorioEnviadoJpaRepository` y su restricción única en `RecordatorioEnviadoJpaEntity`. |
+| 9. Desechabilidad | Cumple | `src/main/resources/application.properties` habilita apagado gradual y define un periodo de cierre; `docker-compose.yml` configura comprobación de salud del backend y política de reinicio. |
+| 10. Paridad entre desarrollo y producción | Parcial | `Dockerfile` y `docker-compose.yml` ejecutan backend y PostgreSQL en contenedores. `src/main/resources/application-dev.properties` y `application-prod.properties` separan ajustes de perfil; no hay un proceso que garantice que todos los servicios externos y versiones sean idénticos entre entornos. |
+| 11. Logs | Cumple | Spring Boot escribe logs al estándar de salida por defecto; `src/main/resources/application-dev.properties` y `application-prod.properties` ajustan niveles. Servicios como `IniciarSesionService`, `RegistrarUsuarioService`, `ChatService` y `ModeracionChatService` registran eventos sin incluir contraseñas, tokens ni correos completos. |
+| 12. Procesos administrativos | Parcial | `src/main/java/com/serenity/notificacion/infrastructure/scheduler/RecordatorioDiarioScheduler.java` ejecuta la tarea programada dentro de la aplicación. Los cambios de esquema no tienen migraciones versionadas y `src/main/resources/application.properties` mantiene `spring.jpa.hibernate.ddl-auto=update`; por eso los cambios de esquema siguen dependiendo de intervención manual. |
+
+El factor 12 es parcial: no hay un comando administrativo independiente ni migraciones versionadas. La configuración actual permite que Hibernate actualice el esquema al arrancar.

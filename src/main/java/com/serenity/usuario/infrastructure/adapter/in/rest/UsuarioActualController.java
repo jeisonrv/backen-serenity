@@ -11,13 +11,16 @@ import java.time.LocalDateTime;
 @RequestMapping("/api/usuarios")
 public class UsuarioActualController {
     public record UsuarioActualResponse(Long idUsuario, String nombreUsuario, String correo, int nivel,
-            int experiencia, int racha, int mejorRacha, LocalDate ultimaActividad, LocalDateTime fechaRegistro, String rol) {}
+            int experiencia, int racha, int mejorRacha, LocalDate ultimaActividad, LocalDateTime fechaRegistro,
+            String rol, boolean googleVinculado, boolean tienePassword) {}
     private final ObtenerUsuarioActualUseCase obtenerUsuarioActual;
     public UsuarioActualController(ObtenerUsuarioActualUseCase obtenerUsuarioActual){this.obtenerUsuarioActual=obtenerUsuarioActual;}
     @GetMapping("/me")
     public UsuarioActualResponse actual(@AuthenticationPrincipal AuthenticatedUser user){
         var u=obtenerUsuarioActual.obtener(user.id());
         return new UsuarioActualResponse(u.getId(),u.getUsername(),u.getEmail(),u.getNivel(),u.getXp(),
-                u.getRacha(),u.getMejorRacha(),u.getUltimaActividad(),null,u.getRol().name());
+                u.getRacha(),u.getMejorRacha(),u.getUltimaActividad(),null,u.getRol().name(),
+                u.getGoogleSubject() != null && !u.getGoogleSubject().isBlank(),
+                u.getPasswordHash() != null);
     }
 }

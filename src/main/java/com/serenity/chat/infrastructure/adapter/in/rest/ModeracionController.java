@@ -3,6 +3,8 @@ package com.serenity.chat.infrastructure.adapter.in.rest;
 import com.serenity.chat.application.port.in.ModeracionChatUseCase;
 import com.serenity.chat.domain.model.*;
 import com.serenity.shared.security.AuthenticatedUser;
+import com.serenity.shared.consent.ConsentService;
+import com.serenity.shared.consent.SensitiveConsentRequiredException;
 import com.serenity.usuario.domain.model.Usuario;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -32,7 +34,8 @@ public class ModeracionController {
     }
     public record RestriccionResponse(Long id,boolean restringido,LocalDateTime restringidoHasta) {}
     private final ModeracionChatUseCase moderacion;
-    public ModeracionController(ModeracionChatUseCase moderacion){this.moderacion=moderacion;}
+    private final ConsentService consentService;
+    public ModeracionController(ModeracionChatUseCase moderacion, ConsentService consentService){this.moderacion=moderacion;this.consentService=consentService;}
 
     @GetMapping("/reportes")
     public List<ReporteChat> reportes(@RequestParam(required=false) EstadoReporte estado){return moderacion.listarReportes(estado);}
@@ -40,6 +43,9 @@ public class ModeracionController {
     @GetMapping("/reportes/{id}")
     public DetalleResponse detalle(@PathVariable Long id){
         DetalleReporte d=moderacion.detalleReporte(id);Conversacion c=d.conversacion();
+        if (!consentService.hasCurrentSensitiveConsent(c.idUsuario())) {
+            throw new SensitiveConsentRequiredException();
+        }
         return new DetalleResponse(d.reporte(),c.idUsuario(),c.idOyente(),c.fechaInicio(),c.fechaFin(),
                 d.mensajes().stream().map(m->new MensajeResumen(m.idConversacion(),m.remitente(),m.contenido(),m.fechaEnvio())).toList(),
                 d.reportesTotalesDelReportado(),d.reportesProcedentesDelReportado());

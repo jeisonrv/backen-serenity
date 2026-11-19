@@ -14,14 +14,21 @@ El valor de `GOOGLE_CLIENT_ID` también se puede proporcionar como variable de e
 
 ## Contrato de la API
 
-El frontend debe mostrar el botón oficial de Google Identity Services. Cuando reciba el campo `credential`, debe enviarlo sin decodificar al backend:
+El frontend debe mostrar el botón oficial de Google Identity Services. Cuando reciba el campo `credential`, debe enviarlo sin decodificar al backend. Para iniciar sesión con una cuenta ya vinculada basta con la credencial. Para crear una cuenta nueva, debe enviar además la aceptación explícita de los términos; el nombre de usuario es opcional y el backend lo deriva del correo verificado si se omite:
 
 ```http
 POST /api/auth/google
 Content-Type: application/json
 
-{"credential":"<ID token de Google>"}
+{
+  "credential": "<ID token de Google>",
+  "username": "persona",
+  "acceptTerms": true,
+  "acceptSensitiveData": false
+}
 ```
+
+`acceptSensitiveData` es opcional y por defecto se considera `false`; solo debe enviarse como `true` si la persona otorga ese consentimiento separado. Si falta `acceptTerms: true` para una cuenta nueva, el backend rechaza el alta y no registra ningún consentimiento.
 
 La respuesta exitosa usa el contrato habitual de login:
 
@@ -43,18 +50,18 @@ El cliente debe usar el JWT de Serenity para las llamadas posteriores a la API. 
 El backend no vincula automáticamente un Google ID a una cuenta local coincidente por correo. Para evitar asociar identidades solo por una dirección de correo, la persona debe iniciar sesión primero con su cuenta actual y luego enviar el ID token con su JWT:
 
 ```http
-POST /api/auth/google/vincular
+POST /api/auth/vincular
 Authorization: Bearer <JWT de Serenity>
 Content-Type: application/json
 
 {"credential":"<ID token de Google>"}
 ```
 
-La operación devuelve `204 No Content`. A partir de entonces, `POST /api/auth/google` reconoce el `sub` de Google asociado. Un mismo `sub` no se puede vincular a más de una cuenta.
+También se mantiene `POST /api/auth/google/vincular` por compatibilidad. Ambas rutas exigen el JWT de Serenity en `Authorization` y devuelven `204 No Content`. El ID token de Google se envía únicamente en `credential`, nunca como bearer de Serenity. A partir de entonces, `POST /api/auth/google` reconoce el `sub` de Google asociado. Un mismo `sub` no se puede vincular a más de una cuenta.
 
 ## Errores esperados
 
-- `400`: falta el campo `credential` o excede el tamaño máximo.
+- `400`: falta el campo `credential`, excede el tamaño máximo o no se aceptaron los términos requeridos para crear una cuenta nueva.
 - `401`: el ID token es inválido, expiró o no tiene un correo verificado.
 - `409`: ya existe una cuenta local con el correo; inicia sesión y vincula Google primero, o el ID de Google ya está vinculado a otro usuario.
-- `503`: falta configurar `GOOGLE_CLIENT_ID` o Google no está disponible temporalmente.
+- `503`: Google no está disponible temporalmente; en el perfil `prod`, si falta `GOOGLE_CLIENT_ID`, la aplicación no inicia por la propiedad requerida.

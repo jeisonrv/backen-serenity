@@ -4,6 +4,7 @@ package com.serenity.usuario.infrastructure.adapter.out.persistence;
 import com.serenity.usuario.application.port.out.UsuarioRepositoryPort;
 import com.serenity.usuario.domain.model.Usuario;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -22,6 +23,23 @@ public class UsuarioRepositoryAdapter implements UsuarioRepositoryPort {
         UsuarioJpaEntity entity = toEntity(usuario);
         UsuarioJpaEntity guardado = jpaRepository.save(entity);
         return toDomain(guardado);
+    }
+
+    @Override
+    @Transactional
+    public boolean guardarSiNoExiste(Usuario usuario) {
+        if (jpaRepository.findByEmailIgnoreCase(usuario.getEmail()).isPresent()) {
+            return false;
+        }
+        return jpaRepository.insertarSiEmailNoExiste(
+                usuario.getUsername(),
+                usuario.getEmail(),
+                usuario.getPasswordHash(),
+                usuario.getNivel(),
+                usuario.getXp(),
+                usuario.getRacha(),
+                usuario.getMejorRacha(),
+                usuario.getRol().name()) == 1;
     }
 
     @Override
@@ -74,6 +92,10 @@ public class UsuarioRepositoryAdapter implements UsuarioRepositoryPort {
         entity.setRestringidoPor(u.getRestringidoPor());
         entity.setGoogleSubject(u.getGoogleSubject());
         entity.setRecordatoriosEmail(u.isRecordatoriosEmail());
+        entity.setTermsAcceptedAt(u.getTermsAcceptedAt());
+        entity.setTermsVersion(u.getTermsVersion());
+        entity.setSensitiveConsentAt(u.getSensitiveConsentAt());
+        entity.setSensitiveConsentVersion(u.getSensitiveConsentVersion());
 
         return entity;
     }
@@ -102,6 +124,10 @@ public class UsuarioRepositoryAdapter implements UsuarioRepositoryPort {
         );
 
         usuario.setGoogleSubject(e.getGoogleSubject());
+        usuario.setTermsAcceptedAt(e.getTermsAcceptedAt());
+        usuario.setTermsVersion(e.getTermsVersion());
+        usuario.setSensitiveConsentAt(e.getSensitiveConsentAt());
+        usuario.setSensitiveConsentVersion(e.getSensitiveConsentVersion());
         usuario.setRecordatoriosEmail(e.isRecordatoriosEmail());
 
         return usuario;

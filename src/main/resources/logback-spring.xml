@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <springProperty scope="context" name="APP_NAME" source="spring.application.name" defaultValue="serenity"/>
+    <springProperty scope="context" name="DB_URL" source="DB_URL" defaultValue=""/>
+    <springProperty scope="context" name="DB_USER" source="DB_USER" defaultValue=""/>
+    <springProperty scope="context" name="DB_PASSWORD" source="DB_PASSWORD" defaultValue=""/>
+    <springProperty scope="context" name="DB_LOG_ENABLED" source="app.logging.database.enabled" defaultValue="true"/>
+    <springProperty scope="context" name="DB_LOG_LEVEL" source="app.logging.database.minimum-level" defaultValue="WARN"/>
+    <springProperty scope="context" name="DB_LOG_ENABLED" source="app.logging.database.enabled" defaultValue="true"/>
+    <springProperty scope="context" name="DB_LOG_BATCH_SIZE" source="app.logging.database.batch-size" defaultValue="100"/>
+    <springProperty scope="context" name="DB_LOG_FLUSH_MS" source="app.logging.database.flush-interval-ms" defaultValue="2000"/>
+    <springProperty scope="context" name="DB_LOG_QUEUE_SIZE" source="app.logging.database.queue-capacity" defaultValue="10000"/>
+    <springProperty scope="context" name="DB_LOG_MAX_MESSAGE" source="app.logging.database.max-message-length" defaultValue="10000"/>
+    <springProperty scope="context" name="DB_LOG_MAX_STACK" source="app.logging.database.max-stack-trace-length" defaultValue="50000"/>
+    <springProperty scope="context" name="DB_LOG_RETRIES" source="app.logging.database.max-retries" defaultValue="3"/>
+    <springProperty scope="context" name="DB_LOG_SHUTDOWN_MS" source="app.logging.database.shutdown-wait-ms" defaultValue="5000"/>
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="DATABASE" class="com.serenity.shared.logging.AsyncDatabaseLogAppender">
+        <jdbcUrl>${DB_URL}</jdbcUrl>
+        <username>${DB_USER}</username>
+        <password>${DB_PASSWORD}</password>
+        <applicationName>${APP_NAME}</applicationName>
+        <enabled>${DB_LOG_ENABLED}</enabled>
+        <minimumLevel>${DB_LOG_LEVEL}</minimumLevel>
+        <batchSize>${DB_LOG_BATCH_SIZE}</batchSize>
+        <flushIntervalMs>${DB_LOG_FLUSH_MS}</flushIntervalMs>
+        <queueCapacity>${DB_LOG_QUEUE_SIZE}</queueCapacity>
+        <maxMessageLength>${DB_LOG_MAX_MESSAGE}</maxMessageLength>
+        <maxStackTraceLength>${DB_LOG_MAX_STACK}</maxStackTraceLength>
+        <maxRetries>${DB_LOG_RETRIES}</maxRetries>
+        <shutdownWaitMs>${DB_LOG_SHUTDOWN_MS}</shutdownWaitMs>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="DATABASE"/>
+    </root>
+</configuration>
