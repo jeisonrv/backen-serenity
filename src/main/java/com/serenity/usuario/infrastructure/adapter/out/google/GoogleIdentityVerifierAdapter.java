@@ -6,6 +6,7 @@ import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.json.gson.GsonFactory;
 import com.serenity.usuario.application.port.out.VerificarIdentidadGooglePort;
 import com.serenity.usuario.domain.model.IdentidadGoogle;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,6 +25,7 @@ public class GoogleIdentityVerifierAdapter implements VerificarIdentidadGooglePo
 
     private final GoogleIdTokenVerifier verifier;
 
+    @Autowired
     public GoogleIdentityVerifierAdapter(@Value("${google.oauth.client-id:}") String clientId) {
         String normalizedClientId = clientId == null ? "" : clientId.strip();
         this.verifier = normalizedClientId.isBlank()
